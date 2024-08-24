@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Navbar } from "@/components/navbar";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -19,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ModalProvider />
-      <body className={cn(inter.className, "bg-snow")}>{children}</body>
+      <body className={cn(inter.className, "bg-snow")}>
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

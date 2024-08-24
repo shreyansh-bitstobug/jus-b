@@ -180,10 +180,8 @@ export const Navbar = () => {
 
         {/* User Account Button */}
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className="rounded-full font-semibold p-1 hover:text-neutral-100  text-snow flex items-center gap-2">
-              <CgProfile className="w-6 h-6" /> Account
-            </button>
+          <DropdownMenuTrigger className="rounded-full font-semibold p-1 hover:text-neutral-100  text-snow flex items-center gap-2">
+            <CgProfile className="w-6 h-6" /> Account
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={10} className="">
             <DropdownMenuGroup>
