@@ -1,205 +1,187 @@
 "use client";
 
-// Dependencies
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Ruthie } from "next/font/google";
-
-// Hooks & Utils
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useModalStore } from "@/hooks/use-store";
+import { usePathname } from "next/navigation";
+import { useCartStore } from "@/hooks/use-store";
 
-// Icons
-import { HandHelping, Home, PanelRight, Phone, Search, ShoppingCart, User, Users } from "lucide-react";
-import { HiMenuAlt1, HiShoppingCart, HiUser } from "react-icons/hi";
-import { BsCart4 } from "react-icons/bs";
-import { FaRegUser, FaUser } from "react-icons/fa6";
+import { Heart, LogOut, Search, ShoppingBag, User } from "lucide-react";
+import { HiMenuAlt3 } from "react-icons/hi";
 
-// UI Components
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuTrigger,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { IoLogOutOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { FaUserCircle } from "react-icons/fa";
-import { TiShoppingCart } from "react-icons/ti";
-import { TbUserFilled } from "react-icons/tb";
-import { HiOutlineShoppingCart } from "react-icons/hi2";
+  DropdownMenuSeparator,
+} from "./ui/dropdown-menu";
 
-// Font for the logo
-const ruthie = Ruthie({ weight: "400", subsets: ["latin"] });
-
-export const Navbar = () => {
+export default function Navbar() {
+  const [cartCount, setCartCount] = useState(0);
   const url = usePathname();
   const pathPart = url?.split("/")[1];
   const page = pathPart?.split("#")[0] ? pathPart.split("#")[0] : pathPart;
 
-  const { openModal } = useModalStore();
+  const { cart } = useCartStore();
+
+  useEffect(() => {
+    console.log(cart);
+    setCartCount(Object.keys(cart).length);
+  }, [cart]);
 
   return (
-    <nav className="side-padding-1 flex justify-between items-center bg-rosy-brown font-base py-3 border-b-2 sticky top-0 ">
-      {/* Left */}
-      <div className="flex gap-6 py-3">
-        <Sheet>
-          <SheetTrigger asChild>
-            <button className="md:hidden rounded-full p-2.5 hover:bg-neutral-200">
-              <HiMenuAlt1 className="w-5 h-5" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="left" className="sm:max-w-xs flex flex-col justify-between">
-            <div className="flex flex-col justify-between h-screen">
-              <nav className=" grid gap-6 text-lg font-medium ">
-                {/* Logo */}
-                <Link
-                  href="/"
-                  className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden gap-2 bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-                >
-                  <SheetClose>
-                    <Image src="/assets/logo.svg" alt="logo" width={40} height={40} />
-                  </SheetClose>
-                </Link>
-
-                <Link
-                  href="/"
-                  className={cn(
-                    " px-2.5 hover:text-foreground",
-                    page === "" ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  <SheetClose className="flex items-center gap-4">
-                    <Home />
-                    Home
-                  </SheetClose>
-                </Link>
-
-                <Link
-                  href="/shop"
-                  className={cn(
-                    "hover:text-foreground px-2.5",
-                    page === "shop" ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  <SheetClose className="flex items-center gap-4">
-                    <HandHelping />
-                    Shop
-                  </SheetClose>
-                </Link>
-
-                <Link
-                  href="/about"
-                  className={cn(
-                    "px-2.5 hover:text-foreground",
-                    page === "about" ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  <SheetClose className="flex items-center gap-4">
-                    <Users />
-                    About us
-                  </SheetClose>
-                </Link>
-
-                <hr />
-              </nav>
-
-              <Link href="/contact" className=" md:hidden w-full">
-                <SheetClose>
-                  <Button className=" w-full">Contact Us</Button>
-                </SheetClose>
-              </Link>
-            </div>
-          </SheetContent>
-        </Sheet>
-
-        {/* Logo */}
-        <Link href="/" className="pr-6">
-          <Image src="/assets/logo.webp" alt="logo" width={45} height={45} />
-        </Link>
-
-        {/* Menu */}
-        <ul className="md:flex hidden gap-6 items-center text-white">
-          <li
-            className={cn(
-              "hover:text-neutral-100 transition-all hover:underline underline-offset-4 underline-thick decoration-penn-red",
-              page === "" && "text-snow font-semibold underline "
-            )}
-          >
-            <Link href="/">Home</Link>
-          </li>
-          <li
-            className={cn(
-              "hover:text-neutral-200 transition-all hover:underline underline-offset-4 underline-thick decoration-penn-red",
-              page === "shop" && "text-snow font-semibold underline "
-            )}
-          >
-            <Link href="/shop">Shop</Link>
-          </li>
-          <li
-            className={cn(
-              "hover:text-neutral-200 transition-all hover:underline underline-offset-4 underline-thick decoration-penn-red",
-              page === "about" && "text-snow font-semibold underline "
-            )}
-          >
-            <Link href="/about">About us</Link>
-          </li>
-          <li
-            className={cn(
-              "hover:text-neutral-200 transition-all hover:underline underline-offset-4 underline-thick decoration-penn-red",
-              page === "contact" && "text-snow font-semibold underline "
-            )}
-          >
-            <Link href="/contact">Contact us</Link>
-          </li>
-        </ul>
-      </div>
-
-      {/* Right */}
-      <div className="flex gap-6 items-center py-3">
-        {/* Search Button */}
-        <button
-          className="p-2 md:p-0 transition-all md:rounded-sm rounded-full hover:bg-snow "
-          onClick={() => openModal("Search")}
-        >
-          <span className="py-1 px-2 gap-2 rounded-sm bg-snow text-sm md:flex items-center hidden">
-            Search for your product
-            <Search className="w-5 h-5" />
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className=" px-4  flex h-16 items-center">
+        <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Image src="/assets/logo.webp" alt="Jus-B Logo" width={40} height={40} />
+          <span className="hidden font-bold sm:flex sm:flex-col leading-4 whitespace-nowrap">
+            Jus-B<span className="text-xs font-medium text-neutral-700 whitespace-nowrap">by JB</span>
           </span>
-          <Search className="md:hidden" />
-        </button>
-
-        {/* Cart Button */}
-        <button className="p-1 text-snow hover:text-neutral-100 flex items-center font-semibold gap-2">
-          <HiOutlineShoppingCart className="w-6 h-6" /> Cart
-        </button>
-
-        {/* User Account Button */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full font-semibold p-1 hover:text-neutral-100  text-snow flex items-center gap-2">
-            <CgProfile className="w-6 h-6" /> Account
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={10} className="">
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Link href="/profile" className="flex gap-2 items-center">
-                  <CgProfile className="w-4 h-4" /> My Profile
+        </Link>
+        <nav className="flex items-center space-x-6 text-sm font-medium flex-1">
+          <Link
+            href="/"
+            className={cn("hidden md:block text-neutral-600", page != "" ? "text-neutral-600" : "text-black font-bold")}
+          >
+            Home
+          </Link>
+          <Link
+            href="/shop"
+            className={cn(
+              "hidden md:block text-neutral-600",
+              page != "/shop" ? "text-neutral-600" : "text-black font-bold"
+            )}
+          >
+            Shop
+          </Link>
+          <Link
+            href="/contact"
+            className={cn(
+              "hidden md:block text-neutral-600",
+              page != "/contact" ? "text-neutral-600" : "text-black font-bold"
+            )}
+          >
+            Contact us
+          </Link>
+          <Link
+            href="/about"
+            className={cn(
+              "hidden md:block text-neutral-600",
+              page != "/about" ? "text-neutral-600" : "text-black font-bold"
+            )}
+          >
+            About us
+          </Link>
+        </nav>
+        <div className="flex items-center md:gap-4">
+          <form className="">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search products..."
+                className="w-[200px] pl-8 sm:w-[300px] md:w-[180px] lg:w-[250px]"
+              />
+            </div>
+          </form>
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="shrink-0 relative">
+              <ShoppingBag className="h-5 w-5" />
+              <span className="absolute top-0 right-1 h-4 p-1 w-4 bg-penn-red text-snow rounded-full text-sm flex items-center justify-center">
+                {cartCount}
+              </span>
+              <span className="sr-only">Open cart</span>
+            </Button>
+          </Link>
+          {/* <Button variant="ghost" size="icon" className="shrink-0"> */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className=" rounded-lg shrink-0 flex justify-center items-center hover:bg-accent hover:text-accent-foreground h-10 w-10">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Account</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="hover:bg-neutral-300">
+                <Link href="/profile" className="w-full flex items-center">
+                  <User className="w-5 mr-2" />
+                  Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button className="flex gap-1 items-center">
-                  <IoLogOutOutline className="w-5 h-5" />
-                  Logout
-                </button>
+              <DropdownMenuItem className="hover:bg-neutral-300">
+                <Link href="/whishlist" className="w-full flex items-center">
+                  <Heart className="w-5 mr-2" />
+                  Whishlist
+                </Link>
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuSeparator className=" bg-neutral-300" />
+              <DropdownMenuItem className=" bg-red-500 hover:bg-red-600 active:bg-red-700 focus:bg-red-600 focus:text-white active:text-white hover:text-white  text-white">
+                <Link href="/log-out" className="w-full  flex items-center">
+                  <LogOut className="w-5 mr-2" />
+                  Log out
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* </Button> */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="md:hidden rounded-full p-2.5 hover:bg-neutral-200">
+                <span className="sr-only">Open Menu</span>
+                <HiMenuAlt3 className="w-5 h-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="max-w-[240px] md:max-w-80 flex flex-col justify-between">
+              <div className="flex flex-col justify-between h-screen">
+                <nav className=" grid gap-6 font-medium ">
+                  {/* Logo */}
+                  <Link
+                    href="/"
+                    className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden gap-2 bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+                  >
+                    <SheetClose>
+                      <Image src="/assets/logo.webp" alt="logo" width={40} height={40} />
+                    </SheetClose>
+                  </Link>
+
+                  <Link href="/" className={cn(" text-neutral-600", page != "" ? "text-neutral-600" : "text-black")}>
+                    <SheetClose>Home</SheetClose>
+                  </Link>
+                  <Link
+                    href="/shop"
+                    className={cn(" text-neutral-600", page != "/shop" ? "text-neutral-600" : "text-black")}
+                  >
+                    <SheetClose>Shop</SheetClose>
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className={cn(" text-neutral-600", page != "/contact" ? "text-neutral-600" : "text-black")}
+                  >
+                    <SheetClose>Contact us</SheetClose>
+                  </Link>
+                  <Link
+                    href="/about"
+                    className={cn(" text-neutral-600", page != "/about" ? "text-neutral-600" : "text-black")}
+                  >
+                    <SheetClose>About us</SheetClose>
+                  </Link>
+
+                  <hr />
+                </nav>
+
+                <Link href="/contact" className=" md:hidden w-full">
+                  <SheetClose>
+                    <Button className=" w-full">Contact Us</Button>
+                  </SheetClose>
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </nav>
+    </header>
   );
-};
+}

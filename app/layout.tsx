@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar";
+import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import ModalProvider from "@/components/modal-provider";
+import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ModalProvider />
-      <body className={cn(inter.className, "bg-snow")}>
+      <body className={cn(inter.className, "bg-snow flex flex-col min-h-screen")}>
         <Navbar />
         {children}
+        <Toaster />
+        <Footer />
       </body>
     </html>
   );
