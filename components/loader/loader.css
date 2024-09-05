@@ -1,0 +1,16 @@
+.page-loader {
+  background: linear-gradient(135deg, hsl(0, 0%, 0%, 1) 9%, hsl(0, 100%, 22%, 1) 56%, hsl(0, 100%, 36%, 1) 100%);
+  animation: smoothGradient 2s ease infinite;
+}
+
+@keyframes smoothGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

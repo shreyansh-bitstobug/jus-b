@@ -1,59 +1,42 @@
 import { create } from "zustand";
 
-export type ModalType = "Search" | "Cart";
-
-type ModalStore = {
-  modal: ModalType | null;
-  isOpen: boolean;
-  openModal: (modal: ModalType) => void;
-  closeModal: () => void;
-};
-
-const useModalStore = create<ModalStore>((set) => ({
-  modal: null,
-  isOpen: false,
-  openModal: (modal) => set({ modal, isOpen: true }),
-  closeModal: () => set({ modal: null, isOpen: false }),
-}));
-
-type Store = {
-  cart: string[];
-  addToCart: (item: string) => void;
-};
-
-const useStore = create<Store>()((set) => ({
-  cart: [],
-  addToCart: (item) => set((state) => ({ cart: [...state.cart, item] })),
-}));
-
+// Type for the cart item
 export type CartItem = {
   id: string;
   quantity: number;
   size: string;
 };
 
+// Type for the cart store
 type cartStoreType = {
   cart: Record<string, CartItem>;
   addToCart: (id: string, size: string) => void;
   removeFromCart: (id: string, size: string) => void;
   deleteFromCart: (id: string, size: string) => void;
-  updateQuantity: (id: string, size: string, quantity: number) => void;
 };
 
+// This function stores the cart locally when the user is not logged in
 const storeLocally = (cart: Record<string, CartItem>) => {
   if (typeof window !== "undefined") localStorage.setItem("jusb_cart", JSON.stringify(cart));
 };
 
+// This function retrieves the cart from local storage
 const getLocalCart = () => {
   if (typeof window === "undefined") return;
   const savedCart = localStorage.getItem("jusb_cart");
   return savedCart ? JSON.parse(savedCart) : {};
 };
 
+// This function generates a key for the cart item with the id and size
 const generateCartKey = (id: string, size: string) => `${id}-${size}`;
-const useCartStore = create<cartStoreType>((set) => ({
-  cart: getLocalCart(),
 
+//  --------------------
+//  Cart Store
+//  --------------------
+const useCartStore = create<cartStoreType>((set) => ({
+  cart: getLocalCart(), // Get the cart from local storage when the user is not logged in with help of getLocalCart function
+
+  // Add to cart function
   addToCart: (id, size) =>
     set((state) => {
       const key = generateCartKey(id, size);
@@ -71,8 +54,10 @@ const useCartStore = create<cartStoreType>((set) => ({
           },
         };
 
+        // Store the updated cart in localStorage
         storeLocally(newCart.cart);
 
+        // Return the updated cart
         return newCart;
       } else {
         // If item does not exist, add it to the cart
@@ -86,31 +71,39 @@ const useCartStore = create<cartStoreType>((set) => ({
             },
           },
         };
+
+        // Store the updated cart in localStorage
         storeLocally(newCart.cart);
+
+        // Return the updated cart
         return newCart;
       }
     }),
 
+  // Reduce the quantity of the item in the cart
   removeFromCart: (id, size) => {
     set((state) => {
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
       const item = newCart[key];
-      const newQuantity = item.quantity - 1;
-      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key];
+      const newQuantity = item.quantity - 1; // Reduce the quantity by 1
+      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key]; // If quantity is greater than 0, update the quantity, else delete the item
+
+      // Store the updated cart in localStorage
       storeLocally(newCart);
+
+      // Return the updated cart
       return { cart: newCart };
     });
   },
 
+  // Completely remove the item from the cart
   deleteFromCart: (id, size) =>
     set((state) => {
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
 
-      console.log("Deleting key:", key); // Debugging line
-      console.log("Cart before deletion:", newCart); // Debugging line
-
+      // If the item exists, delete it
       if (newCart[key]) {
         delete newCart[key];
 
@@ -118,31 +111,12 @@ const useCartStore = create<cartStoreType>((set) => ({
         storeLocally(newCart);
       }
 
-      console.log("Cart after deletion:", newCart); // Debugging line
-
+      // Return the updated cart
       return { cart: newCart };
-    }),
-
-  updateQuantity: (id, size, quantity) =>
-    set((state) => {
-      const key = generateCartKey(id, size);
-      const item = state.cart[key];
-
-      if (item) {
-        const updatedCart = {
-          ...state.cart,
-          [key]: {
-            ...item,
-            quantity: Math.max(quantity, 0), // Ensure quantity doesn't go below 0
-          },
-        };
-        storeLocally(updatedCart);
-        return { cart: updatedCart };
-      }
-      return state;
     }),
 }));
 
+// Type for the wishlist store
 type WishlistStore = {
   wishlist: Set<string>;
   addToWishlist: (item: string) => void;
@@ -150,24 +124,30 @@ type WishlistStore = {
   isInWishlist: (item: string) => boolean;
 };
 
+//  --------------------
+//  Wishlist Store
+//  --------------------
 const useWishlistStore = create<WishlistStore>((set, get) => ({
-  wishlist: new Set<string>(),
+  wishlist: new Set<string>(), // Initialize the wishlist as a Set to avoid duplicates
 
+  // Add item to the wishlist
   addToWishlist: (item) =>
     set((state) => {
-      const newWishlist = new Set(state.wishlist);
-      newWishlist.add(item);
-      return { wishlist: newWishlist };
+      const newWishlist = new Set(state.wishlist); // Create a new Set from the current wishlist state to avoid mutation
+      newWishlist.add(item); // Add the item to the new wishlist Set
+      return { wishlist: newWishlist }; // Return the new wishlist Set
     }),
 
+  // Remove item from the wishlist
   removeFromWishlist: (item) =>
     set((state) => {
-      const newWishlist = new Set(state.wishlist);
-      newWishlist.delete(item);
-      return { wishlist: newWishlist };
+      const newWishlist = new Set(state.wishlist); // Create a new Set from the current wishlist state to avoid mutation
+      newWishlist.delete(item); // Remove the item from the new wishlist Set
+      return { wishlist: newWishlist }; // Return the new wishlist Set
     }),
 
+  // Check if item is in the wishlist
   isInWishlist: (item) => get().wishlist.has(item),
 }));
 
-export { useStore, useModalStore, useCartStore, useWishlistStore };
+export { useCartStore, useWishlistStore };

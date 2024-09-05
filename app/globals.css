@@ -87,3 +87,45 @@ body {
     padding: 0 2rem;
   }
 }
+
+.primary-gradient {
+  background: linear-gradient(135deg, hsla(0, 0%, 0%, 1) 9%, hsla(0, 100%, 22%, 1) 56%, hsla(0, 100%, 36%, 1) 100%);
+}
+
+/* ---------------------- */
+/* Flip Animation */
+/* ---------------------- */
+/* .flip-in-ver-right-hover {
+  -webkit-animation: none;
+  animation: none;
+} */
+
+.flip-in-ver-right-hover {
+  will-change: transform, opacity;
+}
+
+.flip-in-ver-right-hover:hover {
+  animation: flip-in-ver-right 0.6s 1 cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* .flip-in-ver-right {
+  -webkit-animation: flip-in-ver-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: flip-in-ver-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+} */
+
+/*
+  ----------------------------------------
+  animation flip-in-ver-right
+  ----------------------------------------
+*/
+
+@keyframes flip-in-ver-right {
+  0% {
+    transform: rotateY(-80deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0);
+    opacity: 1;
+  }
+}

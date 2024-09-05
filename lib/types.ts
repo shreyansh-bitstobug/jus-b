@@ -1,3 +1,4 @@
+// This is the type for the product
 export type ProductType = {
   id: string;
   name: string;
@@ -6,6 +7,7 @@ export type ProductType = {
   sizes: string[];
 };
 
+// This is the type for the cart product
 export type CartProductType = {
   id: string;
   name: string;

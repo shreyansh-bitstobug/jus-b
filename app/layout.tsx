@@ -1,12 +1,22 @@
+// Dependencies
 import type { Metadata } from "next";
-import Navbar from "@/components/navbar";
-import { Toaster } from "@/components/ui/toaster";
 
-import { Inter } from "next/font/google";
-import "./globals.css";
+// Utils
 import { cn } from "@/lib/utils";
-import ModalProvider from "@/components/modal-provider";
-import Footer from "@/components/footer";
+
+// Fonts
+import { Inter } from "next/font/google";
+
+// CSS
+import "./globals.css";
+
+// Fonts
+import { poppins } from "@/lib/direct-fonts";
+
+// UI Components
+import { Toaster } from "@/components/ui/toaster"; // For showing alerts
+import PageLoader from "@/components/loader/page-loader";
+import WhatsappBtn from "@/components/whatsapp-btn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,12 +32,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ModalProvider />
-      <body className={cn(inter.className, "bg-snow flex flex-col min-h-screen")}>
-        <Navbar />
+      <body className={cn(poppins.className, "bg-snow flex flex-col min-h-screen")}>
+        {/* <PageLoader /> */}
+        <WhatsappBtn />
         {children}
         <Toaster />
-        <Footer />
       </body>
     </html>
   );

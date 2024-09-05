@@ -1,3 +1,7 @@
+export const categories = ["Just-JB Partywear", "Just-JB Luxe"];
+
+export const shopBanner = "/assets/banner/shop-banner.png";
+
 export const products = [
   {
     id: "party-1",

@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="container flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between md:py-12">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-12">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Image src="/assets/logo.webp" alt="Jus-B Logo" width={40} height={40} />
+            <Image src="/assets/logo.svg" alt="Jus-B Logo" width={40} height={40} />
             <span className="hidden font-bold sm:flex sm:flex-col leading-4">
               Jus-B<span className="text-xs font-medium text-neutral-700">by JB</span>
             </span>
