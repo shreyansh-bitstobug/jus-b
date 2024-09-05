@@ -32,7 +32,7 @@ export default function Categories() {
 
       <div className="flex justify-around flex-wrap gap-5">
         {categories.map((category, index) => (
-          <Link href={`/shop/${_.kebabCase(category)}`}>
+          <Link key={index} href={`/shop/${_.kebabCase(category)}`}>
             <div
               className={cn(
                 index === 0

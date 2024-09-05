@@ -37,7 +37,7 @@ import { useRouter } from "next/navigation";
 export default function Navbar1() {
   // State
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
-  const [categories, setCategories] = useState<String[]>([]); // Categories for the shop
+  const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
 
   const router = useRouter();
 
@@ -301,7 +301,7 @@ export default function Navbar1() {
           <HoverCardContent className="flex flex-col w-fit gap-2 p-3 text-neutral-700">
             {categories.map((category) => {
               return (
-                <Link href={`/shop/${_.kebabCase(category.toString())}`} className="hover:text-black">
+                <Link key={category} href={`/shop/${_.kebabCase(category)}`} className="hover:text-black">
                   {category}
                 </Link>
               );
