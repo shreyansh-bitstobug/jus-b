@@ -96,7 +96,7 @@ export default function Navbar1() {
         {/* ------------------------------- */}
         {/* Logo */}
         {/* ------------------------------- */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-self-center">
           {/* ---------------------- */}
           {/* Side Menu for Mobile */}
           {/* ---------------------- */}
@@ -185,7 +185,7 @@ export default function Navbar1() {
               </div>
             </SheetContent>
           </Sheet>
-          <Link href="/" className="justify-self-center">
+          <Link href="/" className="">
             <Image
               src="/assets/logo.svg"
               className=" object-cover md:w-16 md:h-16 h-12 w-12"
