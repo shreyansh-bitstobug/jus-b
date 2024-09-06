@@ -80,7 +80,7 @@ export default function Navbar1() {
 
   return (
     <header>
-      <div className="md:p-6 p-4 md:px-10 grid md:grid-cols-3 grid-cols-2 items-center border-b-penn-red border-b-2 ">
+      <div className="md:p-6 p-2 md:px-10 grid md:grid-cols-3 grid-cols-2 items-center border-b-penn-red border-b-2 ">
         {/* ------------------------------- */}
         {/* Left Side (Social Media) */}
         {/* ------------------------------- */}
@@ -96,13 +96,13 @@ export default function Navbar1() {
         {/* ------------------------------- */}
         {/* Logo */}
         {/* ------------------------------- */}
-        <div className="flex gap-2 justify-self-center">
+        <div className="flex gap-2 md:justify-self-center">
           {/* ---------------------- */}
           {/* Side Menu for Mobile */}
           {/* ---------------------- */}
           <Sheet>
             <SheetTrigger asChild>
-              <button className="md:hidden rounded-full p-2.5 hover:bg-neutral-200">
+              <button className="md:hidden rounded-sm p-2.5">
                 <span className="sr-only">Open Menu</span>
                 <HiMenuAlt2 className="w-5 h-5" />
               </button>
