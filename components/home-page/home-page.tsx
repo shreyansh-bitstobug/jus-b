@@ -19,6 +19,7 @@ import AnimatedLinkBelt from "@/components/home-page/link-belt";
 // Data
 import { products } from "@/public/assets/data";
 import Categories from "./categories";
+import AboutSection from "./about-section";
 
 export default function HomePage() {
   return (
@@ -31,6 +32,9 @@ export default function HomePage() {
 
       {/* Categories Section */}
       <Categories />
+
+      {/* About Section */}
+      <AboutSection />
 
       {/* Luxe Section as 1 Large Image and 4 Product Cards */}
       <MidSection />

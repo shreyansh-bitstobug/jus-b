@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useCartStore } from "@/hooks/use-store";
 
 // Icons
-import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus } from "lucide-react";
+import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus, X } from "lucide-react";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 import { HiChevronDown, HiMenuAlt2 } from "react-icons/hi";
 
@@ -38,6 +38,7 @@ export default function Navbar1() {
   // State
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
   const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
+  const [offerOn, setOfferOn] = useState(true); // Offer banner
 
   const router = useRouter();
 
@@ -80,16 +81,23 @@ export default function Navbar1() {
 
   return (
     <header>
+      <div className={cn("relative p-2 text-center text-snow bg-penn-red text-sm", offerOn ? "" : "hidden")}>
+        10% Off Your First Order! Don&#39;t miss it!
+        <X
+          className="w-5 h-5 absolute right-2 top-2 cursor-pointer hover:rotate-90 transition-all duration-500"
+          onClick={() => setOfferOn(false)}
+        />
+      </div>
       <div className="md:p-6 p-2 md:px-10 grid md:grid-cols-3 grid-cols-2 items-center border-b-penn-red border-b-2 ">
         {/* ------------------------------- */}
         {/* Left Side (Social Media) */}
         {/* ------------------------------- */}
         <div className="hidden md:flex gap-6 px-2 justify-self-start">
           <Link href="https://www.instagram.com/">
-            <RiInstagramLine className=" w-6 h-6 hover:text-neutral-600" />
+            <RiInstagramLine className=" w-6 h-6 text-neutral-800 hover:text-neutral-600" />
           </Link>
           <Link href="https://www.instagram.com/">
-            <RiWhatsappLine className=" w-6 h-6 hover:text-neutral-600" />
+            <RiWhatsappLine className=" w-6 h-6 text-neutral-800 hover:text-neutral-600" />
           </Link>
         </div>
 

@@ -19,7 +19,7 @@ const config = {
         6: "6px",
       },
       colors: {
-        snow: "#fef9f6ff",
+        snow: "#FFF8F8",
         rosewood: "#580505ff",
         "penn-red": "#a00001ff",
         "black-bean": "#2c0000ff",

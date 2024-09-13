@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import _ from "lodash";
+import { syne } from "@/lib/direct-fonts";
 
 export default function Categories() {
   const [categories, setCategories] = useState<string[]>([]);
@@ -17,22 +18,22 @@ export default function Categories() {
       }
       return acc;
     }, []);
+    categories.push("View All");
     setCategories(categories);
   }, [products]);
 
   return (
     <section className="container py-6 space-y-10">
       <div className="flex flex-col gap-4 items-center">
-        <h1 className="text-4xl font-semibold text-center text-penn-red">Explore our wide collection</h1>
-        <p className="text-center max-w-[600px]">
-          Discover a curated selection of the latest styles, crafted for every occasion. Explore our exclusive
-          collection and elevate your wardrobe today!
+        <h1 className="text-2xl text-center text-penn-red">Discover Timeless Elegance</h1>
+        <p className={cn("text-center text-5xl font-bold max-w-[900px] leading-snug text-neutral-800", syne.className)}>
+          Because you deserve style that speaks Effortlessly!.
         </p>
       </div>
 
       <div className="flex justify-around flex-wrap gap-5">
         {categories.map((category, index) => (
-          <Link key={index} href={`/shop/${_.kebabCase(category)}`}>
+          <Link key={index} href={category === "View All" ? "/shop/categories" : `/shop/${_.kebabCase(category)}`}>
             <div
               className={cn(
                 index === 0
