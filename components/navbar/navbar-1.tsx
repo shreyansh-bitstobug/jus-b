@@ -301,7 +301,7 @@ export default function Navbar1() {
             }}
             className={cn(
               " text-neutral-600 hover:text-black cursor-pointer ",
-              page != "/shop" ? "text-neutral-600" : "text-black font-semibold"
+              page != "shop" ? "text-neutral-600" : "text-black font-semibold"
             )}
           >
             Shop <HiChevronDown className="w-4 h-4 inline" />
@@ -322,7 +322,7 @@ export default function Navbar1() {
           href="/contact"
           className={cn(
             " text-neutral-600 hover:text-black",
-            page != "/contact" ? "text-neutral-600" : "text-black font-semibold"
+            page != "contact" ? "text-neutral-600" : "text-black font-semibold"
           )}
         >
           Contact us
@@ -333,7 +333,7 @@ export default function Navbar1() {
           href="/about"
           className={cn(
             " text-neutral-600 hover:text-black",
-            page != "/about" ? "text-neutral-600" : "text-black font-semibold"
+            page != "about" ? "text-neutral-600" : "text-black font-semibold"
           )}
         >
           About us

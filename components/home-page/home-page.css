@@ -1,4 +1,4 @@
-.img-up-animation {
+/* .img-up-animation {
   will-change: height;
   overflow: hidden;
   height: 0;
@@ -22,7 +22,7 @@
 
 .img-down-animation.show {
   height: 100%;
-}
+} */
 
 .show {
   height: 60%;
@@ -36,7 +36,7 @@
   transform-style: preserve-3d;
   will-change: transform;
   /* transition: transform 0.5s; */
-  animation: belt-spin 5s linear infinite;
+  animation: belt-spin 10s linear infinite;
 }
 
 /* Keyframes for continuous looping */
@@ -54,4 +54,14 @@
   color: transparent;
   -webkit-text-stroke-color: #000;
   -webkit-text-stroke-width: 1px;
+}
+
+@keyframes customSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-spin {
+  animation: customSpin 10s linear infinite;
 }

@@ -11,6 +11,7 @@ import { CartProductType } from "@/lib/types";
 // Components
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function CartPage() {
   const { cart } = useCartStore();
@@ -78,19 +79,29 @@ export default function CartPage() {
           Proceed to buy {itemTotal} items
         </Button>
       </div>
-      <div className="flex flex-wrap lg:justify-start justify-center gap-8">
-        {cartProducts.map(({ name, quantity, size, price, id, imgUrl }) => (
-          <CartProductCard
-            key={`${id}-${size}`} // Use id and size as key to ensure uniqueness
-            name={name}
-            price={price}
-            image={imgUrl}
-            id={id}
-            size={size}
-            quantity={quantity}
-          />
-        ))}
-      </div>
+
+      {cartProducts.length === 0 ? (
+        <div className="flex flex-col gap-10 p-20 h-[50vh] justify-center items-center">
+          No items added to cart
+          <Link href="/shop" className="text-lg underline">
+            Continue Shopping
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-wrap lg:justify-start justify-center gap-8">
+          {cartProducts.map(({ name, quantity, size, price, id, imgUrl }) => (
+            <CartProductCard
+              key={`${id}-${size}`} // Use id and size as key to ensure uniqueness
+              name={name}
+              price={price}
+              image={imgUrl}
+              id={id}
+              size={size}
+              quantity={quantity}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 }

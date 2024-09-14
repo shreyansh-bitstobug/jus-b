@@ -30,7 +30,7 @@ export default function HeroSection() {
     const imageChange = () => {
       const imgTimeoutId = setTimeout(() => {
         setImageIndex((prevIndex) => (prevIndex + 1) % 2); // Change the image index every 2 seconds
-      }, 4000);
+      }, 6000);
 
       return imgTimeoutId; // Return the timeout ID for cleanup
     };
@@ -45,12 +45,11 @@ export default function HeroSection() {
     };
   }, [imageIndex]);
 
-  return (
-    <section className="relative border-b-2 border-penn-red md:pb-0 pb-5">
-      <div className=" min-h-screen lg:space-y-0 space-y-6">
-        {/* Center Content (for medium screen sizes) */}
-        <div className="lg:hidden px-8 lg:py-0 py-8 flex flex-col justify-center items-center lg:space-y-0 space-y-4">
-          <div className="md:space-y-4 flex flex-col  items-center">
+  const CenterDiv = ({ className }: { className: string }) => {
+    return (
+      <>
+        <div className={cn(" justify-center items-center gap-6", className)}>
+          <div className="md:space-y-4 flex flex-col items-center">
             <h1 className="text-3xl min-h-[72px] text-center font-bold uppercase tracking-tighter sm:text-5xl xl:text-6xl/none xl:min-h-[120px]">
               <TypeAnimation
                 sequence={[
@@ -100,10 +99,19 @@ export default function HeroSection() {
             </Link>
           </div>
         </div>
+      </>
+    );
+  };
 
-        <div className="grid sm:grid-cols-2 lg:gap-8 gap-4 lg:grid-cols-3 lg:items-center">
+  return (
+    <section className="relative border-b-2 border-penn-red md:pb-0 pb-5">
+      <div className=" min-h-screen lg:space-y-0 space-y-6">
+        {/* Center Content (for medium screen sizes) */}
+        <CenterDiv className="lg:hidden space-y-4 py-8 flex flex-col px-8" />
+
+        <div className="grid grid-cols-2 lg:gap-8 gap-4 lg:grid-cols-3 lg:items-center">
           {/* Left Image */}
-          <div className="md:h-screen h-[70vh] overflow-hidden relative">
+          <div className="group md:h-screen h-[70vh] overflow-hidden relative lg:w-full">
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
@@ -114,82 +122,42 @@ export default function HeroSection() {
             />
 
             {/* -------- Image --------- */}
-            <div className={cn("overflow-hidden absolute top-0 z-10", imageIndex == 0 ? "hidden" : "")}>
+            <div
+              className={cn(
+                "overflow-hidden absolute top-0 z-10 transition-all duration-1000 ease-in",
+                imageIndex == 0 ? "opacity-0" : ""
+              )}
+            >
               <Image
                 src="/assets/hero1.jpg?height=600&width=500"
                 alt="Left decorative image"
                 width={500}
                 height={600}
-                className="object-cover transition-all duration-1000 hover:scale-110"
+                className="object-cover transition-all duration-1000 group-hover:scale-110"
               />
             </div>
 
-            <div className={cn(" overflow-hidden absolute top-0 z-10", imageIndex == 1 ? "hidden" : "")}>
+            <div
+              className={cn(
+                " overflow-hidden absolute top-0 z-10 transition-all duration-1000 ease-in",
+                imageIndex == 1 ? "opacity-0" : ""
+              )}
+            >
               <Image
                 src="/assets/hero2.jpg?height=600&width=500"
                 alt="Left decorative image"
                 width={500}
                 height={600}
-                className="object-cover transition-all duration-1000 hover:scale-110"
+                className="object-cover transition-all duration-1000 group-hover:scale-110"
               />
             </div>
           </div>
 
           {/* Center Content - Hidden on small and medium screens */}
-          <div className=" hidden  px-8 lg:flex lg:flex-col justify-center items-center space-y-4">
-            <div className="md:space-y-4 flex flex-col lg:items-start items-center">
-              <h1 className="text-3xl min-h-[72px] text-center font-bold uppercase tracking-tighter sm:text-5xl xl:text-6xl/none xl:min-h-[120px]">
-                <TypeAnimation
-                  sequence={[
-                    // Same substring at the start will only be typed out once, initially
-                    "Trendy",
-                    1000,
-                    "Modern",
-                    1000,
-                    "Amazing",
-                    1000,
-                    "Stylist",
-                    1000,
-                  ]}
-                  wrapper="span"
-                  speed={20}
-                  repeat={Infinity}
-                  className="w-full"
-                />
-                <span className="font-normal text-center text-penn-red text-4xl">
-                  <br />
-                  designer collection
-                </span>
-              </h1>
-
-              <p className="text-muted-foreground text-center">
-                <b className="text-black">Jus-B by JB</b> offers trendy, modern styles for women, blending quality and
-                affordability. Discover chic dresses, stylish tops, and more, blending quality and affordability for the
-                modern woman&#39;s wardrobe.
-              </p>
-            </div>
-
-            {/* CTA */}
-            <div className=" flex flex-col items-center gap-4">
-              <Link href="/shop">
-                <Button size="lg" className="text-lg font-bold">
-                  Shop Now
-                </Button>
-              </Link>
-              <Link href="/shop">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-lg bg-snow hover:bg-neutral-300/20 border-2 border-black font-bold"
-                >
-                  Shop By Categories
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <CenterDiv className="hidden lg:flex lg:flex-col" />
 
           {/* Right Image */}
-          <div className="md:h-screen h-[70vh]  overflow-hidden relative">
+          <div className="group md:h-screen h-[70vh]  overflow-hidden relative">
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
@@ -200,23 +168,33 @@ export default function HeroSection() {
             />
 
             {/* -------- Image --------- */}
-            <div className={cn("overflow-hidden absolute top-0 z-10", imageIndex == 0 ? "hidden" : "")}>
+            <div
+              className={cn(
+                "overflow-hidden absolute top-0 z-10 transition-all duration-1000 ease-in",
+                imageIndex == 0 ? "opacity-0" : ""
+              )}
+            >
               <Image
-                src="/assets/hero1.jpg?height=600&width=500"
+                src="/assets/hero3.jpg?height=600&width=500"
                 alt="Left decorative image"
                 width={500}
                 height={600}
-                className="object-cover transition-all duration-1000 hover:scale-110"
+                className="object-cover transition-all duration-1000 group-hover:scale-110"
               />
             </div>
 
-            <div className={cn(" overflow-hidden absolute top-0 z-10", imageIndex == 1 ? "hidden" : "")}>
+            <div
+              className={cn(
+                " overflow-hidden absolute top-0 z-10 transition-all duration-1000 ease-in",
+                imageIndex == 1 ? "opacity-0" : ""
+              )}
+            >
               <Image
-                src="/assets/hero2.jpg?height=600&width=500"
+                src="/assets/hero4.jpg?height=600&width=500"
                 alt="Left decorative image"
                 width={500}
                 height={600}
-                className="object-cover transition-all duration-1000 hover:scale-110"
+                className="object-cover transition-all duration-1000 group-hover:scale-110"
               />
             </div>
           </div>

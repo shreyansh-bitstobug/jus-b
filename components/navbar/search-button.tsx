@@ -9,6 +9,7 @@ import "./navbar.css";
 // UI Components
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function SearchButton() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -20,11 +21,10 @@ export default function SearchButton() {
   return (
     <>
       {/* Search Button */}
-      <div className="search-box text-black ">
-        <button className="btn-search flip-in-ver-right-hover">
+      <div className="text-black">
+        <Button variant="ghost" size="icon" className="flip-in-ver-right-hover">
           <Search className="mx-auto" />
-        </button>
-        <input type="text" className="input-search" placeholder="Type to Search..." />
+        </Button>
       </div>
     </>
   );
