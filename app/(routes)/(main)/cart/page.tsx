@@ -3,25 +3,54 @@
 // Dependencies
 import { useEffect, useState } from "react";
 import { products } from "@/public/assets/data";
-import { useCartStore } from "@/hooks/use-store";
+import { useCartStore, useModalStore } from "@/hooks/use-store";
 
 // Types
 import { CartProductType } from "@/lib/types";
 
+// Firebase
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
+
+// Next Components & Hooks
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 // Components
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default function CartPage() {
-  const { cart } = useCartStore();
+  const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [itemTotal, setItemTotal] = useState(0);
+
+  // Get user from firebase
+  const [user] = useAuthState(auth);
+
+  // Stores
+  const { cart } = useCartStore(); // Get cart from store
+  const { openModal } = useModalStore(); // Get onOpen function from store
+
+  // Router
+  const router = useRouter();
+
+  // Get cart items
   let cartItems: any[];
   if (cart) {
     cartItems = Object.values(cart);
   }
-  const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
-  const [cartTotal, setCartTotal] = useState(0);
-  const [itemTotal, setItemTotal] = useState(0);
+
+  // Handle checkout
+  const handleCheckout = () => {
+    if (!user) {
+      console.log("User not found");
+      openModal("checkout");
+    } else {
+      console.log("User found");
+      router.push("/checkout");
+    }
+  };
 
   useEffect(() => {
     const updatedCartProducts: CartProductType[] = [];
@@ -75,7 +104,10 @@ export default function CartPage() {
         <h1 className=" md:text-2xl text-xl items-end">
           <span>Subtotal &#40;{itemTotal} items&#41;:</span> <span className="font-bold">&#8377; {cartTotal}</span>
         </h1>
-        <Button className="md:text-lg text-base md:w-72 sm:w-60 md:h-11 w-full max-w-72 rounded-full md:px-8 px-6">
+        <Button
+          className="md:text-lg text-base md:w-72 sm:w-60 md:h-11 w-full max-w-72 rounded-full md:px-8 px-6"
+          onClick={handleCheckout}
+        >
           Proceed to buy {itemTotal} items
         </Button>
       </div>

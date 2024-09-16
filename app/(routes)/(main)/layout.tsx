@@ -5,9 +5,10 @@ import type { Metadata } from "next";
 import "../../globals.css";
 
 // UI Components
-import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer";
 import Navbar1 from "@/components/navbar/navbar-1";
+import ModalProvider from "@/components/modal-provider";
+import TopBarOffer from "@/components/offers/top-bar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <>
+      <TopBarOffer />
       <Navbar1 />
+      <ModalProvider />
       {children}
       <Footer />
     </>

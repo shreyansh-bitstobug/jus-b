@@ -1,3 +1,6 @@
+"use client";
+import { useState, useEffect } from "react";
+
 import { Facebook, Instagram, Locate, Mail, MapPin, Phone, ShoppingBag, Twitter } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -5,8 +8,34 @@ import { Input } from "./ui/input";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { syne } from "@/lib/direct-fonts";
+import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 
 export default function Footer() {
+  const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry");
+
+  useEffect(() => {
+    const groupLink = "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"; // WhatsApp group link
+    const whatsappSchemeLink = "whatsapp://chat?code=BfPHIvJq0Gg4FJeohDBjry"; // Custom scheme to open app
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Detect if user is on Windows or Mobile
+    if (navigator.userAgent.includes("Windows")) {
+      if (navigator.userAgent.includes("WhatsApp")) {
+        // If WhatsApp is installed on Windows, use the custom scheme
+        setWhatsappLink(whatsappSchemeLink);
+      } else {
+        // Otherwise, open WhatsApp Web
+        setWhatsappLink(groupLink);
+      }
+    } else if (isMobile) {
+      // On mobile devices, use the custom scheme to open WhatsApp app
+      setWhatsappLink(whatsappSchemeLink);
+    } else {
+      // Default fallback to WhatsApp Web
+      setWhatsappLink(groupLink);
+    }
+  }, []);
+
   return (
     <footer className="border-t-2 text-neutral-800 border-penn-red ">
       <div className=" flex flex-col pt-8">
@@ -34,14 +63,11 @@ export default function Footer() {
             <div className="space-y-2">
               <h1 className={cn("text-2xl font-semibold", syne.className)}>Social Links</h1>
               <div className="flex items-center gap-4">
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  <Facebook className="h-5 w-5" />
+                <Link href="https://www.instagram.com/jusb_jb" className="text-muted-foreground hover:text-foreground">
+                  <RiInstagramLine className="h-5 w-5" />
                 </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  <Instagram className="h-5 w-5" />
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  <Twitter className="h-5 w-5" />
+                <Link href={whatsappLink} className="text-muted-foreground hover:text-foreground">
+                  <RiWhatsappLine className="h-5 w-5" />
                 </Link>
               </div>
             </div>

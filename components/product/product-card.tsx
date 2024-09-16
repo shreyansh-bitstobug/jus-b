@@ -188,16 +188,16 @@ export default function ProductCard({
 
         {/* If item present in the cart show - qty + */}
         {itemInCart && itemInCart.quantity > 0 ? (
-          <div className="w-full flex items-center justify-between text-center text-lg font-bold border border-neutral-300 rounded-lg">
+          <div className="w-full flex items-center justify-between text-center text-lg font-bold border border-neutral-300 rounded-lg overflow-hidden max-h-9">
             <button
-              className="text-black h-10 rounded-l-lg items-center justify-center flex w-12 max-w-12 px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
+              className="text-black h-10 rounded-l-md items-center justify-center flex w-12 max-w-12 px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
               onClick={handleRemoveFromCart}
             >
               -
             </button>
             <div className="w-full h-10 content-center bg-neutral-200">{itemInCart.quantity}</div>
             <button
-              className="text-black h-10 rounded-r-lg items-center justify-center flex w-12 max-w-12 px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
+              className="text-black h-10 rounded-r-md items-center justify-center flex w-12 max-w-12 px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
               onClick={handleAddToCart}
             >
               +

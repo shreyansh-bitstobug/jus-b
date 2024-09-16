@@ -1,20 +1,28 @@
 "use client";
 // Dependencies
 import { useEffect, useState } from "react";
+import _ from "lodash";
 
 // Next Components and Hooks
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
 // Hooks and Utils
 import { cn } from "@/lib/utils";
-import { useCartStore } from "@/hooks/use-store";
+import { useCartStore, useModalStore } from "@/hooks/use-store";
 
 // Icons
-import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus, X } from "lucide-react";
+import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus } from "lucide-react";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 import { HiChevronDown, HiMenuAlt2 } from "react-icons/hi";
+
+// Firebase
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
+
+// Data
+import { products } from "@/public/assets/data";
 
 // UI Components
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -27,23 +35,45 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/config";
-import SearchButton from "./search-button";
-import { products } from "@/public/assets/data";
-import _ from "lodash";
-import { useRouter } from "next/navigation";
 
 export default function Navbar1() {
   // State
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
   const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
-  const [offerOn, setOfferOn] = useState(true); // Offer banner
+  const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
 
   const router = useRouter();
 
   const [signOut] = useSignOut(auth);
   const [user] = useAuthState(auth);
+
+  // Stores
+  const { cart } = useCartStore(); // Get the cart from the store for number of items in the cart
+  const { openModal } = useModalStore(); // Get the openModal function from the store to open the search modal
+
+  // Get the WhatsApp link based on the user's device
+  useEffect(() => {
+    const groupLink = "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"; // WhatsApp group link
+    const whatsappSchemeLink = "whatsapp://chat?code=BfPHIvJq0Gg4FJeohDBjry"; // Custom scheme to open app
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Detect if user is on Windows or Mobile
+    if (navigator.userAgent.includes("Windows")) {
+      if (navigator.userAgent.includes("WhatsApp")) {
+        // If WhatsApp is installed on Windows, use the custom scheme
+        setWhatsappLink(whatsappSchemeLink);
+      } else {
+        // Otherwise, open WhatsApp Web
+        setWhatsappLink(groupLink);
+      }
+    } else if (isMobile) {
+      // On mobile devices, use the custom scheme to open WhatsApp app
+      setWhatsappLink(whatsappSchemeLink);
+    } else {
+      // Default fallback to WhatsApp Web
+      setWhatsappLink(groupLink);
+    }
+  }, []);
 
   // Get the categories from the store
   useEffect(() => {
@@ -70,9 +100,6 @@ export default function Navbar1() {
   const pathPart = url?.split("/")[1];
   const page = pathPart?.split("#")[0] ? pathPart.split("#")[0] : pathPart;
 
-  // Get the cart from the store for number of items in the cart
-  const { cart } = useCartStore();
-
   // Update the cart count when the cart changes in the store
   useEffect(() => {
     console.log(cart);
@@ -81,23 +108,16 @@ export default function Navbar1() {
 
   return (
     <header>
-      <div className={cn("relative p-2 text-center text-snow bg-penn-red text-sm", offerOn ? "" : "hidden")}>
-        10% Off Your First Order! Don&#39;t miss it!
-        <X
-          className="w-5 h-5 absolute right-2 top-2 cursor-pointer hover:rotate-90 transition-all duration-500"
-          onClick={() => setOfferOn(false)}
-        />
-      </div>
-      <div className="md:p-6 p-2 md:px-10 grid md:grid-cols-3 grid-cols-2 items-center border-b-penn-red border-b-2 ">
+      <div className="md:p-6 p-2 md:px-10 grid md:grid-cols-3 grid-cols-2 items-center border-b-penn-red border-b-2">
         {/* ------------------------------- */}
         {/* Left Side (Social Media) */}
         {/* ------------------------------- */}
         <div className="hidden md:flex gap-6 px-2 justify-self-start">
-          <Link href="https://www.instagram.com/">
-            <RiInstagramLine className=" w-6 h-6 text-neutral-800 hover:text-neutral-600" />
+          <Link href="https://www.instagram.com/jusb_jb">
+            <RiInstagramLine className=" w-6 h-6 text-neutral-500 hover:text-neutral-400" />
           </Link>
-          <Link href="https://www.instagram.com/">
-            <RiWhatsappLine className=" w-6 h-6 text-neutral-800 hover:text-neutral-600" />
+          <Link href={whatsappLink}>
+            <RiWhatsappLine className=" w-6 h-6 text-neutral-500 hover:text-neutral-400" />
           </Link>
         </div>
 
@@ -210,7 +230,9 @@ export default function Navbar1() {
         <div className="justify-self-end">
           <div className="flex items-center md:gap-4">
             {/* Search Button */}
-            <SearchButton />
+            <Button variant="ghost" size="icon" onClick={() => openModal("search")} className="flip-in-ver-right-hover">
+              <Search className="mx-auto" />
+            </Button>
 
             {/* Cart Button */}
             <Link href="/cart">

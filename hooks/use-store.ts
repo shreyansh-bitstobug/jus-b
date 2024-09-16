@@ -1,5 +1,26 @@
 import { create } from "zustand";
 
+// Type for ModalName
+type ModalName = "checkout" | "search";
+
+// Type for the Modal store
+type ModalStore = {
+  isOpen: boolean;
+  modalName: ModalName | null;
+  openModal: (name: ModalName) => void;
+  closeModal: () => void;
+};
+
+//  --------------------
+//  Modal Store
+//  --------------------
+const useModalStore = create<ModalStore>((set) => ({
+  isOpen: false,
+  modalName: null,
+  openModal: (name) => set({ isOpen: true, modalName: name }),
+  closeModal: () => set({ isOpen: false, modalName: null }),
+}));
+
 // Type for the cart item
 export type CartItem = {
   id: string;
@@ -150,4 +171,4 @@ const useWishlistStore = create<WishlistStore>((set, get) => ({
   isInWishlist: (item) => get().wishlist.has(item),
 }));
 
-export { useCartStore, useWishlistStore };
+export { useCartStore, useWishlistStore, useModalStore };

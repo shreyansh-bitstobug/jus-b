@@ -17,6 +17,7 @@ import { poppins } from "@/lib/direct-fonts";
 import { Toaster } from "@/components/ui/toaster"; // For showing alerts
 import PageLoader from "@/components/loader/page-loader";
 import WhatsappBtn from "@/components/whatsapp-btn";
+import TopBarOffer from "@/components/offers/top-bar";
 
 const inter = Inter({ subsets: ["latin"] });
 

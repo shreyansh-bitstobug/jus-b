@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function AboutSection() {
   return (
-    <section className="py-10 relative flex flex-col items-center lg:flex-row justify-between">
+    <section className="py-10 relative flex flex-col lg:items-start items-center lg:flex-row justify-between">
       {/* Belt in the background */}
       <div
         className={cn(
