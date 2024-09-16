@@ -5,6 +5,7 @@ export type ProductType = {
   price: number;
   image: string[];
   sizes: string[];
+  category: string;
 };
 
 // This is the type for the cart product

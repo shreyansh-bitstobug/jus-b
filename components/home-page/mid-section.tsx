@@ -47,8 +47,8 @@ export default function MidSection() {
         </div>
 
         {/* Four Product Cards */}
-        {luxeProducts.slice(0, 4).map(({ name, price, id, image, sizes }) => (
-          <ProductCard key={id} name={name} price={price} image={image[0]} id={id} sizes={sizes} />
+        {luxeProducts.slice(0, 4).map(({ name, price, id, image, sizes, category }) => (
+          <ProductCard key={id} name={name} price={price} image={image[0]} id={id} sizes={sizes} category={category} />
         ))}
       </div>
 

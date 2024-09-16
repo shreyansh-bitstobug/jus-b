@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import Image from "next/image";
 import { z } from "zod";
+import emailjs from "@emailjs/browser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { shopBanner } from "@/public/assets/data";
@@ -15,8 +16,8 @@ import { cn } from "@/lib/utils";
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  message: z.string().min(1, { message: "Message is required" }),
+  phone: z.string().min(7, { message: "Phone number is required" }),
+  message: z.string().min(20, { message: "Message is shorted than 20 characters" }),
 });
 
 export default function ContactPage() {
@@ -32,8 +33,35 @@ export default function ContactPage() {
   });
 
   // Handle form submission
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values); // Do something with the form values
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { name, email, phone, message } = values;
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.log(serviceId, templateId, publicKey);
+      console.error("Email service configuration is missing");
+      return;
+    }
+
+    try {
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          name,
+          email,
+          phone,
+          message,
+        },
+        publicKey
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    console.log(values); // Debugging: log form values
   }
 
   return (

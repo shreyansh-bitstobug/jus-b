@@ -15,6 +15,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M"],
+    description: "A stunning beige dress with intricate embellishments and long tassels, perfect for any party.",
   },
   {
     id: "party-2",
@@ -26,6 +27,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M", "L"],
+    description: "Shine bright in this golden sequined jumpsuit with a crisscross halter neck and backless design.",
   },
   {
     id: "party-3",
@@ -38,6 +40,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["XS", "S", "M"],
+    description: "Elegant ivory midi dress with tinsel detailing, perfect for a sophisticated evening.",
   },
   {
     id: "party-4",
@@ -50,6 +53,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["M", "L"],
+    description: "Turn heads in this midnight blue dress with a plunging neckline and high slit.",
   },
   {
     id: "party-5",
@@ -63,6 +67,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M", "L"],
+    description: "Cute and flirty pink mini dress with roseline sequins and noodle straps.",
   },
   {
     id: "party-6",
@@ -75,10 +80,11 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["M", "L"],
+    description: "Dazzle in this silver sequined evening dress with a one-sleeve, one-shoulder design and high slit.",
   },
   {
     id: "party-7",
-    name: "Spangle Mini-Woven Strappy Dress with Tassel Hem",
+    name: "Spangle Mini Woven Strappy Dress with Tassel Hem",
     price: 115,
     image: [
       "/assets/products/partywear/product-spangle_mini_woven_strappy_dress_with_tassel_hem-1.png",
@@ -88,6 +94,7 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["XS", "S", "M"],
+    description: "A chic mini dress with spangle details, woven strappy design, and tassel hem.",
   },
   {
     id: "luxe-1",
@@ -100,6 +107,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
+    description: "A snowy white dress with ruffled details, one-sleeve, one-shoulder cutout waist design.",
   },
   {
     id: "luxe-2",
@@ -111,6 +119,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["M", "L"],
+    description: "A luxurious frosted smock kaftan gown with one sleeve, perfect for a grand event.",
   },
   {
     id: "luxe-3",
@@ -122,6 +131,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["XS", "S"],
+    description: "A mauve gown with heavy embellishments, halter neck, and ruched design.",
   },
   {
     id: "luxe-4",
@@ -133,6 +143,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
+    description: "A green gown with sweet heart neckline, noodle straps, and intricate embellishments.",
   },
   {
     id: "luxe-5",
@@ -144,6 +155,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["M", "L"],
+    description: "An enchanted grey gown with one-shoulder design, embellished and ruched details.",
   },
   {
     id: "luxe-6",
@@ -155,6 +167,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["L", "XL"],
+    description: "An elegant black dress with diamante details, one-shoulder design, and plumes.",
   },
   {
     id: "luxe-7",
@@ -166,6 +179,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
+    description: "An ebony dress with plunger halter neck and high slit, perfect for a luxurious evening.",
   },
   {
     id: "luxe-8",
@@ -177,6 +191,7 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M", "L"],
+    description: "A peacock teal silk gown with bandeau top, high slit, and mermaid silhouette.",
   },
   {
     id: "holiday-1",
@@ -188,6 +203,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
+    description: "A festive red velvet dress, perfect for holiday celebrations.",
   },
   {
     id: "holiday-2",
@@ -199,6 +215,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
+    description: "A green sequin gown, ideal for holiday parties and events.",
   },
   {
     id: "holiday-3",
@@ -210,6 +227,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["XS", "S", "M"],
+    description: "A gold sparkle mini dress, perfect for festive occasions.",
   },
   {
     id: "holiday-4",
@@ -221,6 +239,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
+    description: "A silver glitter evening gown, perfect for glamorous holiday events.",
   },
   {
     id: "holiday-5",
@@ -232,6 +251,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
+    description: "A blue velvet dress, perfect for holiday gatherings.",
   },
   {
     id: "holiday-6",
@@ -243,6 +263,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M"],
+    description: "A white gown with snowflake details, perfect for winter holidays.",
   },
   {
     id: "holiday-7",
@@ -254,6 +275,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
+    description: "A black sequin dress, perfect for holiday parties.",
   },
   {
     id: "holiday-8",
@@ -265,6 +287,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
+    description: "A purple satin gown, perfect for elegant holiday events.",
   },
   {
     id: "holiday-9",
@@ -276,6 +299,7 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["XS", "S", "M"],
+    description: "An emerald green dress, perfect for festive holiday gatherings.",
   },
   {
     id: "holiday-10",
@@ -287,5 +311,13 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
+    description: "A red and gold gown, perfect for festive holiday celebrations.",
   },
 ];
+export const getProductsByCategory = (category: string) => {
+  return products.filter((product) => product.category === category);
+};
+
+export const getProductById = (id: string) => {
+  return products.find((product) => product.id === id);
+};

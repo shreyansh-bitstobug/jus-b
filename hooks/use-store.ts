@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 // Type for ModalName
-type ModalName = "checkout" | "search";
+type ModalName = "checkout" | "search" | "share";
 
 // Type for the Modal store
 type ModalStore = {
@@ -171,4 +171,23 @@ const useWishlistStore = create<WishlistStore>((set, get) => ({
   isInWishlist: (item) => get().wishlist.has(item),
 }));
 
-export { useCartStore, useWishlistStore, useModalStore };
+// Type for ShareModalStore
+type ShareModalStore = {
+  link: string;
+  message: string;
+  setLink: (link: string) => void;
+  setMessage: (message: string) => void;
+};
+
+//  --------------------
+//  Share Modal Store
+//  --------------------
+const useShareModalStore = create<ShareModalStore>((set) => ({
+  link: "",
+  message: "",
+  setLink: (link) => set({ link }),
+  setMessage: (message) => set({ message }),
+}));
+
+// Export the custom hooks
+export { useCartStore, useWishlistStore, useModalStore, useShareModalStore };
