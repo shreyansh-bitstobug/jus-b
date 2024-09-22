@@ -42,11 +42,11 @@ export default function Footer() {
         {/* ----------------------------------------- */}
         {/* Top Part of the footer */}
         {/* ----------------------------------------- */}
-        <div className="lg:px-10 md:px-8 sm:px-6 px-4 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 py-10">
+        <div className="lg:px-10 md:px-8 sm:px-6 px-4 md:grid lg:grid-cols-4 md:grid-cols-3 space-y-16 py-10">
           {/* 1st Div of top part of footer */}
           <div className="flex flex-col gap-4 col-span-2 px-6">
             {/* Logo with name */}
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Link href="/" className="mr-6 flex items-center space-x-2 w-fit">
               <Image src="/assets/logo.svg" alt="Jus-B Logo" width={60} height={60} />
               <span className="hidden text-2xl font-bold sm:flex sm:flex-col leading-4">
                 Jus-B<span className=" font-medium text-base text-neutral-700">by JB</span>

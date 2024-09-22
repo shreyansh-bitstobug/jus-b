@@ -28,6 +28,9 @@ import { Button } from "@/components/ui/button";
 // Stores and store types
 import { CartItem, useCartStore, useModalStore, useShareModalStore, useWishlistStore } from "@/hooks/use-store";
 import { usePathname } from "next/navigation";
+import { removeSlash } from "@/lib/functions";
+import _ from "lodash";
+import Link from "next/link";
 
 export default function ProductPage({ productId }: { productId: string }) {
   // States
@@ -40,7 +43,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   const [alert, setAlert] = useState(false); // Alert state for size selection
 
   // Hooks
-  const url = usePathname(); // Get the current URL
+  const url = removeSlash(usePathname()); // Get the current URL
   const [user] = useAuthState(auth); // Get the current user
   const { toast } = useToast(); // Get the toast function
 
@@ -138,20 +141,20 @@ export default function ProductPage({ productId }: { productId: string }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto md:px-4 px-2 py-8">
       {/* Breadcrumbs */}
       <nav className="flex mb-8 text-sm">
-        <a href="/" className="text-muted-foreground hover:text-primary">
+        <Link href="/" className="text-muted-foreground hover:text-primary">
           Home
-        </a>
+        </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
-        <a href="/shop" className="text-muted-foreground hover:text-primary">
+        <Link href="/shop" className="text-muted-foreground hover:text-primary">
           Shop
-        </a>
+        </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
-        <a href={`/shop/${product.category.toLowerCase()}`} className="text-muted-foreground hover:text-primary">
+        <Link href={`/shop/${_.kebabCase(product.category)}`} className="text-muted-foreground hover:text-primary">
           {product.category}
-        </a>
+        </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
         <span className="text-primary">{product.name}</span>
       </nav>
@@ -276,7 +279,7 @@ export default function ProductPage({ productId }: { productId: string }) {
       {/* Related Products */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Related Products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
           {relatedProducts.map((relatedProduct) => (
             <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.image[0]} />
           ))}

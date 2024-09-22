@@ -1,10 +1,10 @@
 "use client";
 // Dependencies
 import { useEffect, useState } from "react";
-import _ from "lodash";
+import _, { set } from "lodash";
 
 // Next Components and Hooks
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -35,17 +35,20 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { removeSlash } from "@/lib/functions";
 
 export default function Navbar1() {
   // State
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
   const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
+  const [page, setPage] = useState(""); // Current page
 
+  // Hooks
   const router = useRouter();
-
   const [signOut] = useSignOut(auth);
   const [user] = useAuthState(auth);
+  const url = usePathname();
 
   // Stores
   const { cart } = useCartStore(); // Get the cart from the store for number of items in the cart
@@ -53,6 +56,11 @@ export default function Navbar1() {
 
   // Get the WhatsApp link based on the user's device
   useEffect(() => {
+    // Get the current page from the URL for active link
+    const pathPart = url?.split("/")[1];
+    const currentPage = pathPart?.split("#")[0] ? pathPart.split("#")[0] : pathPart;
+    setPage(currentPage);
+
     const groupLink = "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"; // WhatsApp group link
     const whatsappSchemeLink = "whatsapp://chat?code=BfPHIvJq0Gg4FJeohDBjry"; // Custom scheme to open app
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -73,7 +81,7 @@ export default function Navbar1() {
       // Default fallback to WhatsApp Web
       setWhatsappLink(groupLink);
     }
-  }, []);
+  }, [url]);
 
   // Get the categories from the store
   useEffect(() => {
@@ -92,17 +100,11 @@ export default function Navbar1() {
     localStorage.clear();
     signOut(); // Sign out from firebase auth
     // Redirect to the home page
-    window.location.href = "/";
+    redirect("/");
   };
-
-  // Get the current page from the URL for active link
-  const url = usePathname();
-  const pathPart = url?.split("/")[1];
-  const page = pathPart?.split("#")[0] ? pathPart.split("#")[0] : pathPart;
 
   // Update the cart count when the cart changes in the store
   useEffect(() => {
-    console.log(cart);
     setCartCount(Object.keys(cart).length);
   }, [cart]);
 
@@ -255,7 +257,7 @@ export default function Navbar1() {
                 <DropdownMenuContent align="end">
                   {/* Sign In Button */}
                   <DropdownMenuItem className="hover:bg-neutral-300">
-                    <Link href="/sign-in" className="w-full flex items-center">
+                    <Link href={`/sign-in?redirect=${page}`} className="w-full flex items-center">
                       <LogIn className="w-5 mr-2" />
                       Sign In
                     </Link>
@@ -263,7 +265,7 @@ export default function Navbar1() {
 
                   {/* Sign Up Button */}
                   <DropdownMenuItem className="hover:bg-neutral-300">
-                    <Link href="/sign-up" className="w-full flex items-center">
+                    <Link href={`/sign-up?redirect=${page}`} className="w-full flex items-center">
                       <UserPlus className="w-5 mr-2" />
                       Sign Up
                     </Link>
@@ -290,9 +292,9 @@ export default function Navbar1() {
                   {/* ------------------------------------------------- */}
                   <DropdownMenuSeparator className=" bg-neutral-300" />
                   {/* Logout Button */}
-                  <DropdownMenuItem>
-                    <Button onClick={handleLogout} variant="destructive" className="w-full  flex items-center">
-                      <LogOut className="w-5 mr-2" />
+                  <DropdownMenuItem className="p-0">
+                    <Button onClick={handleLogout} variant="destructive" className="w-full flex items-center">
+                      <LogOut className="w-5 mr-2 " />
                       Log out
                     </Button>
                   </DropdownMenuItem>

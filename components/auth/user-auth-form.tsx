@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthError } from "firebase/auth";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -27,11 +27,12 @@ export function UserAuthForm({
   ...props
 }: { className?: string; actionName: "sign-up" | "sign-in" } & UserAuthFormProps) {
   // States
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false);
-  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false);
-  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false); // Password visibility state
+  const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false); // Confirm password visibility state
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false); // Password match state
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false); // Password validation state
+  const [prevPageUrl, setPrevPageUrl] = useState<string>("/"); // Previous page URL
 
   // Form fields states
   const [email, setEmail] = useState<string>(""); // Email state
@@ -44,6 +45,10 @@ export function UserAuthForm({
   const [signInWithEmailAndPassword, error] = useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle] = useSignInWithGoogle(auth);
 
+  // Next hook to get the query parameters for the redirect URL
+  const params = useSearchParams();
+  const router = useRouter();
+
   // Function to validate the password
   function validatePassword(password: string): boolean {
     // Regular expression to check the password criteria
@@ -51,6 +56,13 @@ export function UserAuthForm({
 
     return passwordRegex.test(password);
   }
+
+  // UseEffect to get the previous page URL
+  useEffect(() => {
+    const prevUrl = params.get("redirect") || "/";
+    if (prevUrl.charAt(0) !== "/") setPrevPageUrl("/" + prevUrl);
+    else setPrevPageUrl(prevUrl);
+  }, [params]);
 
   // UseEffect to check if the password and confirm password match
   useEffect(() => {
@@ -78,6 +90,7 @@ export function UserAuthForm({
       if (res) {
         // Redirect or handle successful sign-up
         console.log("User created successfully");
+        router.push(prevPageUrl); // Redirect to the prev page
       }
     } catch (err) {
       const error = err as AuthError;
@@ -96,7 +109,7 @@ export function UserAuthForm({
   const handleSignIn = async () => {
     try {
       const res = await signInWithEmailAndPassword(email, password);
-      if (res) redirect("/"); // Redirect to the home page
+      if (res) router.push(prevPageUrl); // Redirect to the prev page
       console.log(res); // Debugging
     } catch (err) {
       console.error("Error", err);
@@ -107,6 +120,7 @@ export function UserAuthForm({
   const handleGoogleSignIn = async () => {
     try {
       const res = await signInWithGoogle();
+      if (res) router.push(prevPageUrl); // Redirect to the prev page
       console.log(res); // Debugging
     } catch (err) {
       console.error("Error", err);
@@ -175,29 +189,46 @@ export function UserAuthForm({
 
             {/* Password field for confirm password (Only SignUp Page) */}
             {actionName === "sign-up" && (
-              <div className="relative">
-                <Label htmlFor="confirm">Confirm Password</Label>
-                <Input
-                  id="confirm"
-                  placeholder="confirm password"
-                  type={isConfirmVisible ? "text" : "password"}
-                  onChange={(event) => setConfirm(event.target.value)}
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  disabled={isLoading}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute  right-0 top-6"
-                  onClick={() => setIsConfirmVisible(!isConfirmVisible)}
-                >
-                  {isConfirmVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
-                </Button>
-                {!isPasswordMatch && <p className={cn("text-red-700 text-sm")}>Password does not match</p>}
-              </div>
+              <>
+                {/* Confirm Password for sign up */}
+                <div className="relative">
+                  <Label htmlFor="confirm">Confirm Password</Label>
+                  <Input
+                    id="confirm"
+                    placeholder="confirm password"
+                    type={isConfirmVisible ? "text" : "password"}
+                    onChange={(event) => setConfirm(event.target.value)}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute  right-0 top-6"
+                    onClick={() => setIsConfirmVisible(!isConfirmVisible)}
+                  >
+                    {isConfirmVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
+                  </Button>
+                  {!isPasswordMatch && <p className={cn("text-red-700 text-sm")}>Password does not match</p>}
+                </div>
+
+                {/* Full name field for sign up */}
+                <div>
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="John Doe"
+                    type="text"
+                    onChange={(event) => setName(event.target.value)}
+                    autoCapitalize="words"
+                    autoComplete="name"
+                    disabled={isLoading}
+                  />
+                </div>
+              </>
             )}
             {actionName === "sign-in" && (
               <Link

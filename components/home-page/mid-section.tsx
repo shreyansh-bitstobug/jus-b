@@ -17,7 +17,7 @@ export default function MidSection() {
   const luxeProducts = products.filter((product) => product.category === "Just-JB Luxe");
 
   return (
-    <section className="py-6 md:py-12 lg:py-16">
+    <section className="py-6 md:py-12 lg:py-16 px-6">
       {/* Header */}
       <div className="space-y-4 flex flex-col items-center px-6 pb-6">
         {/* Heading */}

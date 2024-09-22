@@ -6,13 +6,24 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { UserAuthForm } from "@/components/auth/user-auth-form";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 export default function SignInPage() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || undefined;
+
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+
+  if (user) router.push(`/${redirect || ""}`);
+
   return (
     <>
       <div className="container py-4 lg:py-0 relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/sign-up"
+          href={`/sign-up?redirect=${redirect || ""}`}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "absolute border-neutral-800 left-4 top-4 md:left-8 md:top-8"

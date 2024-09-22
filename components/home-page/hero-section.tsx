@@ -15,13 +15,9 @@ export default function HeroSection() {
   useEffect(() => {
     const divDirChange = () => {
       setShow(true);
-      console.log("Show to true"); // Debugging
-      console.log("Image Index: ", imageIndex); // Debugging
 
       const timeoutId = setTimeout(() => {
         setShow(false);
-        console.log("Show to false"); // Debugging
-        console.log("Image Index: ", imageIndex); // Debugging
       }, 1000);
 
       return timeoutId; // Return the timeout ID for cleanup
@@ -115,7 +111,7 @@ export default function HeroSection() {
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
-                "h-0 absolute transition-all bg-snow duration-1000 z-50 w-full",
+                "h-0 absolute transition-all bg-snow duration-1000 z-40 w-full",
                 show ? "show" : "",
                 imageIndex == 1 ? "top-0" : "bottom-0"
               )}
@@ -161,7 +157,7 @@ export default function HeroSection() {
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
-                "h-0 absolute transition-all bg-snow duration-1000 z-50 w-full",
+                "h-0 absolute transition-all bg-snow duration-1000 z-40 w-full",
                 show ? "show" : "",
                 imageIndex == 0 ? "top-0" : "bottom-0"
               )}

@@ -12,9 +12,13 @@ import { products, shopBanner } from "@/public/assets/data";
 // UI Components
 import ProductCard from "@/components/product/product-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CategoryPage from "./category-page";
+import CategoryPage from "./categorize";
+import SortingButton from "../sorting-button";
+import { useState } from "react";
 
 export default function ShopPage() {
+  const [sortedProducts, setSortedProducts] = useState(products);
+
   return (
     <main className="flex-grow">
       {/* Image Hero */}
@@ -26,7 +30,7 @@ export default function ShopPage() {
       </section>
 
       <section className="flex items-center justify-center py-8 ">
-        <Tabs defaultValue="categorize" className=" ">
+        <Tabs defaultValue="all" className=" ">
           <TabsList className=" block w-fit mx-auto scale-125 bg-black/10">
             <TabsTrigger value="all" className="">
               All
@@ -35,11 +39,13 @@ export default function ShopPage() {
               Categorize
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="all">
-            {" "}
+          <TabsContent value="all" className="flex flex-col items-end">
             {/* All Product Grid */}
+            <div className="px-24">
+              <SortingButton products={sortedProducts} setSortedProducts={setSortedProducts} />
+            </div>
             <div className="container py-4 flex flex-wrap gap-4">
-              {products.map((product, index) => (
+              {sortedProducts.map((product, index) => (
                 <ProductCard
                   key={index}
                   name={product.name}
