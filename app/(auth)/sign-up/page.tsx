@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { UserAuthForm } from "@/components/auth/user-auth-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import { Suspense } from "react";
 
 export default function AuthenticationPage() {
   const searchParams = useSearchParams();
@@ -20,7 +20,7 @@ export default function AuthenticationPage() {
   if (user) router.push(`/${redirect || ""}`);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="container py-4 lg:py-0 relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0 ">
         <Link
           href={`/sign-in?redirect=${redirect || ""}`}
@@ -74,6 +74,6 @@ export default function AuthenticationPage() {
           </div>
         </div>
       </div>
-    </>
+    </Suspense>
   );
 }

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
+import { Suspense, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { UserAuthForm } from "@/components/auth/user-auth-form";
@@ -12,15 +12,18 @@ import { auth } from "@/firebase/config";
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || undefined;
-
+  const redirect = searchParams?.get("redirect") || undefined;
   const [user] = useAuthState(auth);
   const router = useRouter();
 
-  if (user) router.push(`/${redirect || ""}`);
+  useEffect(() => {
+    if (user) {
+      router.push(`/${redirect || ""}`);
+    }
+  }, [user, redirect, router]);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="container py-4 lg:py-0 relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href={`/sign-up?redirect=${redirect || ""}`}
@@ -73,6 +76,6 @@ export default function SignInPage() {
           </div>
         </div>
       </div>
-    </>
+    </Suspense>
   );
 }
