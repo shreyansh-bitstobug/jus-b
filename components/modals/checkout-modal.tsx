@@ -14,18 +14,20 @@ export default function CheckoutModal() {
     <Dialog open={isModalOpen} onOpenChange={closeModal}>
       <DialogContent className="flex items-center flex-col">
         <DialogHeader>
-          <DialogTitle>Did not found the user</DialogTitle>
+          <DialogTitle className="text-2xl">Did not found the user</DialogTitle>
         </DialogHeader>
-        <DialogClose>
-          <Link href="/sign-in">
-            <Button variant="outline">Sign In</Button>
-          </Link>
-        </DialogClose>
-        <DialogClose>
-          <Link href="/sign-up">
-            <Button>Sign Up</Button>
-          </Link>
-        </DialogClose>
+        <div className="flex gap-6">
+          <DialogClose>
+            <Link href="/sign-in">
+              <Button variant="outline">Sign In</Button>
+            </Link>
+          </DialogClose>
+          <DialogClose>
+            <Link href="/sign-up">
+              <Button>Sign Up</Button>
+            </Link>
+          </DialogClose>
+        </div>
         <DialogClose>
           <Link href="/checkout" className="underline">
             Continue as Guest

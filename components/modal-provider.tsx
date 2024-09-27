@@ -1,9 +1,13 @@
 "use client";
 
+// Import modals
+import CheckoutModal from "@/components/modals/checkout-modal";
+import SearchModal from "@/components/modals/search-modal";
+import ShareModal from "@/components/modals/share-modal";
+import AddressModal from "@/components/modals/address-modal";
+
+// Hooks
 import { useShareModalStore } from "@/hooks/use-store";
-import CheckoutModal from "./modals/checkout-modal";
-import SearchModal from "./modals/search-modal";
-import ShareModal from "./modals/share-modal";
 
 export default function ModalProvider() {
   const { link, message } = useShareModalStore();
@@ -12,6 +16,7 @@ export default function ModalProvider() {
     <>
       <SearchModal />
       <CheckoutModal />
+      <AddressModal />
       <ShareModal link={link} message={message} />
     </>
   );

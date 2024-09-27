@@ -1,7 +1,8 @@
+import { AddressType } from "@/lib/types";
 import { create } from "zustand";
 
 // Type for ModalName
-type ModalName = "checkout" | "search" | "share";
+type ModalName = "checkout" | "search" | "share" | "addressForm";
 
 // Type for the Modal store
 type ModalStore = {
@@ -19,6 +20,19 @@ const useModalStore = create<ModalStore>((set) => ({
   modalName: null,
   openModal: (name) => set({ isOpen: true, modalName: name }),
   closeModal: () => set({ isOpen: false, modalName: null }),
+}));
+
+type AddressStoreType = {
+  editAddress: AddressType | null;
+  setEditAddress: (editAddress: AddressType) => void;
+};
+
+//  --------------------
+//  Address Store
+//  --------------------
+const useEditAddressStore = create<AddressStoreType>((set) => ({
+  editAddress: null,
+  setEditAddress: (editAddress) => set({ editAddress }),
 }));
 
 // Type for the cart item
@@ -190,4 +204,4 @@ const useShareModalStore = create<ShareModalStore>((set) => ({
 }));
 
 // Export the custom hooks
-export { useCartStore, useWishlistStore, useModalStore, useShareModalStore };
+export { useCartStore, useWishlistStore, useModalStore, useShareModalStore, useEditAddressStore };

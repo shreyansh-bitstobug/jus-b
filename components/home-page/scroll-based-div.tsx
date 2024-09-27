@@ -1,68 +1,84 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useTransform, useScroll } from "framer-motion";
 import { useRef } from "react";
-import Image from "next/image";
 
-export default function ScrollBasedDivs() {
-  const ref = useRef(null);
-
-  // Track the scroll progress of the target section
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.2", "center center", "end start"], // Adjust the scroll tracking points
-  });
-
-  // Movement transforms for the two divs
-  const moveUp = useTransform(scrollYProgress, [0, 1], ["0%", "-100%"]);
-  const moveDown = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
+const HorizontalCarousel = () => {
   return (
-    <div className="h-[100vh] overflow-hidden content-center">
-      {" "}
-      {/* Increase page height for better scroll experience */}
-      {/* Section to apply scroll-based animation */}
-      <div className="relative h-[80vh] overflow-hidden">
-        <div ref={ref} className="sticky top-0 h-full w-full flex justify-center items-center">
-          <div className="relative w-full max-w-4xl flex justify-between items-center overflow-hidden">
-            {/* Left Div (Moving Up) */}
-            <motion.div
-              className="w-1/2 h-full bg-neutral-200 flex flex-col justify-center items-center text-white font-bold text-xl"
-              style={{ y: moveUp }}
-            >
-              <div className="h-[80vh] bg-neutral-800">Luxe</div>
-              <div className="h-[80vh] bg-neutral-600">Partywear</div>
-              <div className="h-[80vh] bg-neutral-800">Collection</div>
-            </motion.div>
-
-            {/* Right Div (Moving Down) */}
-            <motion.div
-              className="w-1/2 h-full flex flex-col-reverse justify-center items-center text-white font-bold text-xl"
-              style={{ y: moveDown }}
-            >
-              <Image
-                src="/assets/category/Just-JB Luxe.png"
-                alt="Jus-B Partywear Collection"
-                width={800}
-                height={900}
-                className="object-cover h-[80vh] hover:scale-125 transition-all duration-1000"
-              />
-              <Image
-                src="/assets/category/Just-JB Luxe.png"
-                alt="Jus-B Luxe Collection"
-                width={800}
-                height={900}
-                className="object-cover h-[80vh] hover:scale-125 transition-all duration-1000"
-              />
-              <Image
-                src="/assets/category/Just-JB Luxe.png"
-                alt="Jus-B Luxe Collection"
-                width={800}
-                height={900}
-                className="object-cover h-[80vh] hover:scale-125 transition-all duration-1000"
-              />
-            </motion.div>
-          </div>
-        </div>
+    <div className="py-6 md:py-12 lg:py-16">
+      <div className="space-y-4 flex flex-col items-center">
+        <h1 className="font-bold  md:text-5xl text-3xl  text-center">Checkout our Latest Collection</h1>{" "}
+        <p className="text-center md:text-lg text-neutral-600 max-w-[800px] p-4">
+          Jus-B by JB&apos;s latest collection is designed to make every woman shine at any event. Have something casual
+          or partywear or luxurious, we have got you covered.
+        </p>
       </div>
+      <HorizontalScrollCarousel />
     </div>
   );
-}
+};
+
+const HorizontalScrollCarousel = () => {
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+  });
+
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+
+  return (
+    <section ref={targetRef} className="relative h-[300vh]">
+      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <motion.div style={{ x }} className="flex gap-4">
+          {cards.map((card) => {
+            return <Card card={card} key={card.id} />;
+          })}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+const Card = ({ card }: { card: { url: string; title: string; id: number } }) => {
+  return (
+    <div key={card.id} className="group relative h-[600px] w-screen max-w-4xl overflow-hidden bg-neutral-200">
+      <div
+        style={{
+          backgroundImage: `url(${card.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        className="absolute inset-0 z-0 transition-transform duration-300 group-hover:scale-110"
+      ></div>
+      <div></div>
+      {/* <div className="absolute inset-0 z-10 grid place-content-center">
+        <p className="bg-gradient-to-br from-white/20 to-white/0 p-8 text-4xl font-black uppercase text-penn-red backdrop-blur-lg">
+          {card.title}
+        </p>
+      </div> */}
+    </div>
+  );
+};
+
+export default HorizontalCarousel;
+
+const cards = [
+  {
+    url: "/assets/category/just-jb-partywear.png",
+    title: "Just-B Partywear",
+    id: 1,
+  },
+  {
+    url: "/assets/category/just-jb-luxe.png",
+    title: "Just-JB Luxe",
+    id: 2,
+  },
+  {
+    url: "/assets/category/holiday-season.png",
+    title: "Holiday Season",
+    id: 3,
+  },
+  {
+    url: "/assets/category/view-all.png",
+    title: "View All",
+    id: 4,
+  },
+];

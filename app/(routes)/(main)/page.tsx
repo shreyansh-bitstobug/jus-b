@@ -6,7 +6,7 @@ import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 export default function Home() {
   return (
     <main>
-      <ProgressBar height="3px" color="#a00001ff" options={{ showSpinner: false }} shallowRouting />
+      <ProgressBar height="4px" color="#3366FF" options={{ showSpinner: false }} shallowRouting />
       <HomePage />
     </main>
   );

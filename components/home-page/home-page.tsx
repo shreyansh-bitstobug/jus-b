@@ -15,13 +15,10 @@ import MidSection from "@/components/home-page/mid-section";
 // Components
 import HeroSection from "@/components/home-page/hero-section";
 import AnimatedLinkBelt from "@/components/home-page/link-belt";
+import HorizontalCarousel from "@/components/home-page/scroll-based-div";
 
 // Data
 import { products } from "@/public/assets/data";
-import Categories from "./categories";
-import AboutSection from "./about-section";
-import ScrollBasedDivs from "./scroll-based-div";
-import ScrollBasedDivs1 from "./scroll-based-divs1";
 
 export default function HomePage() {
   return (
@@ -32,7 +29,7 @@ export default function HomePage() {
       {/* Animated Link Belt */}
       <AnimatedLinkBelt />
 
-      <ScrollBasedDivs />
+      <HorizontalCarousel />
 
       {/* Luxe Section as 1 Large Image and 4 Product Cards */}
       <MidSection />

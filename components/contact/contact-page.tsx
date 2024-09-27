@@ -14,6 +14,7 @@ import Link from "next/link";
 import { syne } from "@/lib/direct-fonts";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 // Define validation schema using zod
 const formSchema = z.object({
@@ -27,10 +28,15 @@ const formSchema = z.object({
 export default function ContactPage() {
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry");
 
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+
   useEffect(() => {
     const groupLink = "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"; // WhatsApp group link
     const whatsappSchemeLink = "whatsapp://chat?code=BfPHIvJq0Gg4FJeohDBjry"; // Custom scheme to open app
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    orderId && form.setValue("message", `Order ID: ${orderId}`); // Pre-fill message with order ID
 
     // Detect if user is on Windows or Mobile
     if (navigator.userAgent.includes("Windows")) {
@@ -135,7 +141,7 @@ export default function ContactPage() {
                   className=" bg-snow border-neutral-700"
                   {...form.register("phone")}
                   type="tel"
-                  placeholder="Phone number"
+                  placeholder="Phone number with extension"
                 />
               </div>
             </div>
@@ -180,35 +186,6 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5" />
                   </span>
                   +91 99533 21989
-                </Link>
-
-                {/* Email */}
-                <Link href="mailto:info@jus-b-fashion.com" className="flex gap-2 hover:text-muted-foreground w-fit">
-                  <span>
-                    <Mail className="h-5 w-5" />
-                  </span>
-                  info@jus-b-fashion.com
-                </Link>
-              </div>
-            </div>
-
-            <div className="space-y-4 max-w-[324px]">
-              <h1 className={cn("text-2xl font-bold", syne.className)}>UK</h1>
-              <div className="flex flex-col gap-2">
-                {/* Address */}
-                <p className="flex gap-2">
-                  <span>
-                    <MapPin className="h-5 w-5" />
-                  </span>
-                  5 Sharperton Drive, Newcastle upon Tyne. England. UK - NE3 5RL
-                </p>
-
-                {/* Contact */}
-                <Link href="tel:+447768332329" className="flex gap-2 hover:text-muted-foreground w-fit">
-                  <span>
-                    <Phone className="h-5 w-5" />
-                  </span>
-                  +44 7768 332329
                 </Link>
 
                 {/* Email */}

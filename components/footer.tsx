@@ -102,36 +102,6 @@ export default function Footer() {
               </Link>
             </div>
           </div>
-
-          {/* 3rd Part of top part of footer */}
-          <div className="space-y-4 px-4">
-            <h1 className={cn("text-2xl font-bold", syne.className)}>UK</h1>
-            <div className="flex flex-col gap-2">
-              {/* Address */}
-              <p className="flex gap-2">
-                <span>
-                  <MapPin className="h-5 w-5" />
-                </span>
-                5 Sharperton Drive, Newcastle upon Tyne. England. UK - NE3 5RL
-              </p>
-
-              {/* Contact */}
-              <Link href="tel:+447768332329" className="flex gap-2 hover:text-muted-foreground w-fit">
-                <span>
-                  <Phone className="h-5 w-5" />
-                </span>
-                +44 7768 332329
-              </Link>
-
-              {/* Email */}
-              <Link href="mailto:info@jus-b-fashion.com" className="flex gap-2 hover:text-muted-foreground w-fit">
-                <span>
-                  <Mail className="h-5 w-5" />
-                </span>
-                info@jus-b-fashion.com
-              </Link>
-            </div>
-          </div>
         </div>
 
         {/* ------------------------------------- */}
