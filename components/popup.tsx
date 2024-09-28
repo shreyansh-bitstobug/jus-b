@@ -11,7 +11,7 @@ export default function Popup() {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
-      <DialogContent className="p-0 overflow-hidden">
+      <DialogContent className="p-0 overflow-hidden bg-snow/30 md:scale-150 backdrop-blur-sm border-transparent md:w-[60vw]">
         <div className="relative">
           <Image src="/assets/popup-offer.png" alt="Popup" width={1200} height={800} className="max-h-[70vh]" />
           <div className="w-2/5 absolute top-[65%] right-[6%] transform flex flex-col items-center gap-2">

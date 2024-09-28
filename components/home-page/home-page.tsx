@@ -14,12 +14,12 @@ import MidSection from "@/components/home-page/mid-section";
 
 // Components
 import HeroSection from "@/components/home-page/hero-section";
-import AnimatedLinkBelt from "@/components/home-page/link-belt";
-import HorizontalCarousel from "@/components/home-page/scroll-section/scroll-based-div";
+import AnimatedLinkBelt from "@/components/home-page/old-link-belt";
 
 // Data
 import { products } from "@/public/assets/data";
 import Popup from "../popup";
+import CardStack from "@/components/home-page/scroll-section/scroll-based-div";
 
 export default function HomePage() {
   return (
@@ -31,7 +31,7 @@ export default function HomePage() {
       {/* Animated Link Belt */}
       <AnimatedLinkBelt />
 
-      <HorizontalCarousel />
+      <CardStack />
 
       {/* Luxe Section as 1 Large Image and 4 Product Cards */}
       <MidSection />

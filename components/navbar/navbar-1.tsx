@@ -142,66 +142,58 @@ export default function Navbar1() {
               <div className="flex flex-col justify-between h-screen">
                 <nav className=" grid gap-6 font-medium ">
                   {/* Logo */}
-                  <SheetClose>
-                    <Link
-                      href="/"
-                      className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden gap-2 bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-                    >
+                  <Link
+                    href="/"
+                    className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden gap-2 bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+                  >
+                    <SheetClose>
                       <Image src="/assets/logo.svg" alt="logo" width={40} height={40} />
-                    </Link>
-                  </SheetClose>
+                    </SheetClose>
+                  </Link>
 
                   {/* Home Link */}
-                  <SheetClose>
-                    <Link
-                      href="/"
-                      className={cn(
-                        " text-neutral-600 hover:text-black",
-                        page != "" ? "text-neutral-600" : "text-black font-semibold"
-                      )}
-                    >
-                      Home
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    href="/"
+                    className={cn(
+                      " text-neutral-600 hover:text-black",
+                      page != "" ? "text-neutral-600" : "text-black font-semibold"
+                    )}
+                  >
+                    <SheetClose>Home</SheetClose>
+                  </Link>
 
                   {/* Shop Link */}
-                  <SheetClose>
-                    <Link
-                      href="/shop"
-                      className={cn(
-                        " text-neutral-600 hover:text-black",
-                        page != "/shop" ? "text-neutral-600" : "text-black font-semibold"
-                      )}
-                    >
-                      Shop
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    href="/shop"
+                    className={cn(
+                      " text-neutral-600 hover:text-black",
+                      page != "/shop" ? "text-neutral-600" : "text-black font-semibold"
+                    )}
+                  >
+                    <SheetClose>Shop</SheetClose>
+                  </Link>
 
                   {/* Contact Link */}
-                  <SheetClose>
-                    <Link
-                      href="/contact"
-                      className={cn(
-                        " text-neutral-600 hover:text-black",
-                        page != "/contact" ? "text-neutral-600" : "text-black font-semibold"
-                      )}
-                    >
-                      Contact us
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    href="/contact"
+                    className={cn(
+                      " text-neutral-600 hover:text-black",
+                      page != "/contact" ? "text-neutral-600" : "text-black font-semibold"
+                    )}
+                  >
+                    <SheetClose>Contact us</SheetClose>
+                  </Link>
 
                   {/* About Link */}
-                  <SheetClose>
-                    <Link
-                      href="/about"
-                      className={cn(
-                        " text-neutral-600 hover:text-black",
-                        page != "/about" ? "text-neutral-600" : "text-black font-semibold"
-                      )}
-                    >
-                      About us
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    href="/about"
+                    className={cn(
+                      " text-neutral-600 hover:text-black",
+                      page != "/about" ? "text-neutral-600" : "text-black font-semibold"
+                    )}
+                  >
+                    <SheetClose>About us</SheetClose>
+                  </Link>
 
                   <hr />
                 </nav>

@@ -34,12 +34,12 @@ export default function MidSection() {
       {/* Product Grid */}
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr_308px_308px] justify-items-center">
         {/* One Large Image */}
-        <div className=" md:h-full h-[70vh] overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-2">
+        <div className=" md:h-full h-[70vh] overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-3">
           <video src="./assets/products/13.mp4" className="w-full" width={1000} height={500} autoPlay loop muted />
         </div>
 
         {/* Four Product Cards */}
-        {luxeProducts.slice(0, 4).map(({ name, price, id, image, sizes, category }) => (
+        {luxeProducts.slice(0, 6).map(({ name, price, id, image, sizes, category }) => (
           <ProductCard key={id} name={name} price={price} image={image[0]} id={id} sizes={sizes} category={category} />
         ))}
       </div>
