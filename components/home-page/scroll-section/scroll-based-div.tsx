@@ -28,7 +28,7 @@ const CardStack = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["0.8 1", "1.8 1.3"],
+    offset: ["0.3 1", "1.9 1.2"],
   });
 
   const rotateLeft = useTransform(scrollYProgress, [0, 0.33], [0, -30]);
