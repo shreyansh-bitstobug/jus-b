@@ -64,7 +64,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-sm shadow-sm w-[308px] transition-all duration-300 bg-white">
+    <div className="group relative overflow-hidden rounded-sm shadow-sm w-[308px] h-[396px] transition-all duration-300 bg-white">
       {/* Image Section of Card */}
       <Link href={`/shop/${_.kebabCase(category)}/${id}`} className="block relative">
         <Image

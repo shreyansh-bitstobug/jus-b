@@ -39,7 +39,7 @@ export default function TopBtn() {
         isVisible ? "opacity-100" : "opacity-0"
       )}
     >
-      <HiChevronUp className="w-8 h-8" />
+      <HiChevronUp className="w-8 text-neutral-200 h-8" />
     </button>
   );
 }

@@ -8,16 +8,18 @@ import {
   useSignInWithGoogle,
 } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
-import { RiEyeCloseLine, RiEyeLine } from "react-icons/ri";
+import { RiEyeCloseLine, RiEyeLine, RiInformation2Line } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthError } from "firebase/auth";
+import { UserType } from "@/lib/types";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -32,7 +34,10 @@ export function UserAuthForm({
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false); // Confirm password visibility state
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false); // Password match state
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false); // Password validation state
+  const [isTouched, setIsTouched] = useState<boolean>(false); // Touched state
+  const [isConfirmTouched, setIsConfirmTouched] = useState<boolean>(false); // Touched state
   const [prevPageUrl, setPrevPageUrl] = useState<string>("/"); // Previous page URL
+  const [authError, setAuthError] = useState<string | null>(null); // Error state
 
   // Form fields states
   const [email, setEmail] = useState<string>(""); // Email state
@@ -86,11 +91,59 @@ export function UserAuthForm({
   const handleSignUp = async () => {
     try {
       const res = await createUserWithEmailAndPassword(email, password);
-      console.log(res); // Debugging
+
+      if (!res) {
+        const responseUsers = await fetch("/api/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const foundedUser = await responseUsers.json();
+        const userExists = foundedUser.users.find((user: UserType) => user.email === email);
+        if (userExists) {
+          setAuthError("Email ID already exists.");
+        }
+
+        if (responseUsers.ok) {
+          console.log("User exists in the database (SIGN-UP)"); // Debugging
+          setAuthError("Email ID already exists.");
+        }
+      }
+
+      if (error) {
+        console.log("Error: ", error);
+      }
+
       if (res) {
-        // Redirect or handle successful sign-up
-        console.log("User created successfully");
-        router.push(prevPageUrl); // Redirect to the prev page
+        const { user } = res;
+        const userId = user.uid;
+
+        const userInDb = await fetch("/api/users/" + userId, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (userInDb.ok) {
+          console.log("User exists in the database (SIGN-IN)"); // Debugging
+          return router.push(prevPageUrl);
+        } // Redirect to the prev page
+
+        if (userInDb.status === 404) {
+          const { email, displayName } = user;
+          const response = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password, displayName, userId }),
+          });
+
+          if (response.ok) return router.push(prevPageUrl); // Redirect to the prev page
+        }
       }
     } catch (err) {
       const error = err as AuthError;
@@ -109,10 +162,51 @@ export function UserAuthForm({
   const handleSignIn = async () => {
     try {
       const res = await signInWithEmailAndPassword(email, password);
-      if (res) router.push(prevPageUrl); // Redirect to the prev page
-      console.log(res); // Debugging
+
+      if (!res?.user) {
+        setAuthError("Invalid email or password");
+      }
+
+      if (res) {
+        const { user } = res;
+        const userId = user.uid;
+
+        const userInDb = await fetch("/api/users/" + userId, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (userInDb.ok) {
+          console.log("User exists in the database (SIGN-IN)"); // Debugging
+          return router.push(prevPageUrl);
+        } // Redirect to the prev page
+
+        if (userInDb.status === 404) {
+          const { email, displayName } = user;
+          const response = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password, displayName, userId }),
+          });
+
+          if (response.ok) {
+            console.log("User Created (SIGN-IN)", res, response); // Debugging
+            return router.push(prevPageUrl);
+          } // Redirect to the prev page
+        }
+      }
     } catch (err) {
-      console.error("Error", err);
+      const error = err as AuthError;
+      console.log("Error");
+
+      if (error.code === "auth/user-not-found") {
+        console.error("Error: User not found");
+      }
+      console.error("Error", error);
     }
   };
 
@@ -120,8 +214,38 @@ export function UserAuthForm({
   const handleGoogleSignIn = async () => {
     try {
       const res = await signInWithGoogle();
-      if (res) router.push(prevPageUrl); // Redirect to the prev page
-      console.log(res); // Debugging
+      if (res) {
+        const { user } = res;
+        const userId = user.uid;
+
+        const userInDb = await fetch("/api/users/" + userId, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (userInDb.ok) {
+          console.log("User exists in the database"); // Debugging
+          return router.push(prevPageUrl);
+        } // Redirect to the prev page
+
+        if (userInDb.status === 404) {
+          const { email, displayName } = user;
+          const response = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password, displayName, userId }),
+          });
+
+          if (response.ok) {
+            console.log("User created successfully"); // Debugging
+            return router.push(prevPageUrl);
+          } // Redirect to the prev page
+        }
+      }
     } catch (err) {
       console.error("Error", err);
     }
@@ -169,9 +293,11 @@ export function UserAuthForm({
               <Input
                 id="password"
                 placeholder="password"
+                className={cn("", isTouched && !isPasswordValid && "border-red-700 placeholder:text-red-700")}
                 type={isPasswordVisible ? "text" : "password"}
                 onChange={(event) => setPassword(event.target.value)}
                 autoCapitalize="none"
+                onBlur={() => setIsTouched(true)}
                 autoComplete="off"
                 autoCorrect="off"
                 disabled={isLoading}
@@ -185,6 +311,37 @@ export function UserAuthForm({
               >
                 {isPasswordVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
               </Button>
+              {isTouched && !isPasswordValid && (
+                <>
+                  <p className={cn("text-red-700 lg:hidden text-sm flex flex-col")}>
+                    <span className="font-medium">Password must:</span>
+                    <p>
+                      <li>Be at least 8 characters long</li>
+                      <li>Contain at least one uppercase letter &#40;A-Z&#41;</li>
+                      <li>Contain at least one lowercase letter &#40;a-z&#41;</li>
+                      <li>Contain at least one number &#40;0-9&#41;</li>
+                      <li>Contain at least one special character</li>
+                    </p>
+                  </p>
+                  <HoverCard openDelay={300}>
+                    <HoverCardTrigger className=" lg:flex hidden w-fit items-center gap-1 text-red-700 text-sm">
+                      Invalid password <RiInformation2Line />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <p className={cn("text-sm flex flex-col")}>
+                        <span className="font-medium">Password must:</span>
+                        <p>
+                          <li>Be at least 8 characters long</li>
+                          <li>Contain at least one uppercase letter &#40;A-Z&#41;</li>
+                          <li>Contain at least one lowercase letter &#40;a-z&#41;</li>
+                          <li>Contain at least one number &#40;0-9&#41;</li>
+                          <li>Contain at least one special character</li>
+                        </p>
+                      </p>
+                    </HoverCardContent>
+                  </HoverCard>
+                </>
+              )}
             </div>
 
             {/* Password field for confirm password (Only SignUp Page) */}
@@ -195,6 +352,10 @@ export function UserAuthForm({
                   <Label htmlFor="confirm">Confirm Password</Label>
                   <Input
                     id="confirm"
+                    className={cn(
+                      "",
+                      isConfirmTouched && !isPasswordMatch && "border-red-700 placeholder:text-red-700"
+                    )}
                     placeholder="confirm password"
                     type={isConfirmVisible ? "text" : "password"}
                     onChange={(event) => setConfirm(event.target.value)}
@@ -202,6 +363,7 @@ export function UserAuthForm({
                     autoComplete="off"
                     autoCorrect="off"
                     disabled={isLoading}
+                    onBlur={() => setIsConfirmTouched(true)}
                   />
                   <Button
                     type="button"
@@ -212,7 +374,9 @@ export function UserAuthForm({
                   >
                     {isConfirmVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
                   </Button>
-                  {!isPasswordMatch && <p className={cn("text-red-700 text-sm")}>Password does not match</p>}
+                  {isConfirmTouched && !isPasswordMatch && (
+                    <p className={cn("text-red-700 text-sm")}>Password does not match</p>
+                  )}
                 </div>
 
                 {/* Full name field for sign up */}
@@ -240,6 +404,7 @@ export function UserAuthForm({
             )}
           </div>
 
+          <p className="text-red-700">{authError}</p>
           {/* Submit Button */}
           <Button variant="action" disabled={isLoading}>
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
@@ -252,7 +417,7 @@ export function UserAuthForm({
           <span className="w-full border-t border-neutral-400" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          <span className="bg-snow px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
       <Button

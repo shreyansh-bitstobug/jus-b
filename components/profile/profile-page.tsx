@@ -14,6 +14,31 @@ import { OrderType } from "@/lib/types";
 import OrderSection from "./order-section";
 import { orders } from "@/lib/data";
 
+export const addressesSample = [
+  {
+    id: "a1",
+    name: "John Doe",
+    address: ["123 Main St", "Apt 4B"],
+    city: "New York",
+    state: "NY",
+    country: "USA",
+    postalCode: "10001",
+    phoneNumber: "+1 555-555-5555",
+    default: true,
+  },
+  {
+    id: "a2",
+    name: "Will Doe",
+    address: ["123 White House", "Room 40024"],
+    city: "Indore",
+    state: "NY",
+    country: "USA",
+    postalCode: "10001",
+    phoneNumber: "+1 555-555-5555",
+    default: false,
+  },
+];
+
 export default function ProfilePage() {
   const [userInfo, setUserInfo] = useState({
     id: "u12345",
@@ -24,30 +49,7 @@ export default function ProfilePage() {
     phoneNumber: "+1 555-555-5555",
     dob: new Date("1990-08-15"),
     email: "john.doe@example.com",
-    addresses: [
-      {
-        id: "a1",
-        name: "John Doe",
-        address: ["123 Main St", "Apt 4B"],
-        city: "New York",
-        state: "NY",
-        country: "USA",
-        postalCode: "10001",
-        phoneNumber: "+1 555-555-5555",
-        default: true,
-      },
-      {
-        id: "a2",
-        name: "Will Doe",
-        address: ["123 White House", "Room 40024"],
-        city: "Indore",
-        state: "NY",
-        country: "USA",
-        postalCode: "10001",
-        phoneNumber: "+1 555-555-5555",
-        default: false,
-      },
-    ],
+    addresses: addressesSample,
     createdAt: new Date("2023-01-01"),
     updatedAt: new Date("2023-09-13"),
   });

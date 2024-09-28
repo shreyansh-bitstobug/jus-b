@@ -10,7 +10,7 @@ export class Address {
   country!: string;
   phoneNumber!: string;
   postalCode!: string;
-  default!: boolean;
+  isDefault!: boolean;
 }
 
 @Collection("orders")
@@ -41,12 +41,12 @@ export class User {
   id!: string;
   userId!: string;
   firstName!: string;
-  lastName!: string;
+  lastName!: string | undefined;
   displayName!: string;
-  phoneNumber!: string;
-  dob!: Date;
+  phoneNumber!: string | undefined;
+  dob!: Date | null;
   email!: string;
-  addresses!: Address[];
+  addresses!: Address[] | undefined;
   createdAt!: Date;
   updatedAt!: Date;
 }

@@ -34,16 +34,8 @@ export default function MidSection() {
       {/* Product Grid */}
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr_308px_308px] justify-items-center">
         {/* One Large Image */}
-        <div className="md:col-span-2 lg:col-span-2 lg:row-span-2">
-          <Link href={`/shop/partywear/${luxeProducts[5].id}`} className="h-full w-full max-w-lg overflow-hidden">
-            <Image
-              src={luxeProducts[5].image[1]}
-              alt="Luxe featured Product"
-              className="md:h-full h-[70vh] w-full object-cover"
-              width={1000}
-              height={1000}
-            />
-          </Link>
+        <div className=" md:h-full h-[70vh] overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-2">
+          <video src="./assets/products/13.mp4" className="w-full" width={1000} height={500} autoPlay loop muted />
         </div>
 
         {/* Four Product Cards */}

@@ -15,14 +15,16 @@ import MidSection from "@/components/home-page/mid-section";
 // Components
 import HeroSection from "@/components/home-page/hero-section";
 import AnimatedLinkBelt from "@/components/home-page/link-belt";
-import HorizontalCarousel from "@/components/home-page/scroll-based-div";
+import HorizontalCarousel from "@/components/home-page/scroll-section/scroll-based-div";
 
 // Data
 import { products } from "@/public/assets/data";
+import Popup from "../popup";
 
 export default function HomePage() {
   return (
     <main className="flex-1">
+      <Popup />
       {/* Hero Section */}
       <HeroSection />
 

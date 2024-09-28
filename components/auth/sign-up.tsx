@@ -44,7 +44,7 @@ export default function SignUpPage() {
         Sign in
       </Link>
 
-      <div className="relative hidden lg:flex flex-col h-screen bg-muted p-10 text-white ">
+      <div className="relative hidden lg:flex flex-col h-screen bg-snow p-10 text-white ">
         <div className="max-w-[50vw] object-cover absolute inset-0 primary-gradient" />
         <Image
           src="/assets/logo-jus_b.svg"
