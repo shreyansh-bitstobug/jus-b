@@ -46,8 +46,8 @@ const HorizontalCarousel = () => {
         <div className="photo-block">
           <div className="photo-grid">
             {products.map((product) =>
-              product.image.map((imag) => (
-                <div className="photo">
+              product.image.map((imag, index) => (
+                <div key={index} className="photo">
                   <img src={imag} alt="" />
                 </div>
               ))
