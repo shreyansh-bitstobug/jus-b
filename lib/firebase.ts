@@ -11,7 +11,5 @@ firebaseConfig;
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-// Initialize FireORM with Firestore
-initializeFireorm(firestore);
-
 export { firestore };
+export default app;

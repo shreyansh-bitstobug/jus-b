@@ -16,7 +16,7 @@ import ProductCard from "@/components/product/product-card";
 
 export default function WishlistPage() {
   // State
-  const [filteredArray, setFilteredArray] = useState<ProductType[]>(products);
+  const [filteredArray, setFilteredArray] = useState(products);
 
   // Store Hooks
   const { wishlist } = useWishlistStore();

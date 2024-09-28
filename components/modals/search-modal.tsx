@@ -51,8 +51,7 @@ export default function SearchModal() {
         );
       });
 
-      console.log(searchedProducts);
-      setSearchResults(searchedProducts);
+      setSearchResults(searchedProducts as ProductType[]);
     };
 
     if (searchQuery != "") searchProducts();

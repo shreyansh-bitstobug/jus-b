@@ -206,7 +206,7 @@ export default function ProductPage({ productId }: { productId: string }) {
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">{product.name}</h1>
           <p className="text-2xl font-semibold">&#8377;{product.price.toFixed(2)}</p>
-          <p className="text-muted-foreground">{product.description}</p>
+          <p className="text-muted-foreground">{product.description.text}</p>
 
           <div className="flex gap-4">
             {/* Size Selection */}

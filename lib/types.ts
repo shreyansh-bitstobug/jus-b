@@ -15,7 +15,7 @@ export type CartProductType = {
 // This is the type for the product
 export type ProductType = {
   id: string;
-  productId: string;
+  productId?: string;
   name: string;
   price: number;
   description: {
@@ -24,9 +24,9 @@ export type ProductType = {
   };
   sizes: string[];
   category: string;
-  images: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  image: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 // This is the type for the address

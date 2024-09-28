@@ -1,3 +1,5 @@
+import { features } from "process";
+
 export const categories = ["Just-JB Partywear", "Just-JB Luxe"];
 
 export const shopBanner = "/assets/banner/shop-banner.png";
@@ -15,7 +17,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M"],
-    description: "A stunning beige dress with intricate embellishments and long tassels, perfect for any party.",
+    description: {
+      text: "A stunning beige dress with intricate embellishments and long tassels, perfect for any party.",
+      features: ["Sleeveless design", "Embellished details", "Long tassels at hem"],
+    },
   },
   {
     id: "party-2",
@@ -27,7 +32,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M", "L"],
-    description: "Shine bright in this golden sequined jumpsuit with a crisscross halter neck and backless design.",
+    description: {
+      text: "Shine bright in this golden sequined jumpsuit with a crisscross halter neck and backless design.",
+      features: ["Crisscross halter neck", "Backless design", "Sequined details"],
+    },
   },
   {
     id: "party-3",
@@ -40,7 +48,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["XS", "S", "M"],
-    description: "Elegant ivory midi dress with tinsel detailing, perfect for a sophisticated evening.",
+    description: {
+      text: "Elegant ivory midi dress with tinsel detailing, perfect for a sophisticated evening.",
+      features: ["Sleeveless design", "Tinsel detailing", "Midi length"],
+    },
   },
   {
     id: "party-4",
@@ -53,7 +64,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["M", "L"],
-    description: "Turn heads in this midnight blue dress with a plunging neckline and high slit.",
+    description: {
+      text: "Turn heads in this midnight blue dress with a plunging neckline and high slit.",
+      features: ["Plunging neckline", "High slit", "Midnight blue color"],
+    },
   },
   {
     id: "party-5",
@@ -67,7 +81,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["S", "M", "L"],
-    description: "Cute and flirty pink mini dress with roseline sequins and noodle straps.",
+    description: {
+      text: "Cute and flirty pink mini dress with roseline sequins and noodle straps.",
+      features: ["Roseline sequins", "Noodle straps", "Mini length"],
+    },
   },
   {
     id: "party-6",
@@ -80,7 +97,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["M", "L"],
-    description: "Dazzle in this silver sequined evening dress with a one-sleeve, one-shoulder design and high slit.",
+    description: {
+      text: "Dazzle in this silver sequined evening dress with a one-sleeve, one-shoulder design and high slit.",
+      features: ["One-sleeve design", "One-shoulder design", "High slit"],
+    },
   },
   {
     id: "party-7",
@@ -94,7 +114,10 @@ export const products = [
     ],
     category: "Just-JB Partywear",
     sizes: ["XS", "S", "M"],
-    description: "A chic mini dress with spangle details, woven strappy design, and tassel hem.",
+    description: {
+      text: "A chic mini dress with spangle details, woven strappy design, and tassel hem.",
+      features: ["Spangle details", "Woven strappy design", "Tassel hem"],
+    },
   },
   {
     id: "luxe-1",
@@ -107,7 +130,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
-    description: "A snowy white dress with ruffled details, one-sleeve, one-shoulder cutout waist design.",
+    description: {
+      text: "A snowy white dress with ruffled details, one-sleeve, one-shoulder cutout waist design.",
+      features: ["Ruffled details", "One-sleeve design", "Cutout waist"],
+    },
   },
   {
     id: "luxe-2",
@@ -119,7 +145,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["M", "L"],
-    description: "A luxurious frosted smock kaftan gown with one sleeve, perfect for a grand event.",
+    description: {
+      text: "A luxurious frosted smock kaftan gown with one sleeve, perfect for a grand event.",
+      features: ["Frosted smock design", "One sleeve", "Kaftan style"],
+    },
   },
   {
     id: "luxe-3",
@@ -131,7 +160,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["XS", "S"],
-    description: "A mauve gown with heavy embellishments, halter neck, and ruched design.",
+    description: {
+      text: "A mauve gown with heavy embellishments, halter neck, and ruched design.",
+      features: ["Heavy embellishments", "Halter neck", "Ruched design"],
+    },
   },
   {
     id: "luxe-4",
@@ -143,7 +175,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
-    description: "A green gown with sweet heart neckline, noodle straps, and intricate embellishments.",
+    description: {
+      text: "A green gown with sweet heart neckline, noodle straps, and intricate embellishments.",
+      features: ["Sweet heart neckline", "Noodle straps", "Intricate embellishments"],
+    },
   },
   {
     id: "luxe-5",
@@ -155,7 +190,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["M", "L"],
-    description: "An enchanted grey gown with one-shoulder design, embellished and ruched details.",
+    description: {
+      text: "An enchanted grey gown with one-shoulder design, embellished and ruched details.",
+      features: ["One-shoulder design", "Embellished details", "Ruched design"],
+    },
   },
   {
     id: "luxe-6",
@@ -167,7 +205,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["L", "XL"],
-    description: "An elegant black dress with diamante details, one-shoulder design, and plumes.",
+    description: {
+      text: "An elegant black dress with diamante details, one-shoulder design, and plumes.",
+      features: ["Diamante details", "One-shoulder design", "Plumes"],
+    },
   },
   {
     id: "luxe-7",
@@ -179,7 +220,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M"],
-    description: "An ebony dress with plunger halter neck and high slit, perfect for a luxurious evening.",
+    description: {
+      text: "An ebony dress with plunger halter neck and high slit, perfect for a luxurious evening.",
+      features: ["Plunger halter neck", "High slit", "Ebony color"],
+    },
   },
   {
     id: "luxe-8",
@@ -191,7 +235,10 @@ export const products = [
     ],
     category: "Just-JB Luxe",
     sizes: ["S", "M", "L"],
-    description: "A peacock teal silk gown with bandeau top, high slit, and mermaid silhouette.",
+    description: {
+      text: "A peacock teal silk gown with bandeau top, high slit, and mermaid silhouette.",
+      features: ["Bandeau top", "High slit", "Mermaid silhouette"],
+    },
   },
   {
     id: "holiday-1",
@@ -203,7 +250,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
-    description: "A festive red velvet dress, perfect for holiday celebrations.",
+    description: {
+      text: "A festive red velvet dress, perfect for holiday celebrations.",
+      features: ["Red velvet", "Festive design", "Perfect for holidays"],
+    },
   },
   {
     id: "holiday-2",
@@ -215,7 +265,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
-    description: "A green sequin gown, ideal for holiday parties and events.",
+    description: {
+      text: "A green sequin gown, ideal for holiday parties and events.",
+      features: ["Green sequins", "Holiday design", "Perfect for parties"],
+    },
   },
   {
     id: "holiday-3",
@@ -227,7 +280,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["XS", "S", "M"],
-    description: "A gold sparkle mini dress, perfect for festive occasions.",
+    description: {
+      text: "A gold sparkle mini dress, perfect for festive occasions.",
+      features: ["Gold sparkle", "Mini length", "Festive design"],
+    },
   },
   {
     id: "holiday-4",
@@ -239,7 +295,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
-    description: "A silver glitter evening gown, perfect for glamorous holiday events.",
+    description: {
+      text: "A silver glitter evening gown, perfect for glamorous holiday events.",
+      features: ["Silver glitter", "Evening gown", "Glamorous design"],
+    },
   },
   {
     id: "holiday-5",
@@ -251,7 +310,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
-    description: "A blue velvet dress, perfect for holiday gatherings.",
+    description: {
+      text: "A blue velvet dress, perfect for holiday gatherings.",
+      features: ["Blue velvet", "Holiday design", "Perfect for gatherings"],
+    },
   },
   {
     id: "holiday-6",
@@ -263,7 +325,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M"],
-    description: "A white gown with snowflake details, perfect for winter holidays.",
+    description: {
+      text: "A white gown with snowflake details, perfect for winter holidays.",
+      features: ["White color", "Snowflake details", "Winter holiday design"],
+    },
   },
   {
     id: "holiday-7",
@@ -275,7 +340,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
-    description: "A black sequin dress, perfect for holiday parties.",
+    description: {
+      text: "A black sequin dress, perfect for holiday parties.",
+      features: ["Black sequins", "Party design", "Perfect for holidays"],
+    },
   },
   {
     id: "holiday-8",
@@ -287,7 +355,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["M", "L"],
-    description: "A purple satin gown, perfect for elegant holiday events.",
+    description: {
+      text: "A purple satin gown, perfect for elegant holiday events.",
+      features: ["Purple satin", "Elegant design", "Perfect for holidays"],
+    },
   },
   {
     id: "holiday-9",
@@ -299,7 +370,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["XS", "S", "M"],
-    description: "An emerald green dress, perfect for festive holiday gatherings.",
+    description: {
+      text: "An emerald green dress, perfect for festive holiday gatherings.",
+      features: ["Emerald green", "Festive design", "Perfect for gatherings"],
+    },
   },
   {
     id: "holiday-10",
@@ -311,7 +385,10 @@ export const products = [
     ],
     category: "Holiday Season",
     sizes: ["S", "M", "L"],
-    description: "A red and gold gown, perfect for festive holiday celebrations.",
+    description: {
+      text: "A red and gold gown, perfect for festive holiday celebrations.",
+      features: ["Red and gold", "Festive design", "Perfect for celebrations"],
+    },
   },
 ];
 export const getProductsByCategory = (category: string) => {
