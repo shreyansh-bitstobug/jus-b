@@ -1,4 +1,4 @@
-import { db } from "@/firebase/firebaseAdmin";
+import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
 import { getRepository, initialize } from "fireorm";
 import { User } from "@/lib/schema"; // Adjust your import path
