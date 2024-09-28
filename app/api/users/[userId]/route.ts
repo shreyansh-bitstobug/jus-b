@@ -5,8 +5,6 @@ import { User } from "@/lib/schema"; // Adjust your import path
 
 // Get user by userId (GET /api/users/[userId])
 export async function GET(req: Request, { params }: { params: { userId: string } }) {
-  await initialize(db);
-
   try {
     const userRepository = getRepository(User);
     const { userId } = params;

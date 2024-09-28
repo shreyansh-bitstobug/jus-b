@@ -1,11 +1,10 @@
 import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
-import { getRepository, initialize } from "fireorm";
+import { getRepository } from "fireorm";
 import { User } from "@/lib/schema"; // Adjust your import path
 
 // Get all users (GET /api/users)
 export async function GET() {
-  await initialize(db);
   try {
     const userRepository = getRepository(User);
 
