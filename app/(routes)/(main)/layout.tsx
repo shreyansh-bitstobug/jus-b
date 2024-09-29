@@ -11,6 +11,7 @@ import ModalProvider from "@/components/modal-provider";
 import TopBarOffer from "@/components/offers/top-bar";
 import WhatsappBtn from "@/components/whatsapp-btn";
 import TopBtn from "@/components/top-btn";
+import MainLoader from "@/components/loader/main-loader";
 
 export default function RootLayout({
   children,

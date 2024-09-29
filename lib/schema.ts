@@ -1,5 +1,6 @@
 // schemas.ts
 import { Collection } from "fireorm";
+import { db } from "@/firebase/config";
 
 export class Address {
   id!: string;

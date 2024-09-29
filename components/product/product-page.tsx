@@ -208,12 +208,11 @@ export default function ProductPage({ productId }: { productId: string }) {
           <p className="text-2xl font-semibold">&#8377;{product.price.toFixed(2)}</p>
           <p className="text-muted-foreground">{product.description.text}</p>
 
-          <div className="flex gap-4">
-            {/* Size Selection */}
+          <div className="flex gap-4">{/* Size Selection */}</div>
+
+          {/* Add to Cart and Share Buttons */}
+          <div className="flex space-x-4">
             <div>
-              <label htmlFor="size-select" className="block text-sm font-medium mb-2">
-                Size
-              </label>
               <Select value={selectedSize} onValueChange={setSelectedSize}>
                 <SelectTrigger
                   className={cn("w-fit min-w-14", alert ? "border-red-700 text-red-700" : "")}
@@ -231,28 +230,6 @@ export default function ProductPage({ productId }: { productId: string }) {
               </Select>
             </div>
 
-            {/* Quantity Selection */}
-            <div>
-              <label htmlFor="quantity-select" className="block text-sm font-medium mb-2">
-                Quantity
-              </label>
-              <Select value={quantity} onValueChange={setQuantity}>
-                <SelectTrigger className="w-fit min-w-14" id="quantity-select">
-                  <SelectValue placeholder="Select quantity" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <SelectItem key={num} value={num.toString()}>
-                      {num}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Add to Cart and Share Buttons */}
-          <div className="flex space-x-4">
             {itemInCart && itemInCart.quantity > 0 ? (
               <div className="flex items-center justify-between border rounded-md overflow-hidden">
                 <Button size="icon" variant="ghost" onClick={handleRemoveFromCart} className="rounded-none">

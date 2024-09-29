@@ -31,7 +31,7 @@ export default function WhatsappBtn() {
   }, []);
 
   return (
-    <Link href={whatsappLink} target="_blank" className="fixed bottom-8 right-8 transition-all hover:scale-110 z-50">
+    <Link href={whatsappLink} target="_blank" className="fixed bottom-8 right-8 transition-all hover:scale-110 z-40">
       <Image src="/assets/whatsapp_logo.png" alt="whatsapp" width={60} height={60} />
     </Link>
   );

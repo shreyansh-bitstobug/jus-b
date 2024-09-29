@@ -138,7 +138,7 @@ export default function ProgressSection() {
                 step > 3 ? "pointer-events-none opacity-50" : ""
               } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
             >
-              {step === 1 ? "Review" : step === 2 ? "Confirm" : "Continue Shopping"}
+              {step >= 1 ? "Next" : "Continue Shopping"}
             </button>
           </div>
         </div>

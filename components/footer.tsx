@@ -72,7 +72,6 @@ export default function Footer() {
               </div>
             </div>
           </div>
-
           {/* 2nd Part of top part of footer */}
           <div className="space-y-4 px-4">
             <h1 className={cn("text-2xl font-bold", syne.className)}>India</h1>
@@ -102,6 +101,28 @@ export default function Footer() {
               </Link>
             </div>
           </div>
+
+          {/* 3rd Part of top part of footer */}
+          <div className="space-y-4 px-4">
+            <h1 className={cn("text-2xl font-bold", syne.className)}>UK</h1>
+            <div className="flex flex-col gap-2">
+              {/* Contact */}
+              <Link href="tel:+44%207768%20332329" className="flex gap-2 hover:text-muted-foreground w-fit">
+                <span>
+                  <Phone className="h-5 w-5" />
+                </span>
+                +44 7768 332329
+              </Link>
+
+              {/* Email */}
+              <Link href="mailto:info@jus-b-fashion.com" className="flex gap-2 hover:text-muted-foreground w-fit">
+                <span>
+                  <Mail className="h-5 w-5" />
+                </span>
+                info@jus-b-fashion.com
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* ------------------------------------- */}
@@ -111,21 +132,21 @@ export default function Footer() {
           <h1 className={cn("text-2xl font-bold", syne.className)}>Quick Links</h1>
           <nav className=" grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Link href="#" className="hover:text-muted-foreground w-fit">
+              <Link href="/shop" className="hover:text-muted-foreground w-fit">
                 Products
               </Link>
-              <Link href="#" className="hover:text-muted-foreground w-fit">
+              <Link href="/policy/return-exchange" className="hover:text-muted-foreground w-fit">
                 Return / Exchange Policy
               </Link>
-              <Link href="#" className="hover:text-muted-foreground w-fit">
+              <Link href="/policy/shipping" className="hover:text-muted-foreground w-fit">
                 Shipping Policy
               </Link>
             </div>
             <div className="flex flex-col gap-2">
-              <Link href="#" className="hover:text-muted-foreground w-fit">
+              <Link href="/about" className="hover:text-muted-foreground w-fit">
                 About Us
               </Link>
-              <Link href="#" className="hover:text-muted-foreground w-fit">
+              <Link href="/contact" className="hover:text-muted-foreground w-fit">
                 Contact Us
               </Link>
             </div>

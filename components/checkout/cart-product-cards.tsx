@@ -81,7 +81,7 @@ export default function CartProductCard({
   // Return the Cart Product Card component
   // --------------------
   return (
-    <div className="group p-4 bg-neutral-200 relative rounded-lg w-[420px] hover:scale-105 hover:shadow-xl transition-all flex gap-4">
+    <div className="group p-4 bg-white shadow-lg relative rounded-lg w-[420px] hover:scale-105 hover:shadow-xl transition-all flex gap-4">
       <div className="flex flex-col justify-between gap-2">
         {/* Small Image of Product */}
         <Link href={`/shop/${id}`}>
@@ -89,16 +89,16 @@ export default function CartProductCard({
         </Link>
 
         {/* Quantity Selector */}
-        <div className=" h-8 flex items-center justify-between text-center text-lg font-bold border border-neutral-300 rounded-lg">
+        <div className=" h-8 flex items-center justify-between text-center text-lg font-bold border border-neutral-200 rounded-lg">
           <button
-            className="text-black h-8 w-8 rounded-l-lg items-center justify-center flex  px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
+            className="text-black h-8 w-8 rounded-l-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
             onClick={handleRemoveFromCart}
           >
             -
           </button>
-          <div className=" w-8 h-8 content-center bg-neutral-200">{quantity}</div>
+          <div className=" w-8 h-8 content-center bg-neutral-100">{quantity}</div>
           <button
-            className="text-black h-8 w-8 rounded-r-lg items-center justify-center flex  px-4 border border-neutral-300 font-bold text-xl bg-neutral-300 hover:bg-neutral-400 active:bg-neutral-700 active:text-white"
+            className="text-black h-8 w-8 rounded-r-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
             onClick={handleAddToCart}
           >
             +
@@ -108,7 +108,7 @@ export default function CartProductCard({
 
       {/* Deleting all quantities button */}
       <button
-        className="bg-neutral-300 p-1 absolute rounded-full -top-1 -right-1 active:animate-ping transition-all-50-ease-in-out hover:bg-neutral-400"
+        className="bg-neutral-200 p-1 absolute rounded-full -top-1 -right-1 active:animate-ping transition-all-50-ease-in-out hover:bg-neutral-400"
         onClick={handleDelete}
       >
         <X className="  w-4 h-4" />

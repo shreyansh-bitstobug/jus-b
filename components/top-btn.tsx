@@ -35,7 +35,7 @@ export default function TopBtn() {
     <button
       onClick={scrollToTop}
       className={cn(
-        "rounded-full fixed bottom-8 right-[50%] transition-all bg-penn-red/30 backdrop-blur-sm text-neutral-700 hover:scale-110 z-50",
+        "rounded-full fixed bottom-8 right-[50%] transition-all bg-penn-red/30 backdrop-blur-sm text-neutral-700 hover:scale-110 z-40",
         isVisible ? "opacity-100" : "opacity-0"
       )}
     >

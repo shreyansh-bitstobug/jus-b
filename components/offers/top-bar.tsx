@@ -13,7 +13,7 @@ export default function TopBarOffer() {
 
   return (
     <div
-      className={cn("p-2 flex justify-center text-snow bg-penn-red text-sm sticky top-0 z-50", offerOn ? "" : "hidden")}
+      className={cn("p-2 flex justify-center text-snow bg-penn-red text-sm sticky top-0 z-40", offerOn ? "" : "hidden")}
     >
       <p className="flex items-center gap-2">
         <Image src="/assets/offer-icon.svg" className="fill-white" width={20} height={20} alt="Offer" /> 10% Off Your
