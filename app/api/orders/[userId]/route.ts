@@ -1,57 +1,39 @@
 import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
-import { getRepository } from "fireorm";
-import { Order } from "@/lib/schema"; // Adjust your import path accordingly
+import { Order } from "@/lib/schema";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 
-// Create a new order (POST /api/orders)
-export async function POST(req: Request) {
+// Get all orders (GET /api/orders)
+export async function GET(req: Request, params: { userId: string }) {
   try {
-    const body = await req.json();
-    const orderRepository = getRepository(Order);
+    const { userId } = params;
 
-    // Extract data from the request body
-    const {
-      orderId,
-      userId,
-      status,
-      items,
-      paymentStatus,
-      shippingAddress,
-      billingAddress,
-      fare,
-      paymentMethod,
-      trackingId,
-    } = body;
+    if (!userId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    // Create the order object
-    const newOrder = orderRepository.create({
-      orderId,
-      userId,
-      status: status || "pending",
-      items,
-      paymentStatus: paymentStatus || "pending",
-      shippingAddress,
-      billingAddress,
-      fare,
-      placedAt: new Date(),
-      deliveredAt: null,
-      updatedAt: new Date(),
-      trackingId,
-      paymentMethod,
-    });
+    const ordersCollection = collection(db, "orders");
+
+    const ordersSnapshot = await getDocs(ordersCollection);
+
+    const orders: Order[] = ordersSnapshot.docs.map((doc) => doc.data() as Order);
+
+    const userOrders = orders.filter((order) => order.userId === userId);
+
+    if (userOrders.length === 0) {
+      return NextResponse.json({ message: "No orders found" }, { status: 404 });
+    }
 
     return NextResponse.json(
       {
-        message: "Order created successfully",
-        order: newOrder,
+        message: "orders retrieved successfully",
+        userOrders,
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("Error fetching user's orders:", error);
     return NextResponse.json(
       {
-        message: "Failed to create order",
+        message: "Failed to fetch user's orders",
         error,
       },
       { status: 500 }

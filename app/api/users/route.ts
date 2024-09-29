@@ -1,15 +1,16 @@
 import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
-import { getRepository } from "fireorm";
-import { User } from "@/lib/schema"; // Adjust your import path
+import { User } from "@/lib/schema";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 
 // Get all users (GET /api/users)
 export async function GET() {
   try {
-    const userRepository = getRepository(User);
+    const usersCollection = collection(db, "users");
 
-    // Retrieve all users
-    const users = await userRepository.find();
+    const usersSnapshot = await getDocs(usersCollection);
+
+    const users: User[] = usersSnapshot.docs.map((doc) => doc.data() as User);
 
     if (users.length === 0) {
       return NextResponse.json({ message: "No users found" }, { status: 404 });
@@ -51,20 +52,21 @@ export async function POST(req: Request) {
       );
     }
 
-    const userRepository = getRepository(User);
-    const newUser = new User();
-    newUser.userId = userId;
-    newUser.firstName = firstName;
-    newUser.lastName = lastName;
-    newUser.displayName = displayName || "";
-    newUser.phoneNumber = phoneNumber || "";
-    newUser.dob = dob ? new Date(dob) : null; // Ensure date is in correct format
-    newUser.email = email;
-    newUser.addresses = addresses || [];
-    newUser.createdAt = new Date();
-    newUser.updatedAt = new Date();
+    const newUser: User = {
+      id: userId,
+      userId: userId,
+      firstName: firstName,
+      lastName: lastName,
+      displayName: displayName || "",
+      phoneNumber: phoneNumber || "",
+      dob: dob ? new Date(dob) : null,
+      email: email,
+      addresses: addresses || [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    await userRepository.create(newUser);
+    await setDoc(doc(db, "users", newUser.id), newUser);
 
     return NextResponse.json({ message: "User created successfully", user: newUser }, { status: 201 });
   } catch (error) {
