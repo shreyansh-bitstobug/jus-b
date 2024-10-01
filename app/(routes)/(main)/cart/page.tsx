@@ -2,7 +2,6 @@
 
 // Dependencies
 import { useEffect, useState } from "react";
-import { products } from "@/public/assets/data";
 import { useCartStore, useModalStore } from "@/hooks/use-store";
 
 // Types
@@ -19,8 +18,10 @@ import { useRouter } from "next/navigation";
 // Components
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
+import { Product } from "@/lib/schema";
 
 export default function CartPage() {
+  const [products, setProducts] = useState<Product[]>([]); // Products from API
   const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [itemTotal, setItemTotal] = useState(0);
@@ -53,6 +54,16 @@ export default function CartPage() {
   };
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data.products);
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
     const updatedCartProducts: CartProductType[] = [];
     let total = 0;
     let itemTotal = 0;
@@ -78,7 +89,7 @@ export default function CartPage() {
           updatedCartProducts.push({
             name: foundProduct.name,
             price: foundProduct.price,
-            imgUrl: foundProduct.image[0],
+            imgUrl: foundProduct.images[0],
             id: foundProduct.id,
             size: cartItem.size,
             quantity: cartItem.quantity,

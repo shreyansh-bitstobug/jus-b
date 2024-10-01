@@ -3,11 +3,8 @@
 // Dependencies
 import { useEffect, useState } from "react";
 
-// Data
-import { products } from "@/public/assets/data";
-
 // Icons
-import { ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart } from "lucide-react";
+import { ChevronRight, Heart, Minus, PlayCircleIcon, Plus, Share2, ShoppingCart } from "lucide-react";
 
 // Next Components and Hooks
 import Image from "next/image";
@@ -31,14 +28,15 @@ import { usePathname } from "next/navigation";
 import { removeSlash } from "@/lib/functions";
 import _ from "lodash";
 import Link from "next/link";
+import { Product } from "@/lib/schema";
 
 export default function ProductPage({ productId }: { productId: string }) {
   // States
-  const [product, setProduct] = useState(products[0]); // Product state
+  const [product, setProduct] = useState<Product>(); // Product state
   const [selectedSize, setSelectedSize] = useState(""); // Selected size state
-  const [quantity, setQuantity] = useState("1"); // Quantity state
   const [mainImage, setMainImage] = useState(""); // Main image state
-  const [relatedProducts, setRelatedProducts] = useState(products); // Related products array state
+  const [video, setVideo] = useState<string>(); // Videos state
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>(); // Related products array state
   const [itemInCart, setItemInCart] = useState<CartItem>(); // Item in cart state
   const [alert, setAlert] = useState(false); // Alert state for size selection
 
@@ -56,7 +54,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   // Check if item is in cart and set the item in cart state
   useEffect(() => {
     if (!selectedSize) {
-      product.sizes.forEach((size) => {
+      product?.sizes.forEach((size) => {
         const foundCartItem = cart[`${productId}-${size}`];
         if (foundCartItem) {
           setItemInCart(foundCartItem);
@@ -68,24 +66,38 @@ export default function ProductPage({ productId }: { productId: string }) {
       const foundCartItem = cart[`${productId}-${selectedSize}`];
       setItemInCart(foundCartItem);
     }
-  }, [cart, product, selectedSize]);
+  }, [cart, product, selectedSize]); // eslint-disable-line
 
   // Fetch product and related products on mount
   useEffect(() => {
     let category: string;
     const fetchData = async () => {
-      const chosenProduct = products.find((product) => product.id === productId);
+      const response = await fetch("/api/products");
+      const datas = await response.json();
+      const products = datas.products;
+
+      const res = await fetch("/api/products/" + productId);
+
+      const data = await res.json();
+      const chosenProduct = data.product;
+      console.log("product", chosenProduct);
+
       if (!chosenProduct) return;
       setProduct(chosenProduct);
 
       category = chosenProduct.category;
-      const related = products.filter((product) => product.category === category && product.id !== productId);
+      const related = products.filter((product: Product) => product.category === category && product.id !== productId);
+
+      const video = chosenProduct.images.find((imgUrl: string) => imgUrl.includes("_video"));
+      console.log("video", video);
+      setVideo(video);
+
       setRelatedProducts(related);
-      setMainImage(chosenProduct.image[0]);
+      setMainImage(chosenProduct?.images[0] || "/assets/placeholder.svg");
     };
 
     fetchData();
-  }, []);
+  }, []); // eslint-disable-line
 
   // --------------------
   // Handlers
@@ -136,7 +148,7 @@ export default function ProductPage({ productId }: { productId: string }) {
       ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}${url}`
       : `http://localhost:3000${url}`;
     setLink(link);
-    setMessage(`Check out this amazing product: ${product.name} \n Link: ${url}`);
+    setMessage(`Check out this amazing product: ${product?.name} \n Link: ${url}`);
     openModal("share");
   };
 
@@ -152,23 +164,29 @@ export default function ProductPage({ productId }: { productId: string }) {
           Shop
         </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
-        <Link href={`/shop/${_.kebabCase(product.category)}`} className="text-muted-foreground hover:text-primary">
-          {product.category}
+        <Link href={`/shop/${_.kebabCase(product?.category)}`} className="text-muted-foreground hover:text-primary">
+          {product?.category}
         </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
-        <span className="text-primary">{product.name}</span>
+        <span className="text-primary">{product?.name}</span>
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         {/* Product Images */}
         <div className="space-y-4 relative">
-          <Image
-            src={mainImage}
-            alt={product.name}
-            width={2000}
-            height={560}
-            className="w-full h-[560px] object-cover rounded-lg"
-          />
+          {video !== mainImage ? (
+            <Image
+              src={mainImage}
+              alt={product?.name || "Product-Main Image"}
+              width={2000}
+              height={560}
+              className="w-full h-[560px] object-contain rounded-lg"
+            />
+          ) : (
+            <video id="vid1" className="video-js h-[560px] mx-auto" controls>
+              <source src={video} type="video/mp4" />
+            </video>
+          )}
           {user && (
             <Button
               size="icon"
@@ -188,27 +206,45 @@ export default function ProductPage({ productId }: { productId: string }) {
             </Button>
           )}
           <div className="flex space-x-4">
-            {product.image.map((image, index) => (
-              <Image
-                key={index}
-                src={image}
-                alt={`${product.name} ${index + 1}`}
-                className="w-20 h-20 object-cover rounded-md cursor-pointer"
-                onClick={() => setMainImage(image)}
-                width={80}
-                height={80}
-              />
-            ))}
+            {product?.images.map((image, index) => {
+              console.log("image", image);
+              return image !== video ? (
+                <Image
+                  key={index}
+                  src={image || "/assets/placeholder.svg"}
+                  alt={`${product.name} ${index + 1}`}
+                  className={cn(
+                    "w-20 h-20 object-contain rounded-md cursor-pointer ",
+                    image === mainImage && "border-2 border-primary border-neutral-200 "
+                  )}
+                  onClick={() => setMainImage(image)}
+                  width={80}
+                  height={80}
+                />
+              ) : (
+                <div
+                  onClick={() => setMainImage(image)}
+                  key={index}
+                  className="w-20 h-20 object-cover flex justify-center bg-neutral-100 items-center rounded-md cursor-pointer p-1 text-neutral-800"
+                >
+                  <PlayCircleIcon className="w-14 h-14" />
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Product Details */}
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <p className="text-2xl font-semibold">&#8377;{product.price.toFixed(2)}</p>
-          <p className="text-muted-foreground">{product.description.text}</p>
+          <h1 className="text-3xl font-bold">{product?.name}</h1>
+          <p className="text-2xl font-semibold">&#8377;{product?.price.toFixed(2)}</p>
+          <p className="text-muted-foreground text-[16px] leading-5">{product?.description.text}</p>
 
-          <div className="flex gap-4">{/* Size Selection */}</div>
+          <div className="grid grid-cols-2 text-[16px] gap-2 pb-4 ">
+            {product?.description.features.map((feature, index) => (
+              <li key={index}>{feature}</li>
+            ))}
+          </div>
 
           {/* Add to Cart and Share Buttons */}
           <div className="flex space-x-4">
@@ -221,7 +257,7 @@ export default function ProductPage({ productId }: { productId: string }) {
                   <SelectValue placeholder="Size" />
                 </SelectTrigger>
                 <SelectContent>
-                  {product.sizes.map((size) => (
+                  {product?.sizes.map((size) => (
                     <SelectItem key={size} value={size}>
                       {size}
                     </SelectItem>
@@ -257,8 +293,8 @@ export default function ProductPage({ productId }: { productId: string }) {
       <div>
         <h2 className="text-2xl font-bold mb-4">Related Products</h2>
         <div className="grid sm:grid-cols-2 grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
-          {relatedProducts.map((relatedProduct) => (
-            <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.image[0]} />
+          {relatedProducts?.map((relatedProduct) => (
+            <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.images[0]} />
           ))}
         </div>
       </div>

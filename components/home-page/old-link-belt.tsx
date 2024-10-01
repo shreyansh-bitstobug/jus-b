@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { products } from "@/public/assets/data";
 import _ from "lodash";
+import { getCategories } from "@/lib/functions";
 
 export default function AnimatedLinkBelt() {
   const [categories, setCategories] = useState<string[]>([]);
@@ -19,14 +19,13 @@ export default function AnimatedLinkBelt() {
   }, []);
 
   useEffect(() => {
-    const categories = products.reduce((acc: string[], product) => {
-      if (!acc.includes(product.category)) {
-        acc.push(product.category);
-      }
-      return acc;
-    }, []);
-    setCategories(categories);
-  }, [products]);
+    const fetchCategories = async () => {
+      const categoriesFetched = await getCategories();
+      setCategories(categoriesFetched);
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="w-full overflow-hidden py-6 bg-snow border-b-2 border-penn-red">

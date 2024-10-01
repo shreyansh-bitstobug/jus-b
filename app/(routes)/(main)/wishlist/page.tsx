@@ -5,18 +5,17 @@ import { useEffect, useState } from "react";
 // Hooks for Store
 import { useWishlistStore } from "@/hooks/use-store";
 
-// Data
-import { products } from "@/public/assets/data";
-
 // Types
 import { ProductType } from "@/lib/types";
 
 // Components
 import ProductCard from "@/components/product/product-card";
+import { Product } from "@/lib/schema";
 
 export default function WishlistPage() {
   // State
-  const [filteredArray, setFilteredArray] = useState(products);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredArray, setFilteredArray] = useState<Product[]>([]);
 
   // Store Hooks
   const { wishlist } = useWishlistStore();
@@ -24,7 +23,13 @@ export default function WishlistPage() {
 
   // Filter the products based on the wishlist array
   useEffect(() => {
-    setFilteredArray(products.filter((product) => wishlistArray.includes(product.id)));
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data.products);
+      setFilteredArray(data.products.filter((product: Product) => wishlistArray.includes(product.id)));
+    };
+    fetchProducts();
   }, []);
 
   return (
@@ -32,7 +37,7 @@ export default function WishlistPage() {
       <h1 className="">Wishlist</h1>
       <div className="grid gap-4 mt-8 grid-cols-[repeat(auto-fit,minmax(308px,1fr))] justify-items-center">
         {filteredArray.map((item) => (
-          <ProductCard key={item.id} {...item} image={item.image[0]} />
+          <ProductCard key={item.id} {...item} image={item.images[0]} />
         ))}
       </div>
     </main>

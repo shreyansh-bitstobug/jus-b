@@ -10,8 +10,6 @@ export default function Product() {
   const category = parts[parts.length - 2]; // Cate
   const productId = parts[parts.length - 1];
 
-  console.log(category, productId);
-
   return (
     <main>
       <ProductPage productId={productId} />

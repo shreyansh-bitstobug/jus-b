@@ -1,7 +1,6 @@
 "use client";
 
 // Next Components and Hooks
-import Image from "next/image";
 import Link from "next/link";
 
 // Icons
@@ -17,11 +16,24 @@ import HeroSection from "@/components/home-page/hero-section";
 import AnimatedLinkBelt from "@/components/home-page/old-link-belt";
 
 // Data
-import { products } from "@/public/assets/data";
 import Popup from "../popup";
 import CardStack from "@/components/home-page/scroll-section/scroll-based-div";
+import { Product } from "@/lib/schema";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data.products);
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <main className="flex-1">
       <Popup />
@@ -55,13 +67,13 @@ export default function HomePage() {
         {/* Product Grid */}
         <div className="container px-4 md:px-6">
           <div className="grid gap-4 mt-8 grid-cols-[repeat(auto-fit,minmax(308px,1fr))] justify-items-center">
-            {products.slice(0, 4).map(({ name, price, id, image, sizes, category }) => (
+            {products.slice(0, 4).map(({ name, price, id, images, sizes, category }) => (
               <ProductCard
                 name={name}
                 price={price}
                 key={id}
                 id={id}
-                image={image[0]}
+                image={images[0]}
                 sizes={sizes}
                 category={category}
               />

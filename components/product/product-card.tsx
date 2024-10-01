@@ -73,7 +73,7 @@ export default function ProductCard({
           height="320"
           placeholder="blur"
           blurDataURL="/assets/placeholder.svg"
-          src={`${image}`}
+          src={`${image ?? "/assets/placeholder.svg"}`}
           width="320"
         />
 
@@ -96,7 +96,7 @@ export default function ProductCard({
         {/* Product Name and Price */}
         <div className="space-y-1">
           <h3 className="font-semibold leading-3">{_.truncate(name, { length: 25 })}</h3>
-          <p className=" font-medium text-lg text-gray-400">&#8377;{price.toLocaleString()}</p>
+          <p className=" font-medium text-lg text-gray-400">&#8377;{price.toFixed()}</p>
         </div>
 
         {/* Cart Button */}

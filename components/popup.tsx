@@ -2,13 +2,22 @@
 
 import Image from "next/image";
 import { Dialog, DialogClose, DialogContent } from "./ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export default function Popup() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
       <DialogContent
@@ -29,7 +38,7 @@ export default function Popup() {
               </p>
             </div>
             <Link href="/sign-up">
-              <Button size="sm" className="px-8 scale-90">
+              <Button size="sm" className="px-8 scale-75">
                 Sign Up
               </Button>
             </Link>

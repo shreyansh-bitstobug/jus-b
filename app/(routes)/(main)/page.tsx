@@ -1,25 +1,29 @@
 "use client";
 
+import AuthProvider from "@/components/auth-provider";
 import HomePage from "@/components/home-page/home-page";
 import MainLoader from "@/components/loader/main-loader";
+import { useHomePageStore } from "@/hooks/use-store";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [opacity, setOpacity] = useState(1);
+  const { loaderOn, setLoaderOn } = useHomePageStore();
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 5000);
-    setTimeout(() => setOpacity(0), 4000);
-  }, []);
+    setTimeout(() => {
+      setLoaderOn(false);
+    }, 5000);
+  }, []); // eslint-disable-line
 
-  return isLoading ? (
-    <MainLoader className={`opacity-[${opacity}] transition-all`} />
+  return loaderOn ? (
+    <MainLoader />
   ) : (
     <main>
-      <ProgressBar height="4px" color="#3366FF" options={{ showSpinner: false }} shallowRouting />
-      <HomePage />
+      <AuthProvider>
+        <ProgressBar height="4px" color="#3366FF" options={{ showSpinner: false }} shallowRouting />
+        <HomePage />
+      </AuthProvider>
     </main>
   );
 }

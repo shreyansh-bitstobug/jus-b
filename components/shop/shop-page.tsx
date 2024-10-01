@@ -14,10 +14,23 @@ import ProductCard from "@/components/product/product-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CategoryPage from "./categorize";
 import SortingButton from "../sorting-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Product } from "@/lib/schema";
 
 export default function ShopPage() {
-  const [sortedProducts, setSortedProducts] = useState(products);
+  const [products, setProducts] = useState<Product[]>();
+  const [sortedProducts, setSortedProducts] = useState<Product[]>();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data.products);
+      setSortedProducts(data.products);
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <main className="flex-grow">
@@ -42,15 +55,15 @@ export default function ShopPage() {
           <TabsContent value="all" className="flex flex-col items-end">
             {/* All Product Grid */}
             <div className="px-24">
-              <SortingButton products={sortedProducts} setSortedProducts={setSortedProducts} />
+              <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
             </div>
             <div className="container py-4 flex flex-wrap gap-4">
-              {sortedProducts.map((product, index) => (
+              {sortedProducts?.map((product, index) => (
                 <ProductCard
                   key={index}
                   name={product.name}
                   price={product.price}
-                  image={product.image[0]}
+                  image={product.images[0]}
                   id={product.id}
                   sizes={product.sizes}
                   category={product.category}

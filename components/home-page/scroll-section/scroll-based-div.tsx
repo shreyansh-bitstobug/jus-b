@@ -51,16 +51,20 @@ const CardStack = () => {
         {/* For Medium Screens */}
         <div className="lg:hidden flex flex-col items-center gap-6">
           <div className="flex md:flex-row flex-col md:gap-0 gap-10">
-            <Card src="/assets/category/holiday-season.png" categoryName="Holiday Season" className=" -rotate-12" />
             <Card
-              src="/assets/category/just-jb-partywear.png"
-              categoryName="Just-JB Partywear"
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-jashan.png?alt=media"
+              categoryName="Jus-B Jashan"
+              className=" -rotate-12"
+            />
+            <Card
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-partywear.png?alt=media"
+              categoryName="Jus-B Partywear"
               className=" rotate-12"
             />
           </div>
           <Card
-            src="/assets/category/just-jb-luxe.png"
-            categoryName="Just-JB Luxe"
+            src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-luxe.png?alt=media"
+            categoryName="Jus-B Luxe"
             className="md:rotate-0 -rotate-12"
           />
         </div>
@@ -86,12 +90,18 @@ const CardStack = () => {
               translateX: xLeft,
             }}
           >
-            <Card src="/assets/category/just-jb-partywear.png" categoryName="Just-JB Partywear" />
+            <Card
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-partywear.png?alt=media"
+              categoryName="Jus-B Partywear"
+            />
           </motion.div>
 
           {/* Second card (moves left and tilts left) */}
           <motion.div ref={ref} className=" absolute top-1/4 right-1/2 translate-x-1/2 z-20">
-            <Card src="/assets/category/holiday-season.png" categoryName="Holiday Season" />
+            <Card
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-jashan.png?alt=media"
+              categoryName="Jus-B Jashan"
+            />
           </motion.div>
 
           {/* Third card (moves right and tilts right) */}
@@ -103,7 +113,10 @@ const CardStack = () => {
               translateX: xRight,
             }}
           >
-            <Card src="/assets/category/just-jb-luxe.png" categoryName="Just-JB Luxe" />
+            <Card
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-luxe.png?alt=media"
+              categoryName="Jus-B Luxe"
+            />
           </motion.div>
         </div>
       </div>

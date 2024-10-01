@@ -1,12 +1,27 @@
-import { products } from "@/public/assets/data";
+"use client";
+
+import { useEffect, useState } from "react";
 import ProductCard from "../product/product-card";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ArrowRightIcon } from "lucide-react";
 import _ from "lodash";
+import { Product } from "@/lib/schema";
 
 export default function CategoryPage() {
-  const categories = products.map((product) => product.category);
+  const [products, setProducts] = useState<Product[]>();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data.products);
+    };
+
+    fetchProducts();
+  }, []);
+
+  const categories = products?.map((product) => product.category);
   const uniqueCategories = Array.from(new Set(categories));
 
   return (
@@ -23,14 +38,14 @@ export default function CategoryPage() {
           </div>
           <div className=" flex flex-wrap gap-4">
             {products
-              .filter((product) => product.category === category)
+              ?.filter((product) => product.category === category)
               .map((product, index) =>
                 index < 4 ? (
                   <ProductCard
                     key={index}
                     name={product.name}
                     price={product.price}
-                    image={product.image[0]}
+                    image={product.images[0]}
                     id={product.id}
                     sizes={product.sizes}
                     category={product.category}

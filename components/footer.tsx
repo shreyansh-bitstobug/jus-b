@@ -1,14 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 
-import { Facebook, Instagram, Locate, Mail, MapPin, Phone, ShoppingBag, Twitter } from "lucide-react";
-import { Button } from "./ui/button";
+// Next Components
 import Link from "next/link";
-import { Input } from "./ui/input";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { syne } from "@/lib/direct-fonts";
+
+// Icons
+import { Mail, MapPin, Phone } from "lucide-react";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
+
+// Utils
+import { cn } from "@/lib/utils";
+
+// Fonts
+import { syne } from "@/lib/direct-fonts";
 
 export default function Footer() {
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry");

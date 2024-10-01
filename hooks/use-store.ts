@@ -1,5 +1,30 @@
 import { AddressType } from "@/lib/types";
 import { create } from "zustand";
+import { User } from "firebase/auth"; // Import the User type from Firebase Auth
+
+type HomePage = {
+  loaderOn: boolean;
+  setLoaderOn: (loaderOn: boolean) => void;
+};
+
+//  --------------------
+//  Home Page Store
+//  --------------------
+const useHomePageStore = create<HomePage>((set) => ({
+  loaderOn: true,
+  setLoaderOn: (loaderOn) => set({ loaderOn }),
+}));
+
+type AuthStoreType = {
+  user: User | null;
+  setUser: (user: User | null) => void;
+};
+
+// Create Zustand store for authentication
+const useAuthStore = create<AuthStoreType>((set) => ({
+  user: null, // Default to no user logged in
+  setUser: (user) => set({ user }), // Function to update user
+}));
 
 // Type for ModalName
 type ModalName = "checkout" | "search" | "share" | "addressForm";
@@ -42,43 +67,42 @@ export type CartItem = {
   size: string;
 };
 
-// Type for the cart store
-type cartStoreType = {
+type CartStoreType = {
   cart: Record<string, CartItem>;
   addToCart: (id: string, size: string) => void;
   removeFromCart: (id: string, size: string) => void;
   deleteFromCart: (id: string, size: string) => void;
 };
 
-// This function stores the cart locally when the user is not logged in
-const storeLocally = (cart: Record<string, CartItem>) => {
-  if (typeof window !== "undefined") localStorage.setItem("jusb_cart", JSON.stringify(cart));
+const storeLocally = (user: string | null, cart: Record<string, CartItem>) => {
+  if (typeof window !== "undefined" && user) {
+    localStorage.setItem(`jusb_cart_${user}`, JSON.stringify(cart)); // Store cart for a specific user
+  }
 };
 
-// This function retrieves the cart from local storage
-const getLocalCart = () => {
-  if (typeof window === "undefined") return;
-  const savedCart = localStorage.getItem("jusb_cart");
+const getLocalCart = (user: string | null) => {
+  if (typeof window === "undefined" || !user) return {};
+  const savedCart = localStorage.getItem(`jusb_cart_${user}`);
   return savedCart ? JSON.parse(savedCart) : {};
 };
 
-// This function generates a key for the cart item with the id and size
 const generateCartKey = (id: string, size: string) => `${id}-${size}`;
 
 //  --------------------
 //  Cart Store
 //  --------------------
-const useCartStore = create<cartStoreType>((set) => ({
-  cart: getLocalCart(), // Get the cart from local storage when the user is not logged in with help of getLocalCart function
+const useCartStore = create<CartStoreType>((set) => ({
+  cart: getLocalCart(useAuthStore.getState().user?.uid || null), // Get cart for logged-in user
 
-  // Add to cart function
   addToCart: (id, size) =>
     set((state) => {
+      const user = useAuthStore.getState().user?.uid; // Get the current user
+      if (!user) return state; // Ensure user is logged in before adding to cart
+
       const key = generateCartKey(id, size);
       const item = state.cart[key];
 
       if (item) {
-        // If item with the same size exists, update the quantity
         const newCart = {
           cart: {
             ...state.cart,
@@ -89,13 +113,9 @@ const useCartStore = create<cartStoreType>((set) => ({
           },
         };
 
-        // Store the updated cart in localStorage
-        storeLocally(newCart.cart);
-
-        // Return the updated cart
+        storeLocally(user, newCart.cart); // Store cart for this user
         return newCart;
       } else {
-        // If item does not exist, add it to the cart
         const newCart = {
           cart: {
             ...state.cart,
@@ -107,46 +127,36 @@ const useCartStore = create<cartStoreType>((set) => ({
           },
         };
 
-        // Store the updated cart in localStorage
-        storeLocally(newCart.cart);
-
-        // Return the updated cart
+        storeLocally(user, newCart.cart); // Store cart for this user
         return newCart;
       }
     }),
 
-  // Reduce the quantity of the item in the cart
-  removeFromCart: (id, size) => {
+  removeFromCart: (id, size) =>
     set((state) => {
+      const user = useAuthStore.getState().user?.uid;
+      if (!user) return state;
+
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
       const item = newCart[key];
-      const newQuantity = item.quantity - 1; // Reduce the quantity by 1
-      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key]; // If quantity is greater than 0, update the quantity, else delete the item
+      const newQuantity = item.quantity - 1;
+      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key];
 
-      // Store the updated cart in localStorage
-      storeLocally(newCart);
-
-      // Return the updated cart
+      storeLocally(user, newCart); // Store cart for this user
       return { cart: newCart };
-    });
-  },
+    }),
 
-  // Completely remove the item from the cart
   deleteFromCart: (id, size) =>
     set((state) => {
+      const user = useAuthStore.getState().user?.uid;
+      if (!user) return state;
+
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
+      delete newCart[key];
 
-      // If the item exists, delete it
-      if (newCart[key]) {
-        delete newCart[key];
-
-        // Store the updated cart in localStorage
-        storeLocally(newCart);
-      }
-
-      // Return the updated cart
+      storeLocally(user, newCart); // Store cart for this user
       return { cart: newCart };
     }),
 }));
@@ -204,4 +214,12 @@ const useShareModalStore = create<ShareModalStore>((set) => ({
 }));
 
 // Export the custom hooks
-export { useCartStore, useWishlistStore, useModalStore, useShareModalStore, useEditAddressStore };
+export {
+  useCartStore,
+  useWishlistStore,
+  useModalStore,
+  useShareModalStore,
+  useEditAddressStore,
+  useAuthStore,
+  useHomePageStore,
+};

@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
 import { z } from "zod";
-import emailjs from "@emailjs/browser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
@@ -22,11 +21,12 @@ const formSchema = z.object({
   lname: z.string().min(1, { message: "Last Name is required" }),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(7, { message: "Phone number is required" }),
-  message: z.string().min(20, { message: "Message is shorted than 20 characters" }),
+  message: z.string().min(20, { message: "Message is shorter than 20 characters" }),
 });
 
 export default function ContactPage() {
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry");
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -70,35 +70,30 @@ export default function ContactPage() {
 
   // Handle form submission
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { fname, lname, email, phone, message } = values;
+    const { fname, lname, email, phone } = values;
     const name = `${fname} ${lname}`;
+    const query = values.message;
 
-    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.log(serviceId, templateId, publicKey);
-      console.error("Email service configuration is missing");
-      return;
-    }
+    const message: string = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\n${query}`;
 
     try {
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          name,
-          email,
-          phone,
-          message,
-        },
-        publicKey
-      );
+      setIsLoading(true);
+      const response = await fetch("/api/whatsapp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      } else {
+        form.reset(); // Reset the form after submission
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    console.log(values); // Debugging: log form values
   }
 
   return (
@@ -118,11 +113,15 @@ export default function ContactPage() {
             <div className="flex w-full gap-10">
               <div className="w-1/2">
                 <Input className=" bg-snow border-neutral-700" {...form.register("fname")} placeholder="First Name*" />
-                {form.formState.errors.fname && <span>{form.formState.errors.fname.message}</span>}
+                {form.formState.errors.fname && (
+                  <span className="text-sm text-red-600">{form.formState.errors.fname.message}</span>
+                )}
               </div>
               <div className="w-1/2">
                 <Input className=" bg-snow border-neutral-700" {...form.register("lname")} placeholder="Last Name*" />
-                {form.formState.errors.lname && <span>{form.formState.errors.lname.message}</span>}
+                {form.formState.errors.lname && (
+                  <span className="text-sm text-red-600">{form.formState.errors.lname.message}</span>
+                )}
               </div>
             </div>
 
@@ -134,26 +133,35 @@ export default function ContactPage() {
                   type="email"
                   placeholder="Email address*"
                 />
-                {form.formState.errors.email && <span>{form.formState.errors.email.message}</span>}
+                {form.formState.errors.email && (
+                  <span className="text-sm text-red-600">{form.formState.errors.email.message}</span>
+                )}
               </div>
               <div className="w-1/2">
                 <Input
                   className=" bg-snow border-neutral-700"
                   {...form.register("phone")}
                   type="tel"
-                  placeholder="Phone number with extension"
+                  placeholder="Phone number with extension*"
                 />
+                {form.formState.errors.phone && (
+                  <span className="text-sm text-red-600">{form.formState.errors.phone.message}</span>
+                )}
               </div>
             </div>
 
             <div className="w-full flex flex-col items-end gap-4">
-              <Textarea
-                {...form.register("message")}
-                placeholder="Your message here..."
-                className="min-h-40 bg-snow border-neutral-700"
-              />
-              {form.formState.errors.message && <span>{form.formState.errors.message.message}</span>}
-              <Button type="submit" size="lg" className="w-fit px-10 ">
+              <div className="w-full text-right">
+                <Textarea
+                  {...form.register("message")}
+                  placeholder="Your message here..."
+                  className="min-h-40 bg-snow border-neutral-700"
+                />
+                {form.formState.errors.message && (
+                  <span className="text-sm text-red-600">{form.formState.errors.message.message}</span>
+                )}
+              </div>
+              <Button type="submit" size="lg" disabled={isLoading} className="w-fit px-10 ">
                 Submit
               </Button>
             </div>

@@ -1,7 +1,7 @@
 import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
 import { Product, User } from "@/lib/schema";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export async function GET(req: Request, { params }: { params: { productId: string } }) {
   try {
@@ -9,6 +9,7 @@ export async function GET(req: Request, { params }: { params: { productId: strin
 
     const productRef = doc(db, "products", productId);
     const productSnap = await getDoc(productRef);
+
     if (!productSnap.exists()) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 });
     }
@@ -37,6 +38,7 @@ export async function GET(req: Request, { params }: { params: { productId: strin
 export async function POST(req: Request, { params }: { params: { productId: string } }) {
   try {
     const { productId } = params;
+    const body = await req.json();
 
     const productRef = doc(db, "products", productId);
     const productSnap = await getDoc(productRef);
@@ -51,17 +53,17 @@ export async function POST(req: Request, { params }: { params: { productId: stri
 
     // Validate request body
     if (!productId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Required details" }, { status: 400 });
     }
 
     const newProduct: Product = {
       ...product,
-      name: name,
-      price: price,
-      description: description,
+      name: body.name || name,
+      price: body.price || price,
+      description: body.description || description,
       sizes: sizes || [],
-      category: category,
-      images: images || [],
+      category: body.category || category,
+      images: body.images || images || [],
       updatedAt: new Date(),
     };
 

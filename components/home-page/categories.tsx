@@ -2,25 +2,24 @@
 
 import { useEffect, useState } from "react";
 
-import { products } from "@/public/assets/data";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import _ from "lodash";
 import { syne } from "@/lib/direct-fonts";
+import { getCategories } from "@/lib/functions";
 
 export default function Categories() {
   const [categories, setCategories] = useState<string[]>([]);
+
   useEffect(() => {
-    const categories = products.reduce((acc: string[], product) => {
-      if (!acc.includes(product.category)) {
-        acc.push(product.category);
-      }
-      return acc;
-    }, []);
-    categories.push("View All");
-    setCategories(categories);
-  }, [products]);
+    const fetchCategories = async () => {
+      const categoriesFetched = await getCategories();
+      setCategories(categoriesFetched);
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <section className="container py-6 space-y-10">

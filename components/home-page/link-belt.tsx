@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { products } from "@/public/assets/data";
 import _ from "lodash";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 import ParallaxText from "../parallax-text";
+import { getCategories } from "@/lib/functions";
 
 const CategoryBelt = ({ categories }: { categories: string[] }) => {
   return (
@@ -35,13 +34,12 @@ export default function AnimatedLinkBelt() {
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    const categories = products.reduce((acc: string[], product) => {
-      if (!acc.includes(product.category)) {
-        acc.push(product.category);
-      }
-      return acc;
-    }, []);
-    setCategories(categories);
+    const fetchCategories = async () => {
+      const categoriesFetched = await getCategories();
+      setCategories(categoriesFetched);
+    };
+
+    fetchCategories();
   }, []);
 
   return (

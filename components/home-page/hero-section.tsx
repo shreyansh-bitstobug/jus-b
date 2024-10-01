@@ -111,7 +111,7 @@ export default function HeroSection() {
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
-                "h-0 absolute transition-all bg-snow duration-1000 z-40 w-full",
+                "h-0 absolute transition-all bg-snow duration-1000 z-30 w-full",
                 show ? "show" : "",
                 imageIndex == 1 ? "top-0" : "bottom-0"
               )}
@@ -157,7 +157,7 @@ export default function HeroSection() {
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
-                "h-0 absolute transition-all bg-snow duration-1000 z-40 w-full",
+                "h-0 absolute transition-all bg-snow duration-1000 z-30 w-full",
                 show ? "show" : "",
                 imageIndex == 0 ? "top-0" : "bottom-0"
               )}

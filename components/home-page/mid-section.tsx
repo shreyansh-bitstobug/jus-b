@@ -1,5 +1,4 @@
 // Components
-import Image from "next/image";
 import Link from "next/link";
 
 // Icons
@@ -8,13 +7,25 @@ import { ChevronRight } from "lucide-react";
 // UI Components
 import { Button } from "../ui/button";
 import ProductCard from "../product/product-card";
-
-// Data
-import { products } from "@/public/assets/data";
+import { Product } from "@/lib/schema";
+import { useEffect, useState } from "react";
 
 export default function MidSection() {
+  const [luxeProducts, setLuxeProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      const luxe = await data.products.filter((product: Product) => product.category === "Jus-B Luxe");
+      console.log("Luxe", luxe);
+      setLuxeProducts(luxe);
+    };
+
+    fetchProducts();
+  }, []);
+
   // Get the luxe products
-  const luxeProducts = products.filter((product) => product.category === "Just-JB Luxe");
 
   return (
     <section className="py-6 md:py-12 lg:py-16 px-6">
@@ -34,20 +45,30 @@ export default function MidSection() {
       {/* Product Grid */}
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr_308px_308px] justify-items-center">
         {/* One Large Image */}
-        <div className=" md:h-full h-[70vh] overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-3">
-          <video src="./assets/products/13.mp4" className="w-full" width={1000} height={500} autoPlay loop muted />
+        <div className=" md:h-full h-[70vh]  overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-3">
+          <div className="max-w-[700px] w-full md:h-full h-[70vh] overflow-hidden">
+            <video
+              src="./assets/products/13.mp4"
+              className="w-full object-cover"
+              width={1000}
+              height={500}
+              autoPlay
+              loop
+              muted
+            />
+          </div>
         </div>
 
         {/* Four Product Cards */}
-        {luxeProducts.slice(0, 6).map(({ name, price, id, image, sizes, category }) => (
-          <ProductCard key={id} name={name} price={price} image={image[0]} id={id} sizes={sizes} category={category} />
+        {luxeProducts.slice(0, 6).map(({ name, price, id, images, sizes, category }) => (
+          <ProductCard key={id} name={name} price={price} image={images[0]} id={id} sizes={sizes} category={category} />
         ))}
       </div>
 
       {/* CTA */}
       <div className="flex items-center flex-col mt-8 gap-4 px-4">
         <div className="text-center">
-          <h3 className="font-bold text-2xl">Just-JB Luxe</h3>
+          <h3 className="font-bold text-2xl">Jus-B Luxe</h3>
           <p className="text-neutral-600">Shop the latest collection of high-quality luxurious fashion essentials</p>
         </div>
         <Link href="/shop">
