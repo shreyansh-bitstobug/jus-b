@@ -92,7 +92,7 @@ export default function Navbar1() {
       return acc;
     }, []);
     setCategories(categories);
-  }, [products]);
+  }, [products]); // eslint-disable-line
 
   // Logout function
   const handleLogout = () => {

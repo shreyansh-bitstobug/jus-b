@@ -80,7 +80,6 @@ export default function ProductPage({ productId }: { productId: string }) {
 
       const data = await res.json();
       const chosenProduct = data.product;
-      console.log("product", chosenProduct);
 
       if (!chosenProduct) return;
       setProduct(chosenProduct);
@@ -89,7 +88,6 @@ export default function ProductPage({ productId }: { productId: string }) {
       const related = products.filter((product: Product) => product.category === category && product.id !== productId);
 
       const video = chosenProduct.images.find((imgUrl: string) => imgUrl.includes("_video"));
-      console.log("video", video);
       setVideo(video);
 
       setRelatedProducts(related);
@@ -108,10 +106,10 @@ export default function ProductPage({ productId }: { productId: string }) {
     e.stopPropagation();
     e.preventDefault();
     if (isInWishlist(productId)) {
-      removeFromWishlist(productId);
+      removeFromWishlist(productId, user?.uid);
       toast({ title: "Removed from wishlist", description: "This item has been removed from your wishlist" });
     } else {
-      addToWishlist(productId);
+      addToWishlist(productId, user?.uid);
       toast({ title: "Added to wishlist", description: "This item has been added to your wishlist" });
     }
   };
@@ -120,7 +118,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   const handleRemoveFromCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    removeFromCart(productId, selectedSize);
+    removeFromCart(productId, selectedSize, user?.uid);
     toast({ title: "Removed from cart", description: "Your item has been removed from the cart" });
   };
 
@@ -138,7 +136,7 @@ export default function ProductPage({ productId }: { productId: string }) {
       });
       return;
     }
-    addToCart(productId, selectedSize);
+    addToCart(productId, selectedSize, user?.uid);
     toast({ title: "Added to cart", description: "Your item has been added to the cart" });
   };
 
@@ -200,14 +198,11 @@ export default function ProductPage({ productId }: { productId: string }) {
                   isInWishlist(productId) ? "fill-red-500 text-red-500" : ""
                 )}
               />
-              <span className=" sr-only">
-                {isInWishlist(productId) ? "Remover from whishlist" : "Add to whishlist"}
-              </span>
+              <span className=" sr-only">{isInWishlist(productId) ? "Remover from wishlist" : "Add to wishlist"}</span>
             </Button>
           )}
           <div className="flex space-x-4">
             {product?.images.map((image, index) => {
-              console.log("image", image);
               return image !== video ? (
                 <Image
                   key={index}

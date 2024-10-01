@@ -52,10 +52,10 @@ export default function ProductCard({
     e.preventDefault();
     if (user) {
       if (isInWishlist(id)) {
-        removeFromWishlist(id);
+        removeFromWishlist(id, user?.uid);
         toast({ title: "Removed from wishlist", description: "This item has been removed from your wishlist" });
       } else {
-        addToWishlist(id);
+        addToWishlist(id, user?.uid);
         toast({ title: "Added to wishlist", description: "This item has been added to your wishlist" });
       }
     } else {

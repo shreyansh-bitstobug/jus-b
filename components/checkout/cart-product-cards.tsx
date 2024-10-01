@@ -13,6 +13,8 @@ import { useCartStore } from "@/hooks/use-store";
 
 // UI Components
 import { useToast } from "@/components/ui/use-toast";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 // --------------------
 // Cart Product Card Component
@@ -32,8 +34,9 @@ export default function CartProductCard({
   size: string;
   quantity: number;
 }) {
-  // Store Hooks
+  // Hooks
   const { addToCart, removeFromCart, deleteFromCart } = useCartStore();
+  const [user] = useAuthState(auth); // Get the current user
 
   // Toast Hook for showing alerts
   const { toast } = useToast();
@@ -43,7 +46,7 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    removeFromCart(id, size); // Call the remove from cart function
+    removeFromCart(id, size, user?.uid); // Call the remove from cart function
 
     toast({
       title: "Removed from cart",
@@ -56,7 +59,7 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    deleteFromCart(id, size); // Call the delete from cart function
+    deleteFromCart(id, size, user?.uid); // Call the delete from cart function
 
     toast({
       title: "Deleted from cart",
@@ -69,7 +72,7 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    addToCart(id, size); // Call the add to cart function
+    addToCart(id, size, user?.uid); // Call the add to cart function
 
     toast({
       title: "Added to cart",
@@ -81,10 +84,10 @@ export default function CartProductCard({
   // Return the Cart Product Card component
   // --------------------
   return (
-    <div className="group p-4 bg-white shadow-lg relative rounded-lg w-[420px] hover:scale-105 hover:shadow-xl transition-all flex gap-4">
+    <div className="group p-4 bg-white shadow-lg relative  rounded-lg w-[420px] hover:scale-105 hover:shadow-xl transition-all flex gap-4">
       <div className="flex flex-col justify-between gap-2">
         {/* Small Image of Product */}
-        <Link href={`/shop/${id}`}>
+        <Link href={`/shop/${id}`} className="h-32 overflow-hidden">
           <Image src={image} width={150} height={150} alt={name} />
         </Link>
 

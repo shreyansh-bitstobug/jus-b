@@ -10,7 +10,7 @@ export async function GET(req: Request, { params }: { params: { userId: string }
     const wishlistSnap = await getDoc(wishlistRef);
 
     if (!wishlistSnap.exists()) {
-      return NextResponse.json({ message: "Wishlist not found" }, { status: 404 });
+      return NextResponse.json({ message: "wishlist not found" }, { status: 404 });
     }
 
     const wishlist = wishlistSnap.data() as Wishlist;
@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: { params: { userId: string 
     };
 
     await setDoc(doc(db, "wishlists", userId), wishlistData);
-    return NextResponse.json({ message: "Wishlist updated", wishlist: wishlistData }, { status: 201 });
+    return NextResponse.json({ message: "wishlist updated", wishlist: wishlistData }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ message: "Failed to update wishlist", error }, { status: 500 });
   }
@@ -47,7 +47,7 @@ export async function PATCH(req: Request, { params }: { params: { userId: string
     const wishlistSnap = await getDoc(wishlistRef);
 
     if (!wishlistSnap.exists()) {
-      return NextResponse.json({ message: "Wishlist not found" }, { status: 404 });
+      return NextResponse.json({ message: "wishlist not found" }, { status: 404 });
     }
 
     const wishlist = wishlistSnap.data() as Wishlist;
@@ -58,8 +58,8 @@ export async function PATCH(req: Request, { params }: { params: { userId: string
     };
 
     await setDoc(wishlistRef, updatedWishlist);
-    return NextResponse.json({ message: "Wishlist updated", wishlist: updatedWishlist }, { status: 200 });
+    return NextResponse.json({ message: "wishlist updated", wishlist: updatedWishlist }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Failed to update wishlist", error }, { status: 500 });
+    return NextResponse.json({ message: "Failed to update cart", error }, { status: 500 });
   }
 }

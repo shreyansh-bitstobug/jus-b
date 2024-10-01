@@ -18,13 +18,15 @@ import { useRouter } from "next/navigation";
 // Components
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
-import { Product } from "@/lib/schema";
+import { Cart, Product } from "@/lib/schema";
+import { getCart } from "@/lib/functions";
 
 export default function CartPage() {
   const [products, setProducts] = useState<Product[]>([]); // Products from API
   const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [itemTotal, setItemTotal] = useState(0);
+  const [cartItems, setCartItems] = useState<any[]>([]);
 
   // Get user from firebase
   const [user] = useAuthState(auth);
@@ -35,12 +37,6 @@ export default function CartPage() {
 
   // Router
   const router = useRouter();
-
-  // Get cart items
-  let cartItems: any[];
-  if (cart) {
-    cartItems = Object.values(cart);
-  }
 
   // Handle checkout
   const handleCheckout = () => {
@@ -53,6 +49,24 @@ export default function CartPage() {
     }
   };
 
+  // Fetch cart items from the database or store depending on user
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (user) {
+        const data = await getCart(user.uid); // Wait for the cart data to be fetched
+        console.log("cart items fetched from DB", data.items);
+        setCartItems(data.cart); // Update the state only after cart is fetched
+      } else if (cart) {
+        const cartItemsFetched = Object.values(cart);
+        console.log("cart items fetched from store", cartItemsFetched);
+        setCartItems(cartItemsFetched);
+      }
+    };
+
+    fetchCart(); // Call the function to fetch the cart
+  }, [cart, user]); // Ensure it runs when cart or user changes
+
+  // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
       const res = await fetch("/api/products");
@@ -60,32 +74,28 @@ export default function CartPage() {
       setProducts(data.products);
     };
 
-    fetchProducts();
-  }, []);
+    if (cartItems != undefined && cartItems?.length > 0) {
+      console.log("cartItems state", cartItems);
+      fetchProducts(); // Fetch products only if there are cart items
+    }
+  }, [cartItems]);
 
+  // Update cart products when cart items or products change
   useEffect(() => {
-    const updatedCartProducts: CartProductType[] = [];
-    let total = 0;
-    let itemTotal = 0;
+    if (cartItems?.length > 0 && products?.length > 0) {
+      const updatedCartProducts: CartProductType[] = [];
+      let total = 0;
+      let itemTotal = 0;
 
-    // Loop through each cart item and find the product
-    cartItems.forEach((cartItem) => {
-      const productIdParts = cartItem.id.split("-");
-      const productId = `${productIdParts[0]}-${productIdParts[1]}`;
-      const foundProduct = products.find((product) => product.id === productId);
+      console.log("cartItems white updating cart products", cartItems);
 
-      // If product is found, add it to the updated cart products
-      if (foundProduct) {
-        const existingProductIndex = updatedCartProducts.findIndex(
-          (item) => item.id === foundProduct.id && item.size === cartItem.size
-        );
+      // Loop through each cart item and find the product
+      cartItems.forEach((cartItem) => {
+        const productIdParts = cartItem.id.split("-");
+        const productId = `${productIdParts[0]}-${productIdParts[1]}`;
+        const foundProduct = products.find((product) => product.id === productId);
 
-        // Check if product already exists in the cart
-        if (existingProductIndex > -1) {
-          // Product already exists, update quantity
-          updatedCartProducts[existingProductIndex].quantity += cartItem.quantity;
-        } else {
-          // Product doesn't exist, add it
+        if (foundProduct) {
           updatedCartProducts.push({
             name: foundProduct.name,
             price: foundProduct.price,
@@ -94,23 +104,21 @@ export default function CartPage() {
             size: cartItem.size,
             quantity: cartItem.quantity,
           });
+
+          // Calculate total price
+          total += foundProduct.price * cartItem.quantity;
+          itemTotal += cartItem.quantity;
         }
+      });
 
-        // Calculate total price
-        total += foundProduct.price * cartItem.quantity;
-        itemTotal += cartItem.quantity;
-      }
-    });
-
-    // Update state
-    setCartProducts(updatedCartProducts); // Update cart products
-    setItemTotal(itemTotal); // Update item total
-    setCartTotal(total); // Update cart amount total
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cart]);
+      setCartProducts(updatedCartProducts); // Update cart products
+      setItemTotal(itemTotal); // Update item total
+      setCartTotal(total); // Update cart amount total
+    }
+  }, [cartItems, products]); // Wait for both cartItems and products
 
   return (
-    <main className="container flex-grow flex flex-col gap-6 py-4">
+    <main className="container flex-grow flex flex-col gap-6 py-6 pb-14">
       <div className=" flex justify-between items-center sm:flex-row flex-col gap-2">
         <h1 className=" md:text-2xl text-xl items-end">
           <span>Subtotal &#40;{itemTotal} items&#41;:</span> <span className="font-bold">&#8377; {cartTotal}</span>

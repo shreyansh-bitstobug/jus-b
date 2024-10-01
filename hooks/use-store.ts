@@ -1,6 +1,7 @@
 import { AddressType } from "@/lib/types";
 import { create } from "zustand";
 import { User } from "firebase/auth"; // Import the User type from Firebase Auth
+import { cartUpdate, getCart, wishlistUpdate } from "@/lib/functions";
 
 type HomePage = {
   loaderOn: boolean;
@@ -67,42 +68,44 @@ export type CartItem = {
   size: string;
 };
 
-type CartStoreType = {
+// Type for the cart store
+type cartStoreType = {
   cart: Record<string, CartItem>;
-  addToCart: (id: string, size: string) => void;
-  removeFromCart: (id: string, size: string) => void;
-  deleteFromCart: (id: string, size: string) => void;
+  addToCart: (id: string, size: string, userId?: string) => void;
+  removeFromCart: (id: string, size: string, userId?: string) => void;
+  deleteFromCart: (id: string, size: string, userId?: string) => void;
 };
 
-const storeLocally = (user: string | null, cart: Record<string, CartItem>) => {
-  if (typeof window !== "undefined" && user) {
-    localStorage.setItem(`jusb_cart_${user}`, JSON.stringify(cart)); // Store cart for a specific user
-  }
+// This function stores the cart locally when the user is not logged in
+const storeLocally = (cart: Record<string, CartItem>) => {
+  console.log("storing cart locally", cart);
+  if (typeof window !== "undefined") localStorage.setItem("jusb_cart", JSON.stringify(cart));
 };
 
-const getLocalCart = (user: string | null) => {
-  if (typeof window === "undefined" || !user) return {};
-  const savedCart = localStorage.getItem(`jusb_cart_${user}`);
+// This function retrieves the cart from local storage
+const getLocalCart = () => {
+  if (typeof window === "undefined") return;
+  const savedCart = localStorage.getItem("jusb_cart");
   return savedCart ? JSON.parse(savedCart) : {};
 };
 
+// This function generates a key for the cart item with the id and size
 const generateCartKey = (id: string, size: string) => `${id}-${size}`;
 
 //  --------------------
 //  Cart Store
 //  --------------------
-const useCartStore = create<CartStoreType>((set) => ({
-  cart: getLocalCart(useAuthStore.getState().user?.uid || null), // Get cart for logged-in user
+const useCartStore = create<cartStoreType>((set) => ({
+  cart: useAuthStore.getState().user?.uid ? getCart(useAuthStore.getState().user?.uid || "") : getLocalCart(), // Get the cart from local storage when the user is not logged in with help of getLocalCart function
 
-  addToCart: (id, size) =>
+  // Add to cart function
+  addToCart: (id, size, userId) =>
     set((state) => {
-      const user = useAuthStore.getState().user?.uid; // Get the current user
-      if (!user) return state; // Ensure user is logged in before adding to cart
-
       const key = generateCartKey(id, size);
       const item = state.cart[key];
 
       if (item) {
+        // If item with the same size exists, update the quantity
         const newCart = {
           cart: {
             ...state.cart,
@@ -113,9 +116,14 @@ const useCartStore = create<CartStoreType>((set) => ({
           },
         };
 
-        storeLocally(user, newCart.cart); // Store cart for this user
+        // Store the updated cart in localStorage
+        storeLocally(newCart.cart);
+        userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
+
+        // Return the updated cart
         return newCart;
       } else {
+        // If item does not exist, add it to the cart
         const newCart = {
           cart: {
             ...state.cart,
@@ -127,36 +135,46 @@ const useCartStore = create<CartStoreType>((set) => ({
           },
         };
 
-        storeLocally(user, newCart.cart); // Store cart for this user
+        // Store the updated cart in localStorage
+        userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
+
+        // Return the updated cart
         return newCart;
       }
     }),
 
-  removeFromCart: (id, size) =>
+  // Reduce the quantity of the item in the cart
+  removeFromCart: (id, size, userId) => {
     set((state) => {
-      const user = useAuthStore.getState().user?.uid;
-      if (!user) return state;
-
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
       const item = newCart[key];
-      const newQuantity = item.quantity - 1;
-      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key];
+      const newQuantity = item.quantity - 1; // Reduce the quantity by 1
+      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key]; // If quantity is greater than 0, update the quantity, else delete the item
 
-      storeLocally(user, newCart); // Store cart for this user
+      // Store the updated cart in localStorage
+      userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+
+      // Return the updated cart
       return { cart: newCart };
-    }),
+    });
+  },
 
-  deleteFromCart: (id, size) =>
+  // Completely remove the item from the cart
+  deleteFromCart: (id, size, userId) =>
     set((state) => {
-      const user = useAuthStore.getState().user?.uid;
-      if (!user) return state;
-
       const key = generateCartKey(id, size);
       const newCart = { ...state.cart };
-      delete newCart[key];
 
-      storeLocally(user, newCart); // Store cart for this user
+      // If the item exists, delete it
+      if (newCart[key]) {
+        delete newCart[key];
+
+        // Store the updated cart in localStorage
+        userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+      }
+
+      // Return the updated cart
       return { cart: newCart };
     }),
 }));
@@ -164,8 +182,8 @@ const useCartStore = create<CartStoreType>((set) => ({
 // Type for the wishlist store
 type WishlistStore = {
   wishlist: Set<string>;
-  addToWishlist: (item: string) => void;
-  removeFromWishlist: (item: string) => void;
+  addToWishlist: (item: string, userId?: string) => void;
+  removeFromWishlist: (item: string, userId?: string) => void;
   isInWishlist: (item: string) => boolean;
 };
 
@@ -176,18 +194,22 @@ const useWishlistStore = create<WishlistStore>((set, get) => ({
   wishlist: new Set<string>(), // Initialize the wishlist as a Set to avoid duplicates
 
   // Add item to the wishlist
-  addToWishlist: (item) =>
+  addToWishlist: (item, userId) =>
     set((state) => {
       const newWishlist = new Set(state.wishlist); // Create a new Set from the current wishlist state to avoid mutation
       newWishlist.add(item); // Add the item to the new wishlist Set
+
+      wishlistUpdate(userId, newWishlist); // Update the wishlist in the database if the user is logged in, else store it locally
       return { wishlist: newWishlist }; // Return the new wishlist Set
     }),
 
   // Remove item from the wishlist
-  removeFromWishlist: (item) =>
+  removeFromWishlist: (item, userId) =>
     set((state) => {
       const newWishlist = new Set(state.wishlist); // Create a new Set from the current wishlist state to avoid mutation
       newWishlist.delete(item); // Remove the item from the new wishlist Set
+
+      wishlistUpdate(userId, newWishlist); // Update the wishlist in the database if the user is logged in, else store it locally
       return { wishlist: newWishlist }; // Return the new wishlist Set
     }),
 
