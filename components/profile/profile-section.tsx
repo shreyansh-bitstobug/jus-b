@@ -51,7 +51,7 @@ export default function ProfileSection({ userInfo }: { userInfo: User }) {
             <div className="flex items-center space-x-2">
               <CalendarDaysIcon className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold">Date of Birth:</span>
-              <span>{format(userInfo.dob, "PP")}</span>
+              <span>{format(userInfo.dob as Date, "PP")}</span>
             </div>
 
             <div className="flex items-center space-x-2">
