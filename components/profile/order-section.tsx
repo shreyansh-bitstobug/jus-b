@@ -1,5 +1,4 @@
 import { orders } from "@/lib/data";
-import { OrderType } from "@/lib/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { format } from "date-fns";
 import { Button } from "../ui/button";

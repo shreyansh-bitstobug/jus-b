@@ -10,11 +10,11 @@ import AddressSection from "./address-section";
 import ProfileSection from "./profile-section";
 import { Button } from "../ui/button";
 import { useModalStore } from "@/hooks/use-store";
-import { OrderType } from "@/lib/types";
 import OrderSection from "./order-section";
 import { orders } from "@/lib/data";
+import { Address } from "@/lib/schema";
 
-export const addressesSample = [
+export const addressesSample: Address[] = [
   {
     id: "a1",
     name: "John Doe",
@@ -24,7 +24,7 @@ export const addressesSample = [
     country: "USA",
     postalCode: "10001",
     phoneNumber: "+1 555-555-5555",
-    default: true,
+    isDefault: true,
   },
   {
     id: "a2",
@@ -35,7 +35,7 @@ export const addressesSample = [
     country: "USA",
     postalCode: "10001",
     phoneNumber: "+1 555-555-5555",
-    default: false,
+    isDefault: false,
   },
 ];
 

@@ -1,12 +1,18 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddressSection from "../checkout/address-section";
 import { addressesSample } from "../profile/profile-page";
-import { AddressType } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import ReviewSection from "./review-section";
+import { Address, Cart, Order } from "@/lib/schema";
+import { createOrder, getCart } from "@/lib/functions";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
+import { useCartStore } from "@/hooks/use-store";
+import Confirmation from "./confirmation";
+import { useRouter } from "next/navigation";
 
 let x = 1;
 const t = (v: any) => x * v;
@@ -69,11 +75,58 @@ let checkIconVariants = {
 
 export default function ProgressSection() {
   // States
-  const [address, setAddress] = useState<AddressType | null>(null); // Address
+  const [address, setAddress] = useState<Address | null>(null); // Address
   let [step, setStep] = useState(1); // Step for the progress
+  const [items, setItems] = useState<any[]>([]); // Items in the cart
+  const [cartItems, setCartItems] = useState<any[]>([]); // Cart items
+  const [order, setOrder] = useState<Order>(); // Order
+  const [user] = useAuthState(auth); // User
+  const { cart } = useCartStore(); // Cart store
 
   // Hooks
   const { toast } = useToast(); // Toast hook
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (user) {
+        const cartItems: Cart = await getCart(user.uid as string);
+        setCartItems(cartItems.items);
+      } else {
+        const cartObj = Object.values(cart);
+        const localCart = cartObj.map((item) => {
+          return {
+            productId: item.id,
+            quantity: item.quantity,
+            size: item.size,
+          };
+        });
+        setCartItems(localCart);
+      }
+    };
+
+    fetchCart(); // Fetch cart items from the database or local storage on mount
+  }, []);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+
+      const newOrder = createOrder(
+        user?.uid as string,
+        cartItems,
+        address as Address,
+        address as Address,
+        data.products
+      );
+      console.log("New Order", newOrder);
+      setItems(newOrder.items);
+      setOrder(newOrder);
+    };
+
+    if (address) fetchItems(); // Fetch items from the database on mount and create an order
+  }, [address]);
 
   // ---- Handlers ----
   // Next button action
@@ -87,7 +140,11 @@ export default function ProgressSection() {
       });
       return;
     }
+
     setStep(step > 3 ? step : step + 1);
+    if (step === 3) {
+      router.push("/shop");
+    }
   };
 
   // Back button action
@@ -96,9 +153,9 @@ export default function ProgressSection() {
   };
 
   return (
-    <main className="container flex min-h-screen items-start  pt-10">
+    <main className="container flex min-h-screen items-start pt-10">
       <div className=" mx-auto w-full rounded-2xl bg-white border-2 border-neutral-100 shadow-sm">
-        <div className="flex justify-between rounded py-8 max-w-[700px] mx-auto">
+        <div className="flex justify-between rounded py-8 max-w-[700px] mx-auto px-4 md:px-0 sm:px-8">
           <div className="flex flex-col gap-1 items-center">
             <Step step={1} currentStep={step} />
             <h3 className="font-medium text-neutral-800">Address</h3>
@@ -113,17 +170,23 @@ export default function ProgressSection() {
           </div>
         </div>
 
-        <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="px-8">
+        <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="sm:px-8 px-2">
           {step === 1 && (
             <AddressSection selectedAddress={address} selectAddress={setAddress} addresses={addressesSample} />
           )}
         </motion.section>
 
-        <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="px-8">
-          {step === 2 && <ReviewSection address={address as AddressType} />}
+        <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="sm:px-8 px-2 ">
+          {step === 2 && order?.fare && (
+            <ReviewSection fare={order?.fare} address={address as Address} items={items ?? []} paymentMethod="COD" />
+          )}
         </motion.section>
 
-        <div className="px-8 pb-8">
+        <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="sm:px-8 px-2 ">
+          {step === 3 && order?.fare && <Confirmation order={order} />}
+        </motion.section>
+
+        <div className="sm:px-8 px-2 pb-8">
           <div className="mt-10 flex justify-between">
             <motion.button
               animate={step < 2 ? { opacity: 0 } : { opacity: 1 }}
@@ -138,7 +201,7 @@ export default function ProgressSection() {
                 step > 3 ? "pointer-events-none opacity-50" : ""
               } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
             >
-              {step >= 1 ? "Next" : "Continue Shopping"}
+              {step >= 1 && step <= 2 ? "Next" : "Continue Shopping"}
             </button>
           </div>
         </div>

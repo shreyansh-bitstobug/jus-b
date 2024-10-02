@@ -1,7 +1,7 @@
-import { AddressType } from "@/lib/types";
 import { create } from "zustand";
 import { User } from "firebase/auth"; // Import the User type from Firebase Auth
 import { cartUpdate, getCart, wishlistUpdate } from "@/lib/functions";
+import { Address } from "@/lib/schema";
 
 type HomePage = {
   loaderOn: boolean;
@@ -49,8 +49,8 @@ const useModalStore = create<ModalStore>((set) => ({
 }));
 
 type AddressStoreType = {
-  editAddress: AddressType | null;
-  setEditAddress: (editAddress: AddressType) => void;
+  editAddress: Address | null;
+  setEditAddress: (editAddress: Address) => void;
 };
 
 //  --------------------

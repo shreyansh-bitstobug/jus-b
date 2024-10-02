@@ -5,9 +5,6 @@ import { useEffect, useState } from "react";
 // Hooks for Store
 import { useWishlistStore } from "@/hooks/use-store";
 
-// Types
-import { ProductType } from "@/lib/types";
-
 // Components
 import ProductCard from "@/components/product/product-card";
 import { Product } from "@/lib/schema";

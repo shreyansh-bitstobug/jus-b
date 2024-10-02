@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserType } from "@/lib/types";
 import { PhoneIcon, MailIcon, UserIcon, CalendarDaysIcon, PencilIcon, PencilLineIcon, DeleteIcon } from "lucide-react";
 import { format } from "date-fns";
 import { RiDeleteBin2Line, RiDeleteBin3Line, RiLockPasswordFill, RiLockPasswordLine } from "react-icons/ri";
@@ -19,8 +18,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { User } from "@/lib/schema";
 
-export default function ProfileSection({ userInfo }: { userInfo: UserType }) {
+export default function ProfileSection({ userInfo }: { userInfo: User }) {
   return (
     <section className="space-y-4">
       <Card>

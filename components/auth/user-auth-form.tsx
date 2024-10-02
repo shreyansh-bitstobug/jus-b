@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthError } from "firebase/auth";
-import { UserType } from "@/lib/types";
+import { User } from "@/lib/schema";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -101,7 +101,7 @@ export function UserAuthForm({
         });
 
         const foundedUser = await responseUsers.json();
-        const userExists = foundedUser.users.find((user: UserType) => user.email === email);
+        const userExists = foundedUser.users.find((user: User) => user.email === email);
         if (userExists) {
           setAuthError("Email ID already exists.");
         }

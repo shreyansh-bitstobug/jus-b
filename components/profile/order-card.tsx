@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { OrderType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, Copy, CreditCardIcon, PackageIcon, TruckIcon, UserIcon } from "lucide-react";
@@ -20,6 +19,7 @@ import {
 import Link from "next/link";
 import _ from "lodash";
 import TooltipContext from "../tooltip-context";
+import { Order } from "@/lib/schema";
 
 interface OrderItem {
   name: string;
@@ -31,7 +31,7 @@ export default function OrderCard({
   order,
   handleCopy,
 }: {
-  order: OrderType;
+  order: Order;
   handleCopy: (e: React.MouseEvent, orderId: string) => void;
 }) {
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
@@ -137,7 +137,7 @@ export default function OrderCard({
             <h3 className="text-lg font-semibold mb-2">Order Items</h3>
             {items.length > 0 ? (
               <ul className="space-y-2">
-                {items.map((item, index) => {
+                {items.map((item) => {
                   const { id, details, quantity } = item;
                   return (
                     <li key={id} className="flex justify-between items-center">
@@ -147,7 +147,7 @@ export default function OrderCard({
                           <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
                         </TooltipContext>
                       </div>
-                      <span>{formatCurrency(details.price * item.quantity)}</span>
+                      <span>{formatCurrency(details.price * quantity)}</span>
                     </li>
                   );
                 })}

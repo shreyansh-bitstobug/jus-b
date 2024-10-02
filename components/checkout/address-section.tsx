@@ -1,9 +1,9 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { MapPinIcon, PhoneIcon, Pencil } from "lucide-react";
+import { MapPinIcon, PhoneIcon, Pencil, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
-import { AddressType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Address } from "@/lib/schema";
 
 const AddressCard = ({
   address,
@@ -11,15 +11,21 @@ const AddressCard = ({
   selectAddress,
   selectedAddress,
 }: {
-  address: AddressType;
+  address: Address;
   handleEditAddress: (id: string) => void;
-  selectAddress: (address: AddressType) => void;
-  selectedAddress: AddressType | null;
+  selectAddress: (address: Address) => void;
+  selectedAddress: Address | null;
 }) => {
   return (
-    <Card className={cn("w-[500px] ", address.id === selectedAddress?.id ? "bg-blue-100" : "")}>
+    <Card className={cn("max-w-[500px] min-w-96 ", address.id === selectedAddress?.id ? "bg-blue-100" : "")}>
       <CardContent className="flex flex-col md:flex-row items-start justify-between p-6 ">
         <div className="space-y-2 w-full">
+          <div className="flex items-start space-x-2">
+            <User className="h-5 w-5 text-muted-foreground" />
+            <div className="flex flex-col w-60">
+              <span>{address.name}</span>
+            </div>
+          </div>
           <div className="flex items-start space-x-2">
             <MapPinIcon className="h-5 w-5 text-muted-foreground" />
             <div className="flex flex-col w-60">
@@ -59,9 +65,9 @@ export default function AddressSection({
   selectAddress,
   selectedAddress,
 }: {
-  addresses: AddressType[];
-  selectAddress: (address: AddressType) => void;
-  selectedAddress: AddressType | null;
+  addresses: Address[];
+  selectAddress: (address: Address) => void;
+  selectedAddress: Address | null;
 }) {
   // Hooks
   const { openModal } = useModalStore(); // Modal store
@@ -69,7 +75,7 @@ export default function AddressSection({
 
   // Handlers
   const handleEditAddress = (id: string) => {
-    setEditAddress(addresses.find((address) => address.id === id) as AddressType);
+    setEditAddress(addresses.find((address) => address.id === id) as Address);
     openModal("addressForm");
   };
 
@@ -85,6 +91,7 @@ export default function AddressSection({
           selectedAddress={selectedAddress}
         />
       ))}
+      <Button onClick={() => openModal("addressForm")}>Add new address</Button>
     </section>
   );
 }

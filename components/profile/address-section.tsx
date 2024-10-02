@@ -1,18 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPinIcon, PhoneIcon, Pencil } from "lucide-react";
-import { AddressType } from "@/lib/types";
 import { Button } from "../ui/button";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
+import { Address } from "@/lib/schema";
 
-const AddressCard = ({
-  address,
-  handleEditAddress,
-}: {
-  address: AddressType;
-  handleEditAddress: (id: string) => void;
-}) => {
+const AddressCard = ({ address, handleEditAddress }: { address: Address; handleEditAddress: (id: string) => void }) => {
   return (
     <Card className="w-[500px] h-">
       <CardContent className="flex flex-col gap-4 md:flex-row items-start justify-between p-6 ">
@@ -31,8 +25,8 @@ const AddressCard = ({
         </div>
 
         <div className=" flex md:flex-col flex-row-reverse md:items-end md:h-full justify-between items-end w-full gap-2">
-          {address.default && <Badge className="h-fit my-[7.2px]">Default</Badge>}
-          {!address.default && (
+          {address.isDefault && <Badge className="h-fit my-[7.2px]">Default</Badge>}
+          {!address.isDefault && (
             <Button size="sm" variant="secondary">
               Make as default
             </Button>
@@ -51,14 +45,18 @@ const AddressCard = ({
   );
 };
 
-export default function AddressSection({ addresses }: { addresses: AddressType[] }) {
+export default function AddressSection({ addresses }: { addresses: Address[] }) {
   // Hooks
   const { openModal } = useModalStore(); // Modal store
   const { setEditAddress } = useEditAddressStore(); // Address store
 
   // Handlers
   const handleEditAddress = (id: string) => {
-    setEditAddress(addresses.find((address) => address.id === id) as AddressType);
+    const addressToEdit = addresses.find((address) => address.id === id);
+    if (addressToEdit) {
+      setEditAddress(addressToEdit);
+      openModal("addressForm");
+    }
     openModal("addressForm");
   };
   return (

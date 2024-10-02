@@ -15,7 +15,7 @@ export interface Order {
   orderId: string; // Order ID
   userId: string;
   status: "pending" | "completed" | "cancelled" | "shipped" | "confirmed";
-  items: { id: string; details: Product[]; quantity: number }[];
+  items: { id: string; details: Product; quantity: number; size: string }[];
   paymentStatus: "pending" | "completed" | "failed" | "refunded";
   shippingAddress: Address;
   billingAddress: Address;
@@ -65,7 +65,7 @@ export interface Product {
 export interface Cart {
   id: string;
   userId: string;
-  items: { productId: string; quantity: number }[];
+  items: { productId: string; quantity: number; size: string }[];
   createdAt: Date;
   updatedAt: Date;
 }

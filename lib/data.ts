@@ -1,6 +1,6 @@
-import { OrderType } from "./types";
+import { Order } from "@/lib/schema";
 
-export const orders: OrderType[] = [
+export const orders: Order[] = [
   {
     id: "order123",
     orderId: "ORD0001",

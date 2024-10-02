@@ -5,19 +5,17 @@ import Link from "next/link";
 
 // UI Components
 import { Dialog, DialogHeader, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useModalStore } from "@/hooks/use-store";
 import Image from "next/image";
-import { ProductType } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { products } from "@/public/assets/data";
+import { Product } from "@/lib/schema";
 
-const SearchCard = ({ product }: { product: ProductType }) => {
+const SearchCard = ({ product }: { product: Product }) => {
   return (
     <Link href={`/products/${product.id}`} className="flex items-center space-x-2 p-2 border-b border-gray-200">
       <Image
-        src={product.image[0]}
+        src={product.images[0]}
         alt={product.name}
         width={48}
         height={48}
@@ -34,7 +32,7 @@ const SearchCard = ({ product }: { product: ProductType }) => {
 export default function SearchModal() {
   // States
   const [searchQuery, setSearchQuery] = useState(""); // Search Query
-  const [searchResults, setSearchResults] = useState<ProductType[]>([]); // Search Results
+  const [searchResults, setSearchResults] = useState<Product[]>([]); // Search Results
 
   // Hooks
   const { isOpen, modalName, closeModal } = useModalStore(); // Modal Store
@@ -42,8 +40,10 @@ export default function SearchModal() {
   const isModalOpen = modalName === "search" && isOpen; // Check if the modal is open
 
   useEffect(() => {
-    const searchProducts = () => {
-      const searchedProducts = products.filter((product) => {
+    const searchProducts = async () => {
+      const products = await fetch("/api/products").then((res) => res.json());
+
+      const searchedProducts = products.filter((product: Product) => {
         return (
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,7 +51,20 @@ export default function SearchModal() {
         );
       });
 
-      setSearchResults(searchedProducts as ProductType[]);
+      const mappedProducts = searchedProducts.map((product: Product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        images: product.images,
+        category: product.category,
+        sizes: product.sizes,
+        description: product.description,
+        productId: product.id, // Assuming productId is the same as id
+        createdAt: new Date(), // Placeholder value
+        updatedAt: new Date(), // Placeholder value
+      })) as Product[];
+
+      setSearchResults(mappedProducts);
     };
 
     if (searchQuery != "") searchProducts();
