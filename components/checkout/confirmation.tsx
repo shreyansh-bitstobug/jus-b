@@ -5,10 +5,20 @@ import { Order } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { Check, CopyIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Confirmation({ order }: { order: Order }) {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const postOrder = async () => {
+      await fetch("/api/orders", {
+        method: "POST",
+        body: JSON.stringify(order),
+      });
+    };
+    postOrder();
+  }, [order]);
 
   const handleCopy = (orderId: string) => {
     navigator.clipboard.writeText(orderId);

@@ -29,6 +29,7 @@ import { removeSlash } from "@/lib/functions";
 import _ from "lodash";
 import Link from "next/link";
 import { Product } from "@/lib/schema";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ProductPage({ productId }: { productId: string }) {
   // States
@@ -39,6 +40,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>(); // Related products array state
   const [itemInCart, setItemInCart] = useState<CartItem>(); // Item in cart state
   const [alert, setAlert] = useState(false); // Alert state for size selection
+  const [loading, setLoading] = useState(true); // Loading state
 
   // Hooks
   const url = removeSlash(usePathname()); // Get the current URL
@@ -95,6 +97,7 @@ export default function ProductPage({ productId }: { productId: string }) {
     };
 
     fetchData();
+    setLoading(false);
   }, []); // eslint-disable-line
 
   // --------------------
@@ -151,7 +154,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   };
 
   return (
-    <div className="container mx-auto md:px-4 px-2 py-8">
+    <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
       <nav className="flex mb-8 text-sm">
         <Link href="/" className="text-muted-foreground hover:text-primary">
@@ -171,74 +174,109 @@ export default function ProductPage({ productId }: { productId: string }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         {/* Product Images */}
-        <div className="space-y-4 relative">
-          {video !== mainImage ? (
-            <Image
-              src={mainImage}
-              alt={product?.name || "Product-Main Image"}
-              width={2000}
-              height={560}
-              className="w-full h-[560px] object-contain rounded-lg"
-            />
-          ) : (
-            <video id="vid1" className="video-js h-[560px] mx-auto" controls>
-              <source src={video} type="video/mp4" />
-            </video>
-          )}
-          {user && (
-            <Button
-              size="icon"
-              variant="secondary"
-              className="absolute top-2 right-6 rounded-full  transition-opacity"
-              onClick={handleWishlist}
-            >
-              <Heart
-                className={cn(
-                  "h-5 w-5 active:animate-ping",
-                  isInWishlist(productId) ? "fill-red-500 text-red-500" : ""
-                )}
+        {loading ? (
+          <Skeleton className="h-[600px] w-full bg-muted-foreground/20" />
+        ) : (
+          <div className="space-y-4 relative">
+            {video !== mainImage ? (
+              <Image
+                src={mainImage || "/assets/placeholder.svg"}
+                alt={product?.name || "Product-Main Image"}
+                width={2000}
+                height={560}
+                className="w-full h-[560px] object-contain rounded-lg"
               />
-              <span className=" sr-only">{isInWishlist(productId) ? "Remover from wishlist" : "Add to wishlist"}</span>
-            </Button>
-          )}
-          <div className="flex space-x-4">
-            {product?.images.map((image, index) => {
-              return image !== video ? (
-                <Image
-                  key={index}
-                  src={image || "/assets/placeholder.svg"}
-                  alt={`${product.name} ${index + 1}`}
+            ) : (
+              <video id="vid1" className="video-js h-[560px] mx-auto" controls>
+                <source src={video} type="video/mp4" />
+              </video>
+            )}
+            {user && (
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute top-2 right-6 rounded-full  transition-opacity"
+                onClick={handleWishlist}
+              >
+                <Heart
                   className={cn(
-                    "w-20 h-20 object-contain rounded-md cursor-pointer ",
-                    image === mainImage && "border-2 border-primary border-neutral-200 "
+                    "h-5 w-5 active:animate-ping",
+                    isInWishlist(productId) ? "fill-red-500 text-red-500" : ""
                   )}
-                  onClick={() => setMainImage(image)}
-                  width={80}
-                  height={80}
                 />
-              ) : (
-                <div
-                  onClick={() => setMainImage(image)}
-                  key={index}
-                  className="w-20 h-20 object-cover flex justify-center bg-neutral-100 items-center rounded-md cursor-pointer p-1 text-neutral-800"
-                >
-                  <PlayCircleIcon className="w-14 h-14" />
-                </div>
-              );
-            })}
+                <span className=" sr-only">
+                  {isInWishlist(productId) ? "Remover from wishlist" : "Add to wishlist"}
+                </span>
+              </Button>
+            )}
+            <div className="flex space-x-4">
+              {product?.images.map((image, index) => {
+                return image !== video ? (
+                  <Image
+                    key={index}
+                    src={image || "/assets/placeholder.svg"}
+                    alt={`${product?.name} ${index + 1}`}
+                    className={cn(
+                      "w-20 h-20 object-contain rounded-md cursor-pointer ",
+                      image === mainImage && "border-2 border-primary border-neutral-200 "
+                    )}
+                    onClick={() => setMainImage(image)}
+                    width={80}
+                    height={80}
+                  />
+                ) : (
+                  <div
+                    onClick={() => setMainImage(image)}
+                    key={index}
+                    className="w-20 h-20 object-cover flex justify-center bg-neutral-100 items-center rounded-md cursor-pointer p-1 text-neutral-800"
+                  >
+                    <PlayCircleIcon className="w-14 h-14" />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Product Details */}
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold">{product?.name}</h1>
-          <p className="text-2xl font-semibold">&#8377;{product?.price.toFixed(2)}</p>
-          <p className="text-muted-foreground text-[16px] leading-5">{product?.description.text}</p>
+        <div className="space-y-6 ">
+          {loading ? (
+            <Skeleton className="w-full h-16 bg-muted-foreground/20" />
+          ) : (
+            <h1 className="sm:text-3xl text-2xl font-bold">{product?.name}</h1>
+          )}
+          {loading ? (
+            <Skeleton className="w-40 h-10 bg-muted-foreground/20" />
+          ) : (
+            <p className="text-2xl font-semibold">&#8377;{product?.price.toFixed(2)}</p>
+          )}
+          {loading ? (
+            <div className="space-y-3">
+              <Skeleton className="w-full h-6 bg-muted-foreground/20" />
+              <Skeleton className="w-full h-6 bg-muted-foreground/20" />
+              <Skeleton className="w-full h-6 bg-muted-foreground/20" />
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-[16px] leading-5">{product?.description.text}</p>
+          )}
 
           <div className="grid grid-cols-2 text-[16px] gap-2 pb-4 ">
-            {product?.description.features.map((feature, index) => (
-              <li key={index}>{feature}</li>
-            ))}
+            {loading ? (
+              <>
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+                <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
+              </>
+            ) : (
+              product?.description.features.map((feature, index) => <li key={index}>{feature}</li>)
+            )}
           </div>
 
           {/* Add to Cart and Share Buttons */}
@@ -288,9 +326,20 @@ export default function ProductPage({ productId }: { productId: string }) {
       <div>
         <h2 className="text-2xl font-bold mb-4">Related Products</h2>
         <div className="grid sm:grid-cols-2 grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
-          {relatedProducts?.map((relatedProduct) => (
-            <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.images[0]} />
-          ))}
+          {loading ? (
+            <>
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              <Skeleton className="w-[308px] h-[396px] bg-muted-foreground/20" />
+            </>
+          ) : (
+            relatedProducts?.map((relatedProduct) => (
+              <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.images[0]} />
+            ))
+          )}
         </div>
       </div>
     </div>

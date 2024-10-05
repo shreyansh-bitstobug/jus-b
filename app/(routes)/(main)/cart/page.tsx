@@ -20,6 +20,7 @@ import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
 import { Cart, Product } from "@/lib/schema";
 import { getCart } from "@/lib/functions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CartPage() {
   const [products, setProducts] = useState<Product[]>([]); // Products from API
@@ -27,6 +28,7 @@ export default function CartPage() {
   const [cartTotal, setCartTotal] = useState(0);
   const [itemTotal, setItemTotal] = useState(0);
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Get user from firebase
   const [user] = useAuthState(auth);
@@ -52,10 +54,11 @@ export default function CartPage() {
   // Fetch cart items from the database or store depending on user
   useEffect(() => {
     const fetchCart = async () => {
+      setLoading(true); // Set loading to true
       if (user) {
         const data = await getCart(user.uid); // Wait for the cart data to be fetched
         console.log("cart items fetched from DB", data.items);
-        setCartItems(data.cart); // Update the state only after cart is fetched
+        setCartItems(data.items); // Update the state only after cart is fetched
       } else if (cart) {
         const cartItemsFetched = Object.values(cart);
         console.log("cart items fetched from store", cartItemsFetched);
@@ -91,8 +94,7 @@ export default function CartPage() {
 
       // Loop through each cart item and find the product
       cartItems.forEach((cartItem) => {
-        const productIdParts = cartItem.id.split("-");
-        const productId = `${productIdParts[0]}-${productIdParts[1]}`;
+        const productId = cartItem.productId;
         const foundProduct = products.find((product) => product.id === productId);
 
         if (foundProduct) {
@@ -103,6 +105,7 @@ export default function CartPage() {
             id: foundProduct.id,
             size: cartItem.size,
             quantity: cartItem.quantity,
+            category: foundProduct.category,
           });
 
           // Calculate total price
@@ -114,6 +117,7 @@ export default function CartPage() {
       setCartProducts(updatedCartProducts); // Update cart products
       setItemTotal(itemTotal); // Update item total
       setCartTotal(total); // Update cart amount total
+      setLoading(false); // Set loading to false
     }
   }, [cartItems, products]); // Wait for both cartItems and products
 
@@ -126,12 +130,19 @@ export default function CartPage() {
         <Button
           className="md:text-lg text-base md:w-72 sm:w-60 md:h-11 w-full max-w-72 rounded-full md:px-8 px-6"
           onClick={handleCheckout}
+          disabled={cartProducts.length === 0 || loading}
         >
           Proceed to buy {itemTotal} items
         </Button>
       </div>
 
-      {cartProducts.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-wrap lg:justify-start justify-center gap-8">
+          <Skeleton className="sm:w-[420px] w-96 h-[200px] rounded-lg bg-muted-foreground/20" />
+          <Skeleton className="sm:w-[420px] w-96 h-[200px] rounded-lg bg-muted-foreground/20" />
+          <Skeleton className="sm:w-[420px] w-96 h-[200px] rounded-lg bg-muted-foreground/20" />
+        </div>
+      ) : cartProducts.length === 0 ? (
         <div className="flex flex-col gap-10 p-20 h-[50vh] justify-center items-center">
           No items added to cart
           <Link href="/shop" className="text-lg underline">
@@ -140,7 +151,7 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="flex flex-wrap lg:justify-start justify-center gap-8">
-          {cartProducts.map(({ name, quantity, size, price, id, imgUrl }) => (
+          {cartProducts.map(({ name, quantity, size, price, id, imgUrl, category }) => (
             <CartProductCard
               key={`${id}-${size}`} // Use id and size as key to ensure uniqueness
               name={name}
@@ -149,6 +160,7 @@ export default function CartPage() {
               id={id}
               size={size}
               quantity={quantity}
+              category={category}
             />
           ))}
         </div>

@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useModalStore } from "@/hooks/use-store";
+import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 const addressFormSchema = z.object({
   name: z.string().min(2).max(30),
@@ -21,6 +24,8 @@ const addressFormSchema = z.object({
 
 export default function AddressModal() {
   const { isOpen, closeModal, modalName } = useModalStore();
+  const { editAddress, setEditAddress } = useEditAddressStore();
+  const [user] = useAuthState(auth);
 
   const isModalOpen = isOpen && modalName === "addressForm";
 
@@ -29,12 +34,36 @@ export default function AddressModal() {
     defaultValues: {},
   });
 
-  function onSubmit(values: z.infer<typeof addressFormSchema>) {
-    console.log(values);
+  const close = () => {
+    closeModal();
+    form.reset();
+    setEditAddress(null);
+  };
+
+  useEffect(() => {
+    if (editAddress) {
+      form.reset(editAddress);
+      form.setValue("phone", editAddress.phoneNumber);
+      form.setValue("address1", editAddress.address[0]);
+      form.setValue("address2", editAddress.address[1]);
+    }
+  }, [isModalOpen]);
+
+  async function onSubmit(values: z.infer<typeof addressFormSchema>) {
+    if (!user) return;
+
+    const res = await fetch(`/api/users/${user.uid}`, {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+
+    if (res.ok) {
+      closeModal();
+    }
   }
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={closeModal}>
+    <Dialog open={isModalOpen} onOpenChange={close}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add address</DialogTitle>
@@ -138,7 +167,7 @@ export default function AddressModal() {
                 />
                 <FormField
                   control={form.control}
-                  name="state"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem className="flex-grow">
                       <FormLabel>

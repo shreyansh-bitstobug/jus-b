@@ -79,11 +79,12 @@ export default function ProgressSection() {
   let [step, setStep] = useState(1); // Step for the progress
   const [items, setItems] = useState<any[]>([]); // Items in the cart
   const [cartItems, setCartItems] = useState<any[]>([]); // Cart items
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const [order, setOrder] = useState<Order>(); // Order
-  const [user] = useAuthState(auth); // User
-  const { cart } = useCartStore(); // Cart store
 
   // Hooks
+  const [user] = useAuthState(auth); // User
+  const { cart } = useCartStore(); // Cart store
   const { toast } = useToast(); // Toast hook
   const router = useRouter();
 
@@ -129,6 +130,20 @@ export default function ProgressSection() {
   }, [address]);
 
   // ---- Handlers ----
+  // Posting the order to the database
+  const postOrder = async () => {
+    setIsLoading(true);
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(order),
+    });
+    console.log(res.json());
+    return res.ok;
+  };
+
   // Next button action
   const nextAction = () => {
     if (address === null) {
@@ -142,7 +157,13 @@ export default function ProgressSection() {
     }
 
     setStep(step > 3 ? step : step + 1);
+
+    if (step === 2) {
+      postOrder();
+      setIsLoading(false);
+    }
     if (step === 3) {
+      setIsLoading(true);
       router.push("/shop");
     }
   };
@@ -189,7 +210,7 @@ export default function ProgressSection() {
         <div className="sm:px-8 px-2 pb-8">
           <div className="mt-10 flex justify-between">
             <motion.button
-              animate={step < 2 ? { opacity: 0 } : { opacity: 1 }}
+              animate={step < 2 || step === 3 ? { opacity: 0 } : { opacity: 1 }}
               onClick={() => previousAction()}
               className="rounded px-2 py-1 text-slate-400 hover:text-slate-700"
             >
@@ -197,6 +218,7 @@ export default function ProgressSection() {
             </motion.button>
             <button
               onClick={() => nextAction()}
+              disabled={isLoading}
               className={`${
                 step > 3 ? "pointer-events-none opacity-50" : ""
               } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}

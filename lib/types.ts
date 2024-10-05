@@ -6,6 +6,7 @@ export type CartProductType = {
   quantity: number;
   size: string;
   imgUrl: string;
+  category: string;
 };
 
 // ------------------------------------ //

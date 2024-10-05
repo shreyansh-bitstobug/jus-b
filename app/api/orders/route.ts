@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       shippingAddress: shippingAddress,
       billingAddress: billingAddress,
       fare: fare,
-      placedAt: new Date(placedAt),
+      placedAt: new Date(),
       deliveredAt: deliveredAt ? new Date(deliveredAt) : null,
       trackingId: trackingId,
       paymentMethod: paymentMethod,

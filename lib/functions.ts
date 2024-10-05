@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid"; // Use to generate unique order IDs
 import { CartItem } from "@/hooks/use-store";
 import { Cart, Product, Wishlist, Order, Address } from "@/lib/schema";
 
@@ -184,4 +183,16 @@ export const createOrder = (
   };
 
   return order;
+};
+
+export const formatCurrency = async (amount: number, currency?: string): Promise<string> => {
+  // const currencyCode = currency.toLowerCase(); // Convert currency to lowercase
+  const currencyCode = "usd"; // Default currency code for testing
+
+  const api = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json"; // API endpoint to fetch currency data based on INR
+  const res = await fetch(api);
+  const data = await res.json();
+  const exchangeRate = await data.inr[currencyCode]; // Get the exchange rate for the given currency code
+  const convertedAmount = amount * exchangeRate; // Convert the amount to the given currency
+  return convertedAmount.toFixed(2); // Return the converted amount with 2 decimal places
 };

@@ -26,6 +26,7 @@ export default function CartProductCard({
   id, // Product id (for cart)
   size, // Product size (for cart)
   quantity, // Product quantity (for cart)
+  category, // Product category
 }: {
   name: string;
   price: number;
@@ -33,6 +34,7 @@ export default function CartProductCard({
   id: string;
   size: string;
   quantity: number;
+  category: string;
 }) {
   // Hooks
   const { addToCart, removeFromCart, deleteFromCart } = useCartStore();
@@ -84,24 +86,24 @@ export default function CartProductCard({
   // Return the Cart Product Card component
   // --------------------
   return (
-    <div className="group p-4 bg-white shadow-lg relative  rounded-lg w-[420px] hover:scale-105 hover:shadow-xl transition-all flex gap-4">
+    <div className="group p-4 bg-white shadow-lg relative  rounded-lg sm:w-[420px] w-96 hover:scale-105 hover:shadow-xl transition-all flex gap-4">
       <div className="flex flex-col justify-between gap-2">
         {/* Small Image of Product */}
-        <Link href={`/shop/${id}`} className="h-32 overflow-hidden">
+        <Link href={`/shop/${category}/${id}`} className="h-32 w-32 overflow-hidden">
           <Image src={image} width={150} height={150} alt={name} />
         </Link>
 
         {/* Quantity Selector */}
         <div className=" h-8 flex items-center justify-between text-center text-lg font-bold border border-neutral-200 rounded-lg">
           <button
-            className="text-black h-8 w-8 rounded-l-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
+            className="text-black h-8 w-10 rounded-l-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
             onClick={handleRemoveFromCart}
           >
             -
           </button>
-          <div className=" w-8 h-8 content-center bg-neutral-100">{quantity}</div>
+          <div className=" w-12 h-8 content-center bg-neutral-100">{quantity}</div>
           <button
-            className="text-black h-8 w-8 rounded-r-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
+            className="text-black h-8 w-10 rounded-r-lg items-center justify-center flex  px-4 border border-neutral-200 font-bold text-xl bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 active:text-black"
             onClick={handleAddToCart}
           >
             +
@@ -120,7 +122,7 @@ export default function CartProductCard({
       {/* Product Details */}
       <div className=" flex flex-col justify-between gap-4">
         {/* Name */}
-        <Link href={`/shop/${id}`}>
+        <Link href={`/shop/${category}/${id}`}>
           <h3 className="font-medium text-sm text-neutral-900 leading-snug group-hover:text-primary-600">{name}</h3>
         </Link>
 

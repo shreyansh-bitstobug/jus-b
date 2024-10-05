@@ -41,14 +41,13 @@ export async function POST(req: Request, { params }: { params: { orderId: string
     const orderRef = doc(db, "orders", orderId);
     const orderSnap = await getDoc(orderRef);
 
+    const body = await req.json();
+
     if (!orderSnap.exists()) {
       return NextResponse.json({ message: "order not found" }, { status: 404 });
     }
 
     const order = orderSnap.data() as Order;
-
-    const { status, paymentMethod, paymentStatus, trackingId, deliveredAt, fare, shippingAddress, billingAddress } =
-      order;
 
     // Validate request body
     if (!orderId) {
@@ -57,14 +56,14 @@ export async function POST(req: Request, { params }: { params: { orderId: string
 
     const newOrder: Order = {
       ...order,
-      status,
-      paymentMethod,
-      paymentStatus,
-      trackingId,
-      deliveredAt: deliveredAt ? new Date(deliveredAt) : null,
-      fare,
-      shippingAddress,
-      billingAddress,
+      status: body.status || order.status,
+      paymentMethod: body.paymentMethod || order.paymentMethod,
+      paymentStatus: body.paymentStatus || order.paymentStatus,
+      trackingId: body.trackingId || order.trackingId,
+      deliveredAt: body.deliveredAt ? new Date(body.deliveredAt) : order.deliveredAt || null,
+      fare: body.fare || order.fare,
+      shippingAddress: body.shippingAddress || order.shippingAddress,
+      billingAddress: body.billingAddress || order.billingAddress,
       updatedAt: new Date(),
     };
 

@@ -45,12 +45,16 @@ const useModalStore = create<ModalStore>((set) => ({
   isOpen: false,
   modalName: null,
   openModal: (name) => set({ isOpen: true, modalName: name }),
-  closeModal: () => set({ isOpen: false, modalName: null }),
+  closeModal: () => {
+    useEditAddressStore.setState({ editAddress: null });
+    console.log("Edit address", useEditAddressStore.getState().editAddress);
+    return set({ isOpen: false, modalName: null });
+  },
 }));
 
 type AddressStoreType = {
   editAddress: Address | null;
-  setEditAddress: (editAddress: Address) => void;
+  setEditAddress: (editAddress: Address | null) => void;
 };
 
 //  --------------------
@@ -233,6 +237,23 @@ const useShareModalStore = create<ShareModalStore>((set) => ({
   message: "",
   setLink: (link) => set({ link }),
   setMessage: (message) => set({ message }),
+}));
+
+// Type for the currency
+type currency = "INR" | "USD" | "EUR" | "GBP" | "AUD" | "ATS" | "SGD" | "AED";
+
+// Type for the currency store
+type CurrencyStore = {
+  currency: currency;
+  setCurrency: (currency: currency) => void;
+};
+
+//  --------------------
+//  Currency Store
+//  --------------------
+const useCurrencyStore = create<CurrencyStore>((set) => ({
+  currency: "INR",
+  setCurrency: (currency) => set({ currency }),
 }));
 
 // Export the custom hooks
