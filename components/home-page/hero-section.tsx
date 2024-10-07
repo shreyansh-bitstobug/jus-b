@@ -70,7 +70,7 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="   text-muted-foreground text-center">
+            <p className="text-muted-foreground text-center">
               <b className="text-black">Jus-B by JB</b> is an online fashion boutique offering trendy, modern styles for
               women. From chic dresses to stylish tops, their collection features the latest designs, blending quality
               and affordability for the modern woman&#x27;s wardrobe.
@@ -101,13 +101,13 @@ export default function HeroSection() {
 
   return (
     <section className="relative border-b-2 border-penn-red md:pb-0 pb-5">
-      <div className=" min-h-screen lg:space-y-0 space-y-6">
+      <div className=" md:min-h-screen lg:space-y-0 space-y-6">
         {/* Center Content (for medium screen sizes) */}
         <CenterDiv className="lg:hidden space-y-4 py-8 flex flex-col px-8" />
 
         <div className="grid grid-cols-2 lg:gap-8 gap-4 lg:grid-cols-3 lg:items-center">
           {/* Left Image */}
-          <div className="group md:h-screen h-[70vh] overflow-hidden relative lg:w-full">
+          <div className="group md:h-screen sm:h-[50vh] h-[30vh] overflow-hidden relative lg:w-full">
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
@@ -153,7 +153,7 @@ export default function HeroSection() {
           <CenterDiv className="hidden lg:flex lg:flex-col" />
 
           {/* Right Image */}
-          <div className="group md:h-screen h-[70vh]  overflow-hidden relative">
+          <div className="group md:h-screen sm:h-[50vh] h-[30vh]  overflow-hidden relative">
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
@@ -172,7 +172,7 @@ export default function HeroSection() {
             >
               <Image
                 src="/assets/hero3.jpg?height=600&width=500"
-                alt="Left decorative image"
+                alt="Right decorative image"
                 width={500}
                 height={600}
                 className="object-cover transition-all duration-1000 group-hover:scale-110"
@@ -187,7 +187,7 @@ export default function HeroSection() {
             >
               <Image
                 src="/assets/hero4.jpg?height=600&width=500"
-                alt="Left decorative image"
+                alt="Right decorative image"
                 width={500}
                 height={600}
                 className="object-cover transition-all duration-1000 group-hover:scale-110"

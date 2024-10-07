@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
 import { Address } from "@/lib/schema";
+import { Skeleton } from "../ui/skeleton";
 
 const AddressCard = ({
   address,
@@ -17,7 +18,7 @@ const AddressCard = ({
   selectedAddress: Address | null;
 }) => {
   return (
-    <Card className={cn("max-w-[500px] min-w-96 ", address.id === selectedAddress?.id ? "bg-blue-100" : "")}>
+    <Card className={cn("max-w-[500px] min-w-72 ", address.id === selectedAddress?.id ? "bg-blue-100" : "")}>
       <CardContent className="flex flex-col md:flex-row items-start justify-between p-6 ">
         <div className="space-y-2 w-full">
           <div className="flex items-start space-x-2">
@@ -63,10 +64,12 @@ const AddressCard = ({
 export default function AddressSection({
   addresses,
   selectAddress,
+  isLoading,
   selectedAddress,
 }: {
   addresses: Address[];
   selectAddress: (address: Address) => void;
+  isLoading: boolean;
   selectedAddress: Address | null;
 }) {
   // Hooks
@@ -82,15 +85,19 @@ export default function AddressSection({
   return (
     <section className="flex flex-col gap-8 items-center justify-center">
       <h1 className="text-3xl font-semibold">Delivery Address</h1>
-      {addresses.map((address) => (
-        <AddressCard
-          key={address.id}
-          address={address}
-          handleEditAddress={handleEditAddress}
-          selectAddress={selectAddress}
-          selectedAddress={selectedAddress}
-        />
-      ))}
+      {isLoading ? (
+        <Skeleton className="w-72 sm:w-96 h-48" />
+      ) : (
+        addresses.map((address) => (
+          <AddressCard
+            key={address.id}
+            address={address}
+            handleEditAddress={handleEditAddress}
+            selectAddress={selectAddress}
+            selectedAddress={selectedAddress}
+          />
+        ))
+      )}
       <Button onClick={() => openModal("addressForm")}>Add new address</Button>
     </section>
   );

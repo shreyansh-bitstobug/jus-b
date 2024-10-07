@@ -67,7 +67,7 @@ export default function HomePage() {
         {/* Product Grid */}
         <div className="container px-4 md:px-6">
           <div className="grid gap-4 mt-8 grid-cols-[repeat(auto-fit,minmax(308px,1fr))] justify-items-center">
-            {products.slice(0, 4).map(({ name, price, id, images, sizes, category }) => (
+            {products?.slice(0, 4).map(({ name, price, id, images, sizes, category }) => (
               <ProductCard
                 name={name}
                 price={price}

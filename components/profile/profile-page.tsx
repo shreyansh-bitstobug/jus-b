@@ -9,78 +9,63 @@ import { useRouter } from "next/navigation";
 import AddressSection from "./address-section";
 import ProfileSection from "./profile-section";
 import { Button } from "../ui/button";
-import { useModalStore } from "@/hooks/use-store";
+import { useChangeStore, useModalStore, useProfileStore } from "@/hooks/use-store";
 import OrderSection from "./order-section";
 import { orders } from "@/lib/data";
-import { Address } from "@/lib/schema";
-
-export const addressesSample: Address[] = [
-  {
-    id: "a1",
-    name: "John Doe",
-    address: ["123 Main St", "Apt 4B"],
-    city: "New York",
-    state: "NY",
-    country: "USA",
-    postalCode: "10001",
-    phoneNumber: "+1 555-555-5555",
-    isDefault: true,
-  },
-  {
-    id: "a2",
-    name: "Will Doe",
-    address: ["123 White House", "Room 40024"],
-    city: "Indore",
-    state: "NY",
-    country: "USA",
-    postalCode: "10001",
-    phoneNumber: "+1 555-555-5555",
-    isDefault: false,
-  },
-];
+import { Address, User } from "@/lib/schema";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ProfilePage() {
-  const [userInfo, setUserInfo] = useState({
-    id: "u12345",
-    userId: "user001",
-    firstName: "John",
-    lastName: "Doe",
-    displayName: "johnny_doe",
-    phoneNumber: "+1 555-555-5555",
-    dob: new Date("1990-08-15"),
-    email: "john.doe@example.com",
-    addresses: addressesSample,
-    createdAt: new Date("2023-01-01"),
-    updatedAt: new Date("2023-09-13"),
-  });
+  const [userInfo, setUserInfo] = useState<User>();
+  const [addresses, setAddresses] = useState<Address[]>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Convert timestamp to date
+  const timestampToDate = (timestamp: any) => new Date(timestamp.seconds * 1000);
 
   // Hooks
-  const [user] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
   const { openModal } = useModalStore();
+  const { setProfile } = useProfileStore();
+  const { change } = useChangeStore();
 
   // Redirect to sign-in page if user is not signed in
   if (!user) router.push("/sign-in?redirect=profile");
 
   // Fetch user data
   useEffect(() => {
-    if (user) {
-      const name = user.displayName?.split(" ");
-      setUserInfo((prev) => ({
-        ...prev,
-        firstName: name ? name[0] : "",
-        lastName: name ? name[1] : "",
-        email: user.email || "",
-        createdAt: new Date(user.metadata.creationTime || ""),
-      }));
-    }
-  }, [user]);
+    const fetchDbUser = async () => {
+      const res = await fetch(`/api/users/${user?.uid}`);
+      const data = await res.json();
+      setUserInfo({
+        ...data.user,
+        dob: timestampToDate(data.user.dob),
+        createdAt: timestampToDate(data.user.createdAt),
+      });
+      setAddresses(data.user.addresses);
+      setIsLoading(false);
+    };
 
-  const addresses = userInfo.addresses;
+    // If not loading and user, fetch user data from the database
+    if (!loading && user) fetchDbUser();
+  }, [user?.uid, change]);
 
   // Handlers
   const handleAddAddress = () => {
     openModal("addressForm");
+  };
+
+  const handleEditProfile = () => {
+    setProfile({
+      firstName: userInfo?.firstName || "",
+      lastName: userInfo?.lastName,
+      displayName: userInfo?.displayName || "",
+      email: userInfo?.email || "",
+      dob: userInfo?.dob || null,
+      phoneNumber: userInfo?.phoneNumber,
+    });
+    openModal("profile");
   };
 
   return (
@@ -97,13 +82,13 @@ export default function ProfilePage() {
         <TabsContent value="profile">
           <div className="flex justify-between items-center mb-4">
             <h1 className="font-semibold text-2xl">User Info</h1>
-            <Button className="flex items-center space-x-2 w-fit" variant="outline">
+            <Button className="flex items-center space-x-2 w-fit" variant="outline" onClick={handleEditProfile}>
               <PencilIcon className="h-5 w-5 text-muted-foreground" />
               <span className="font-semibold ">Edit Profile</span>
             </Button>
           </div>
 
-          <ProfileSection userInfo={userInfo} />
+          {isLoading ? <Skeleton className="w-full h-[50vh]" /> : <ProfileSection userInfo={userInfo as User} />}
         </TabsContent>
 
         {/* Address Tab */}
@@ -115,7 +100,7 @@ export default function ProfilePage() {
               <span className="font-semibold">Add new</span>
             </Button>
           </div>
-          <AddressSection addresses={addresses} />
+          <AddressSection addresses={addresses as Address[]} />
         </TabsContent>
 
         {/* Orders Tab */}

@@ -21,9 +21,6 @@ import { HiChevronDown, HiMenuAlt2 } from "react-icons/hi";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
 
-// Data
-import { products } from "@/public/assets/data";
-
 // UI Components
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -36,9 +33,12 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { removeSlash } from "@/lib/functions";
+import { Product } from "@/lib/schema";
+import CurrencyButton from "../currency-button";
 
 export default function Navbar1() {
   // State
+  const [products, setProducts] = useState([]); // Products from the API
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
   const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
@@ -83,16 +83,22 @@ export default function Navbar1() {
     }
   }, [url]);
 
-  // Get the categories from the store
+  // Get the categories reduced from the products from API
   useEffect(() => {
-    const categories = products.reduce((acc: string[], product) => {
-      if (!acc.includes(product.category)) {
-        acc.push(product.category);
-      }
-      return acc;
-    }, []);
-    setCategories(categories);
-  }, [products]); // eslint-disable-line
+    const fetchProducts = async () => {
+      const response = await fetch("/api/products");
+      const data = await response.json();
+      setProducts(data);
+      const categories = await data.products?.reduce((acc: string[], product: Product) => {
+        if (!acc.includes(product.category)) {
+          acc.push(product.category);
+        }
+        return acc;
+      }, []);
+      setCategories(categories);
+    };
+    fetchProducts();
+  }, []);
 
   // Logout function
   const handleLogout = () => {
@@ -228,6 +234,8 @@ export default function Navbar1() {
               <Search className="mx-auto" />
             </Button>
 
+            <CurrencyButton />
+
             {/* Cart Button */}
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="shrink-0 relative flip-in-ver-right-hover">
@@ -275,9 +283,9 @@ export default function Navbar1() {
 
                   {/* Whishlist Button */}
                   <DropdownMenuItem className="hover:bg-neutral-300">
-                    <Link href="/whishlist" className="w-full flex items-center">
+                    <Link href="/wishlist" className="w-full flex items-center">
                       <Heart className="w-5 mr-2" />
-                      Whishlist
+                      Wishlist
                     </Link>
                   </DropdownMenuItem>
 
@@ -323,7 +331,7 @@ export default function Navbar1() {
             Shop <HiChevronDown className="w-4 h-4 inline" />
           </HoverCardTrigger>
           <HoverCardContent className="flex flex-col w-fit gap-2 p-3 text-neutral-700">
-            {categories.map((category) => {
+            {categories?.map((category) => {
               return (
                 <Link key={category} href={`/shop/${_.kebabCase(category)}`} className="hover:text-black">
                   {category}

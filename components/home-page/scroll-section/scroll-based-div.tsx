@@ -3,24 +3,28 @@ import Image from "next/image";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { syne } from "@/lib/direct-fonts";
+import _ from "lodash";
+import Link from "next/link";
 
 const Card = ({ src, categoryName, className }: { src: string; categoryName: string; className?: string }) => {
   return (
-    <div
-      className={cn(
-        "card w-80 h-96 overflow-hidden rounded-lg bg-white  shadow-lg hover:scale-110 transition-transform duration-1000",
-        className
-      )}
-    >
-      <Image
-        alt=""
-        src={src}
-        className="object-cover w-80 h-80 border-[30px] border-b-0 border-white"
-        width={500}
-        height={500}
-      />
-      <h1 className={cn("text-2xl px-8 font-bold text-left pt-1", syne.className)}>{categoryName}</h1>
-    </div>
+    <Link href={`/shop/${_.kebabCase(categoryName)}`}>
+      <div
+        className={cn(
+          "card w-80 h-96 overflow-hidden rounded-lg bg-white  shadow-lg hover:scale-110 transition-transform duration-1000",
+          className
+        )}
+      >
+        <Image
+          alt=""
+          src={src}
+          className="object-cover w-80 h-80 border-[30px] border-b-0 border-white"
+          width={500}
+          height={500}
+        />
+        <h1 className={cn("text-2xl px-8 font-bold text-left pt-1", syne.className)}>{categoryName}</h1>
+      </div>
+    </Link>
   );
 };
 

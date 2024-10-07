@@ -1,3 +1,6 @@
+// Dependencies
+import { useEffect, useState } from "react";
+
 // Components
 import Link from "next/link";
 
@@ -5,27 +8,27 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 // UI Components
-import { Button } from "../ui/button";
-import ProductCard from "../product/product-card";
+import { Button } from "@/components/ui/button";
+import ProductCard from "@/components/product/product-card";
+
+// Schema
 import { Product } from "@/lib/schema";
-import { useEffect, useState } from "react";
 
 export default function MidSection() {
   const [luxeProducts, setLuxeProducts] = useState<Product[]>([]);
 
+  // Get the luxe products
   useEffect(() => {
     const fetchProducts = async () => {
       const res = await fetch("/api/products");
       const data = await res.json();
-      const luxe = await data.products.filter((product: Product) => product.category === "Jus-B Luxe");
+      const luxe = await data.products?.filter((product: Product) => product.category === "Jus-B Luxe");
       console.log("Luxe", luxe);
       setLuxeProducts(luxe);
     };
 
     fetchProducts();
   }, []);
-
-  // Get the luxe products
 
   return (
     <section className="py-6 md:py-12 lg:py-16 px-6">
@@ -60,7 +63,7 @@ export default function MidSection() {
         </div>
 
         {/* Four Product Cards */}
-        {luxeProducts.slice(0, 6).map(({ name, price, id, images, sizes, category }) => (
+        {luxeProducts?.slice(0, 6).map(({ name, price, id, images, sizes, category }) => (
           <ProductCard key={id} name={name} price={price} image={images[0]} id={id} sizes={sizes} category={category} />
         ))}
       </div>

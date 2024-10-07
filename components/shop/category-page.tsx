@@ -9,10 +9,12 @@ import { cn } from "@/lib/utils";
 import SortingButton from "@/components/sorting-button";
 import ProductCard from "@/components/product/product-card";
 import { Product } from "@/lib/schema";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CategoryPage() {
   const [sortedProducts, setSortedProducts] = useState<Product[]>();
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const url = usePathname();
 
@@ -47,7 +49,8 @@ export default function CategoryPage() {
 
     // Fetch products from API and set them to state on component mount
     fetchProducts();
-  }, []);
+    setLoading(false);
+  }, [url]);
 
   return (
     <main className="flex-grow">
@@ -65,17 +68,21 @@ export default function CategoryPage() {
           <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
         </div>
         <div className=" py-4 grid sm:grid-cols-2 grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
-          {sortedProducts?.map((product, index) => (
-            <ProductCard
-              key={index}
-              name={product.name}
-              price={product.price}
-              image={product.images[0]}
-              id={product.id}
-              sizes={product.sizes}
-              category={product.category}
-            />
-          ))}
+          {loading
+            ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((i_, index) => (
+                <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />
+              ))
+            : sortedProducts?.map((product, index) => (
+                <ProductCard
+                  key={index}
+                  name={product.name}
+                  price={product.price}
+                  image={product.images[0]}
+                  id={product.id}
+                  sizes={product.sizes}
+                  category={product.category}
+                />
+              ))}
         </div>
       </section>
     </main>

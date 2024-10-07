@@ -23,9 +23,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 
 // Stores and store types
-import { CartItem, useCartStore, useModalStore, useShareModalStore, useWishlistStore } from "@/hooks/use-store";
+import {
+  CartItem,
+  useCartStore,
+  useCurrencyStore,
+  useModalStore,
+  useShareModalStore,
+  useWishlistStore,
+} from "@/hooks/use-store";
 import { usePathname } from "next/navigation";
-import { removeSlash } from "@/lib/functions";
+import { formatCurrency, removeSlash } from "@/lib/functions";
 import _ from "lodash";
 import Link from "next/link";
 import { Product } from "@/lib/schema";
@@ -41,8 +48,10 @@ export default function ProductPage({ productId }: { productId: string }) {
   const [itemInCart, setItemInCart] = useState<CartItem>(); // Item in cart state
   const [alert, setAlert] = useState(false); // Alert state for size selection
   const [loading, setLoading] = useState(true); // Loading state
+  const [currencyPrice, setCurrencyPrice] = useState<string>(); // Currency price state
 
   // Hooks
+  const { currency } = useCurrencyStore(); // Get the currency
   const url = removeSlash(usePathname()); // Get the current URL
   const [user] = useAuthState(auth); // Get the current user
   const { toast } = useToast(); // Get the toast function
@@ -52,6 +61,15 @@ export default function ProductPage({ productId }: { productId: string }) {
   const { addToCart, cart, removeFromCart } = useCartStore();
   const { openModal } = useModalStore();
   const { setLink, setMessage } = useShareModalStore();
+
+  // Format the price with the selected currency
+  useEffect(() => {
+    const formatPrice = async () => {
+      const formattedPrice = await formatCurrency(product?.price || 0, currency);
+      setCurrencyPrice(formattedPrice);
+    };
+    formatPrice();
+  }, [product, currency]);
 
   // Check if item is in cart and set the item in cart state
   useEffect(() => {
@@ -248,7 +266,7 @@ export default function ProductPage({ productId }: { productId: string }) {
           {loading ? (
             <Skeleton className="w-40 h-10 bg-muted-foreground/20" />
           ) : (
-            <p className="text-2xl font-semibold">&#8377;{product?.price.toFixed(2)}</p>
+            <p className="text-2xl font-semibold">&#8377;{currencyPrice}</p>
           )}
           {loading ? (
             <div className="space-y-3">

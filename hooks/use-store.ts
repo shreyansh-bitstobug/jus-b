@@ -6,6 +6,8 @@ import { Address } from "@/lib/schema";
 type HomePage = {
   loaderOn: boolean;
   setLoaderOn: (loaderOn: boolean) => void;
+  popupOn: boolean;
+  setPopupOn: (popupOn: boolean) => void;
 };
 
 //  --------------------
@@ -14,6 +16,8 @@ type HomePage = {
 const useHomePageStore = create<HomePage>((set) => ({
   loaderOn: true,
   setLoaderOn: (loaderOn) => set({ loaderOn }),
+  popupOn: true,
+  setPopupOn: (popupOn) => set({ popupOn }),
 }));
 
 type AuthStoreType = {
@@ -28,7 +32,7 @@ const useAuthStore = create<AuthStoreType>((set) => ({
 }));
 
 // Type for ModalName
-type ModalName = "checkout" | "search" | "share" | "addressForm";
+type ModalName = "checkout" | "search" | "share" | "addressForm" | "profile";
 
 // Type for the Modal store
 type ModalStore = {
@@ -52,6 +56,45 @@ const useModalStore = create<ModalStore>((set) => ({
   },
 }));
 
+// Type for the change store
+type ChangeStore = {
+  change: boolean;
+  setChange: (change: boolean) => void;
+};
+
+//  --------------------
+//  Change Store
+//  --------------------
+const useChangeStore = create<ChangeStore>((set) => ({
+  change: false,
+  setChange: (change) => set({ change }),
+}));
+
+// Type for the profile edit type
+export type ProfileEditType = {
+  firstName: string;
+  lastName?: string;
+  displayName: string;
+  email: string;
+  dob: Date | null;
+  phoneNumber?: string;
+};
+
+// Type for the profile store
+type ProfileStore = {
+  profile: ProfileEditType | null;
+  setProfile: (profile: ProfileEditType | null) => void;
+};
+
+//  --------------------
+//  Profile Store
+//  --------------------
+const useProfileStore = create<ProfileStore>((set) => ({
+  profile: null,
+  setProfile: (profile) => set({ profile }),
+}));
+
+// Type for the address store
 type AddressStoreType = {
   editAddress: Address | null;
   setEditAddress: (editAddress: Address | null) => void;
@@ -78,6 +121,7 @@ type cartStoreType = {
   addToCart: (id: string, size: string, userId?: string) => void;
   removeFromCart: (id: string, size: string, userId?: string) => void;
   deleteFromCart: (id: string, size: string, userId?: string) => void;
+  clearCart: (userId?: string) => void;
 };
 
 // This function stores the cart locally when the user is not logged in
@@ -181,6 +225,18 @@ const useCartStore = create<cartStoreType>((set) => ({
       // Return the updated cart
       return { cart: newCart };
     }),
+
+  // Clear all items from the cart
+  clearCart: (userId) =>
+    set(() => {
+      const newCart = {}; // Reset the cart to an empty object
+
+      // Store the empty cart in localStorage or update the cart for the user
+      userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+
+      // Return the updated cart (empty)
+      return { cart: newCart };
+    }),
 }));
 
 // Type for the wishlist store
@@ -239,8 +295,29 @@ const useShareModalStore = create<ShareModalStore>((set) => ({
   setMessage: (message) => set({ message }),
 }));
 
+// Function to store the currency locally
+const storeLocallyCurrency = (currency: currency) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("jusb_currency", currency);
+  }
+};
+
+// Function to get the currency from local storage
+const getLocalCurrency = (): currency => {
+  if (typeof window === "undefined") return "inr"; // Return 'inr' as default during SSR
+
+  console.log("Getting currency from local storage 1. type of window", typeof window); // Log the type of window
+
+  const savedCurrency = localStorage.getItem("jusb_currency");
+
+  console.log("Getting currency from local storage 2. currency", savedCurrency); // Log the currency retrieval
+
+  // Return the saved currency if it's valid, otherwise default to 'inr'
+  return savedCurrency ? (savedCurrency as currency) : "inr";
+};
+
 // Type for the currency
-type currency = "INR" | "USD" | "EUR" | "GBP" | "AUD" | "ATS" | "SGD" | "AED";
+export type currency = "inr" | "usd" | "eur" | "gbp" | "aud" | "sgd" | "aed" | "cad"; // Define the currency type
 
 // Type for the currency store
 type CurrencyStore = {
@@ -248,11 +325,25 @@ type CurrencyStore = {
   setCurrency: (currency: currency) => void;
 };
 
-//  --------------------
-//  Currency Store
-//  --------------------
+// --------------------
+// Currency Store
+// --------------------
 const useCurrencyStore = create<CurrencyStore>((set) => ({
-  currency: "INR",
+  currency: getLocalCurrency(), // Initialize with local currency from local storage
+  setCurrency: (currency: currency) => {
+    console.log("Setting currency", currency); // Log the currency change
+
+    storeLocallyCurrency(currency); // Store currency locally
+
+    set({ currency }); // Update Zustand state
+  },
+}));
+
+//  --------------------
+//  Dash Currency Store
+//  --------------------
+const useDashCurrencyStore = create<CurrencyStore>((set) => ({
+  currency: "inr",
   setCurrency: (currency) => set({ currency }),
 }));
 
@@ -265,4 +356,8 @@ export {
   useEditAddressStore,
   useAuthStore,
   useHomePageStore,
+  useCurrencyStore,
+  useDashCurrencyStore,
+  useProfileStore,
+  useChangeStore,
 };

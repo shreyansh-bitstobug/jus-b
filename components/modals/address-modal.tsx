@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
+import { useChangeStore, useEditAddressStore, useModalStore } from "@/hooks/use-store";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import { Address } from "@/lib/schema";
 
 const addressFormSchema = z.object({
   name: z.string().min(2).max(30),
@@ -26,6 +27,7 @@ export default function AddressModal() {
   const { isOpen, closeModal, modalName } = useModalStore();
   const { editAddress, setEditAddress } = useEditAddressStore();
   const [user] = useAuthState(auth);
+  const { change, setChange } = useChangeStore();
 
   const isModalOpen = isOpen && modalName === "addressForm";
 
@@ -52,13 +54,26 @@ export default function AddressModal() {
   async function onSubmit(values: z.infer<typeof addressFormSchema>) {
     if (!user) return;
 
+    console.log("values", values);
+
+    const response = await fetch(`/api/users/${user.uid}`);
+    const data = await response.json();
+    const addresses = data.user.addresses;
+    const updatedAddresses = editAddress
+      ? addresses.map((address: Address) => (address.id === editAddress.id ? { ...address, ...values } : address))
+      : [...addresses, values];
+
+    console.log("updatedAddresses", updatedAddresses);
+
     const res = await fetch(`/api/users/${user.uid}`, {
       method: "POST",
-      body: JSON.stringify(values),
+      body: JSON.stringify({ addresses: updatedAddresses }),
     });
 
     if (res.ok) {
       closeModal();
+      form.reset();
+      setChange(!change);
     }
   }
 

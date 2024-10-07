@@ -13,7 +13,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
 
 // Hooks
-import { useWishlistStore } from "@/hooks/use-store";
+import { useCurrencyStore, useWishlistStore } from "@/hooks/use-store";
 import { useToast } from "@/components/ui/use-toast";
 
 // Icons
@@ -24,7 +24,8 @@ import { BiCart } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePathname, useRouter } from "next/navigation";
-import { removeSlash } from "@/lib/functions";
+import { formatCurrency, removeSlash } from "@/lib/functions";
+import { useEffect, useState } from "react";
 
 export default function ProductCard({
   name,
@@ -41,11 +42,21 @@ export default function ProductCard({
   sizes: string[];
   category: string;
 }) {
+  const [currencyPrice, setCurrencyPrice] = useState<string>();
   const { toast } = useToast();
   const [user] = useAuthState(auth);
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlistStore();
   const url = removeSlash(usePathname());
   const router = useRouter();
+  const { currency } = useCurrencyStore();
+
+  useEffect(() => {
+    const formatPrice = async () => {
+      const formattedPrice = await formatCurrency(price, currency);
+      setCurrencyPrice(formattedPrice);
+    };
+    formatPrice();
+  }, [price, currency]);
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -96,7 +107,7 @@ export default function ProductCard({
         {/* Product Name and Price */}
         <div className="space-y-1">
           <h3 className="font-semibold leading-3">{_.truncate(name, { length: 25 })}</h3>
-          <p className=" font-medium text-lg text-gray-400">&#8377;{price.toFixed()}</p>
+          <p className=" font-medium text-lg text-gray-400">&#8377;{currencyPrice}</p>
         </div>
 
         {/* Cart Button */}

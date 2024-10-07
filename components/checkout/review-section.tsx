@@ -1,13 +1,12 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPinIcon, PhoneIcon, Pencil, User, PackageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Address, Cart, Product } from "@/lib/schema";
+import { Address, Product } from "@/lib/schema";
 import TooltipContext from "../tooltip-context";
-import { CartProductType } from "@/lib/types";
 import _ from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Separator } from "@radix-ui/react-separator";
+import { formatCurrency } from "@/lib/functions";
+import { useCurrencyStore } from "@/hooks/use-store";
 
 export default function ReviewSection({
   address,
@@ -20,10 +19,31 @@ export default function ReviewSection({
   paymentMethod: string;
   fare: { total: number; shipping?: number; discount?: number; amountPaid: number };
 }) {
-  const [products, setProducts] = useState<Product[]>([]);
-  // const [fare, setFare] = useState({ total: 0, shipping: 0, discount: 0, amountPaid: 0 });
+  const [currencyFare, setCurrencyFare] = useState({ total: "", shipping: "", discount: "", amountPaid: "" });
+  const { currency } = useCurrencyStore();
+  const [currencyItems, setCurrencyItems] =
+    useState<{ id: string; details: Product; quantity: number; size: string; total: string }[]>(); // Items with currency
 
-  const formatCurrency = (value: number) => `₹ ${value.toFixed(2)}`;
+  useEffect(() => {
+    const currencyCalc = async () => {
+      const formattedItems = await Promise.all(
+        items.map(async (product) => {
+          const { details, quantity } = product;
+          const total = await formatCurrency(details.price * quantity, currency);
+          return { ...product, details: { ...details }, total };
+        })
+      );
+
+      setCurrencyItems(formattedItems);
+
+      const total = await formatCurrency(fare.total ?? 0, currency);
+      const shipping = await formatCurrency(fare.shipping ?? 0, currency);
+      const discount = await formatCurrency(fare.discount ?? 0, currency);
+      const amountPaid = await formatCurrency(fare.amountPaid, currency);
+      setCurrencyFare({ total, shipping, discount, amountPaid });
+    };
+    currencyCalc();
+  }, [fare]);
 
   const responsiveTruncate = (text: string) => {
     const screenWidth = window.innerWidth;
@@ -43,7 +63,7 @@ export default function ReviewSection({
   };
 
   return (
-    <Card className="max-w-[500px] min-w-96 w-full mx-auto">
+    <Card className="max-w-[500px] min-w-72 w-full mx-auto">
       <CardHeader>
         <CardTitle className="text-3xl">Order Details</CardTitle>
         <Separator orientation="horizontal" className="border-neutral-300 border-t-2" />
@@ -51,19 +71,19 @@ export default function ReviewSection({
       <CardContent className="flex flex-col gap-6 items-start justify-between px-6 ">
         <section className="w-full">
           <h3 className="text-xl font-semibold mb-2">Order Items</h3>
-          {items?.length > 0 ? (
+          {currencyItems && currencyItems?.length > 0 ? (
             <ul className="space-y-2">
-              {items.map((item, index) => {
+              {currencyItems.map((item) => {
                 const { id, details, quantity } = item;
                 return (
                   <li key={id} className="flex justify-between w-full">
                     <div className="flex items-center space-x-2">
                       <PackageIcon className="h-5 w-5 text-muted-foreground" />
                       <TooltipContext content={details.name}>
-                        <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
+                        <span>{responsiveTruncate(details.name)}</span> x {quantity}
                       </TooltipContext>
                     </div>
-                    <div>{formatCurrency(details.price * quantity)}</div>
+                    <div>{details.price * quantity}</div>
                   </li>
                 );
               })}
@@ -101,19 +121,19 @@ export default function ReviewSection({
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span>{formatCurrency(fare.total)}</span>
+              <span>{currencyFare.total}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping:</span>
-              <span>{formatCurrency(fare.shipping ?? 0)}</span>
+              <span>{currencyFare.shipping}</span>
             </div>
             <div className="flex justify-between text-primary">
               <span>Discount:</span>
-              <span>-{formatCurrency(fare.discount ?? 0)}</span>
+              <span>-{currencyFare.discount}</span>
             </div>
             <div className="flex justify-between font-bold">
               <span>Total:</span>
-              <span>{formatCurrency(fare.amountPaid)}</span>
+              <span>{currencyFare.amountPaid}</span>
             </div>
           </div>
         </section>

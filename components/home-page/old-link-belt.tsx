@@ -38,7 +38,7 @@ export default function AnimatedLinkBelt() {
       >
         {[...Array(10)].map((i, index) => (
           <div key={index} className="flex">
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <Link
                 key={category}
                 href={`/shop/${_.kebabCase(category)}`}

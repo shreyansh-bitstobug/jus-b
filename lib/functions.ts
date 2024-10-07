@@ -1,4 +1,4 @@
-import { CartItem } from "@/hooks/use-store";
+import { CartItem, currency } from "@/hooks/use-store";
 import { Cart, Product, Wishlist, Order, Address } from "@/lib/schema";
 
 export const removeSlash = (str: string) => {
@@ -10,7 +10,7 @@ export const getCategories = async () => {
   const data = await res.json();
   console.log(data);
 
-  const categories = data.products.reduce((acc: string[], product: Product) => {
+  const categories = await data.products?.reduce((acc: string[], product: Product) => {
     if (!acc.includes(product.category)) {
       acc.push(product.category);
     }
@@ -185,14 +185,29 @@ export const createOrder = (
   return order;
 };
 
-export const formatCurrency = async (amount: number, currency?: string): Promise<string> => {
-  // const currencyCode = currency.toLowerCase(); // Convert currency to lowercase
-  const currencyCode = "usd"; // Default currency code for testing
+export const formatCurrency = async (amount: number, currency: currency): Promise<string> => {
+  const currencyCode = currency.toLowerCase(); // Convert currency to lowercase
 
   const api = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json"; // API endpoint to fetch currency data based on INR
   const res = await fetch(api);
   const data = await res.json();
   const exchangeRate = await data.inr[currencyCode]; // Get the exchange rate for the given currency code
   const convertedAmount = amount * exchangeRate; // Convert the amount to the given currency
-  return convertedAmount.toFixed(2); // Return the converted amount with 2 decimal places
+
+  let currencySymbol = "₹"; // Initialize currency symbol
+
+  if (currencyCode === "inr") {
+    currencySymbol = "₹"; // Set currency symbol for INR
+  } else if (currencyCode === "usd" || currencyCode === "cad" || currencyCode === "aud" || currencyCode === "sgd") {
+    currencySymbol = "$"; // Default to $ for other currencies
+  } else if (currencyCode === "eur") {
+    currencySymbol = "€"; // Set currency symbol for EUR
+  } else if (currencyCode === "gbp") {
+    currencySymbol = "£"; // Set currency symbol for GBP
+  } else if (currencyCode === "aed") {
+    currencySymbol = "د.إ"; // Set currency symbol for JPY
+  }
+
+  // Return the converted amount with 2 decimal places
+  return `${currencySymbol} ${convertedAmount.toFixed(2)}`; // Return the converted amount with 2 decimal places
 };

@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
 import { Address } from "@/lib/schema";
+import Link from "next/link";
 
 const AddressCard = ({ address, handleEditAddress }: { address: Address; handleEditAddress: (id: string) => void }) => {
   return (
@@ -61,9 +62,15 @@ export default function AddressSection({ addresses }: { addresses: Address[] }) 
   };
   return (
     <section className="flex flex-wrap gap-10">
-      {addresses.map((address, index) => (
-        <AddressCard address={address} handleEditAddress={handleEditAddress} key={index} />
-      ))}
+      {addresses?.length === 0 ? (
+        <div className="text-center w-full py-10 text-neutral-500">
+          <p>No addresses added yet.</p>
+        </div>
+      ) : (
+        addresses?.map((address, index) => (
+          <AddressCard address={address} handleEditAddress={handleEditAddress} key={index} />
+        ))
+      )}
     </section>
   );
 }

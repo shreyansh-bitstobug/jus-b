@@ -39,6 +39,8 @@ export async function POST(req: Request, { params }: { params: { userId: string 
   try {
     const { userId } = params;
 
+    const body = await req.json();
+
     const userRef = doc(db, "users", userId);
     const userSnap = await getDoc(userRef);
 
@@ -57,12 +59,12 @@ export async function POST(req: Request, { params }: { params: { userId: string 
 
     const newUser: User = {
       ...user,
-      firstName: firstName,
-      lastName: lastName,
-      displayName: displayName || "",
-      phoneNumber: phoneNumber || "",
-      dob: dob ? new Date(dob) : null,
-      addresses: addresses || [],
+      firstName: body.firstName || firstName,
+      lastName: body.lastName || lastName,
+      displayName: body.displayName || displayName || "",
+      phoneNumber: body.phoneNumber || phoneNumber || "",
+      dob: body.dob || dob ? new Date(body.dob || dob) : null,
+      addresses: body.addresses || addresses || [],
       updatedAt: new Date(),
     };
 
@@ -72,5 +74,25 @@ export async function POST(req: Request, { params }: { params: { userId: string 
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json({ message: "Failed to create user", error }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: { userId: string } }) {
+  try {
+    const { userId } = params;
+
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    await setDoc(userRef, { ...userSnap.data(), deletedAt: new Date() });
+
+    return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return NextResponse.json({ message: "Failed to delete user", error }, { status: 500 });
   }
 }

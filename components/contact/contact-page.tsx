@@ -14,6 +14,7 @@ import { syne } from "@/lib/direct-fonts";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useToast } from "../ui/use-toast";
 
 // Define validation schema using zod
 const formSchema = z.object({
@@ -27,6 +28,9 @@ const formSchema = z.object({
 export default function ContactPage() {
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry");
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const { toast } = useToast();
 
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -87,6 +91,11 @@ export default function ContactPage() {
       if (!response.ok) {
         throw new Error("Failed to send message");
       } else {
+        toast({ title: "Message sent!", description: "We'll get back to you shortly" });
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+        }, 5000);
         form.reset(); // Reset the form after submission
       }
     } catch (error) {
@@ -161,8 +170,15 @@ export default function ContactPage() {
                   <span className="text-sm text-red-600">{form.formState.errors.message.message}</span>
                 )}
               </div>
-              <Button type="submit" size="lg" disabled={isLoading} className="w-fit px-10 ">
-                Submit
+
+              {success && <p className="text-green-800 text-sm">Your message has successfully been sent!</p>}
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isLoading}
+                className={cn("w-fit px-10", success ? "bg-green-700" : "")}
+              >
+                {success ? "Sent!" : "Send Message"}
               </Button>
             </div>
           </form>

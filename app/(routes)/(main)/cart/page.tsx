@@ -2,7 +2,7 @@
 
 // Dependencies
 import { useEffect, useState } from "react";
-import { useCartStore, useModalStore } from "@/hooks/use-store";
+import { useCartStore, useCurrencyStore, useModalStore } from "@/hooks/use-store";
 
 // Types
 import { CartProductType } from "@/lib/types";
@@ -19,13 +19,13 @@ import { useRouter } from "next/navigation";
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
 import { Cart, Product } from "@/lib/schema";
-import { getCart } from "@/lib/functions";
+import { formatCurrency, getCart } from "@/lib/functions";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CartPage() {
   const [products, setProducts] = useState<Product[]>([]); // Products from API
   const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
-  const [cartTotal, setCartTotal] = useState(0);
+  const [cartTotal, setCartTotal] = useState("0");
   const [itemTotal, setItemTotal] = useState(0);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,7 @@ export default function CartPage() {
   // Stores
   const { cart } = useCartStore(); // Get cart from store
   const { openModal } = useModalStore(); // Get onOpen function from store
+  const { currency } = useCurrencyStore(); // Get currency from store
 
   // Router
   const router = useRouter();
@@ -85,47 +86,51 @@ export default function CartPage() {
 
   // Update cart products when cart items or products change
   useEffect(() => {
-    if (cartItems?.length > 0 && products?.length > 0) {
-      const updatedCartProducts: CartProductType[] = [];
+    const calculateTotal = async () => {
       let total = 0;
-      let itemTotal = 0;
+      if (cartItems?.length > 0 && products?.length > 0) {
+        const updatedCartProducts: CartProductType[] = [];
+        let itemTotal = 0;
 
-      console.log("cartItems white updating cart products", cartItems);
+        console.log("cartItems white updating cart products", cartItems);
 
-      // Loop through each cart item and find the product
-      cartItems.forEach((cartItem) => {
-        const productId = cartItem.productId;
-        const foundProduct = products.find((product) => product.id === productId);
+        // Loop through each cart item and find the product
+        cartItems.forEach((cartItem) => {
+          const productId = cartItem.productId;
+          const foundProduct = products.find((product) => product.id === productId);
 
-        if (foundProduct) {
-          updatedCartProducts.push({
-            name: foundProduct.name,
-            price: foundProduct.price,
-            imgUrl: foundProduct.images[0],
-            id: foundProduct.id,
-            size: cartItem.size,
-            quantity: cartItem.quantity,
-            category: foundProduct.category,
-          });
+          if (foundProduct) {
+            updatedCartProducts.push({
+              name: foundProduct.name,
+              price: foundProduct.price,
+              imgUrl: foundProduct.images[0],
+              id: foundProduct.id,
+              size: cartItem.size,
+              quantity: cartItem.quantity,
+              category: foundProduct.category,
+            });
 
-          // Calculate total price
-          total += foundProduct.price * cartItem.quantity;
-          itemTotal += cartItem.quantity;
-        }
-      });
+            // Calculate total price
+            total += foundProduct.price * cartItem.quantity;
+            itemTotal += cartItem.quantity;
+          }
+        });
 
-      setCartProducts(updatedCartProducts); // Update cart products
-      setItemTotal(itemTotal); // Update item total
-      setCartTotal(total); // Update cart amount total
-      setLoading(false); // Set loading to false
-    }
-  }, [cartItems, products]); // Wait for both cartItems and products
+        setCartProducts(updatedCartProducts); // Update cart products
+        setItemTotal(itemTotal); // Update item quantity total
+        setLoading(false); // Set loading to false
+      }
+      const cartTotalCurrency = await formatCurrency(total, currency);
+      setCartTotal(cartTotalCurrency); // Update cart amount total
+    };
+    calculateTotal();
+  }, [cartItems, products, currency]); // Wait for both cartItems and products to be fetched ( Refresh when they change and currency changes)
 
   return (
     <main className="container flex-grow flex flex-col gap-6 py-6 pb-14">
       <div className=" flex justify-between items-center sm:flex-row flex-col gap-2">
         <h1 className=" md:text-2xl text-xl items-end">
-          <span>Subtotal &#40;{itemTotal} items&#41;:</span> <span className="font-bold">&#8377; {cartTotal}</span>
+          <span>Subtotal &#40;{itemTotal} items&#41;:</span> <span className="font-bold">{cartTotal}</span>
         </h1>
         <Button
           className="md:text-lg text-base md:w-72 sm:w-60 md:h-11 w-full max-w-72 rounded-full md:px-8 px-6"

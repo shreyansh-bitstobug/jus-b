@@ -25,12 +25,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-}
+import { useDashCurrencyStore } from "@/hooks/use-store";
 
 export default function OrderCard({
   order,
@@ -53,12 +48,16 @@ export default function OrderCard({
   } = order;
 
   const [amountPaid, setAmountPaid] = useState<string>(""); // Amount paid by the user
+  const [currencyItems, setCurrencyItems] =
+    useState<{ id: string; details: any; quantity: number; size: string; total: string }[]>();
   const [total, setTotal] = useState<string>(""); // Total amount of the order
   const [discount, setDiscount] = useState<string>(""); // Discount amount
   const [shipping, setShipping] = useState<string>(""); // Shipping cost
   const [orderStatus, setOrderStatus] = useState<string>(status);
   const [orderTrackingId, setOrderTrackingId] = useState<string>(trackingId);
   const [orderPaymentStatus, setOrderPaymentStatus] = useState<string>(paymentStatus);
+
+  const { currency } = useDashCurrencyStore();
 
   const timestampToDate = (timestamp: any) => new Date(timestamp.seconds * 1000);
 
@@ -83,17 +82,23 @@ export default function OrderCard({
 
   useEffect(() => {
     const handleCurrencies = async () => {
-      items.map((item) => {
-        item.details.price = parseFloat(item.details.price.toFixed(2));
-        return item;
-      });
-      setAmountPaid(await formatCurrency(fare.amountPaid));
-      setTotal(await formatCurrency(fare.total));
-      setDiscount(await formatCurrency(fare.discount));
-      setShipping(await formatCurrency(fare.shipping));
+      const formattedItems = await Promise.all(
+        items.map(async (product) => {
+          const { details, quantity } = product;
+          const total = await formatCurrency(details.price * quantity, currency);
+          return { ...product, details: { ...details }, total };
+        })
+      );
+
+      setCurrencyItems(formattedItems);
+
+      setAmountPaid(await formatCurrency(fare.amountPaid, currency));
+      setTotal(await formatCurrency(fare.total, currency));
+      setDiscount(await formatCurrency(fare.discount, currency));
+      setShipping(await formatCurrency(fare.shipping, currency));
     };
     handleCurrencies();
-  }, [fare.amountPaid, fare.total, fare.discount, fare.shipping, items]);
+  }, [fare, items, currency]);
 
   // ----------------
   // Handlers
@@ -215,20 +220,21 @@ export default function OrderCard({
             <h3 className="text-lg font-semibold mb-2">Order Items</h3>
             {items.length > 0 ? (
               <ul className="space-y-2">
-                {items.map((item) => {
-                  const { id, details, quantity } = item;
-                  return (
-                    <li key={id} className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
-                        <PackageIcon className="h-5 w-5 text-muted-foreground" />
-                        <TooltipContext content={details.name}>
-                          <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
-                        </TooltipContext>
-                      </div>
-                      {/* <span>{formatCurrency(details.price * quantity)}</span> */}
-                    </li>
-                  );
-                })}
+                {currencyItems &&
+                  currencyItems.map((item) => {
+                    const { id, details, quantity, total } = item;
+                    return (
+                      <li key={id} className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <PackageIcon className="h-5 w-5 text-muted-foreground" />
+                          <TooltipContext content={details.name}>
+                            <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
+                          </TooltipContext>
+                        </div>
+                        <span>{total}</span>
+                      </li>
+                    );
+                  })}
               </ul>
             ) : (
               <p className="text-muted-foreground">No items in this order.</p>
@@ -255,8 +261,6 @@ export default function OrderCard({
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
-          {/* <Button variant="outline">Print Receipt</Button> */}
-
           <AlertDialog>
             <AlertDialogTrigger>
               <Button>Actions</Button>
@@ -264,31 +268,25 @@ export default function OrderCard({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Order Actions</AlertDialogTitle>
-                {trackingId && (
-                  <AlertDialogDescription>
-                    Tracking ID: {trackingId}
-                    <Copy className="inline-flex ml-2 w-4 h-4 cursor-pointer hover:text-muted-foreground/70 text-muted-foreground " />
-                  </AlertDialogDescription>
-                )}
               </AlertDialogHeader>
-              <div>
-                {!trackingId && (
-                  <div className="flex gap-4">
-                    <Input
-                      placeholder="# Tracking ID"
-                      onChange={(e) => setOrderTrackingId(e.target.value)}
-                      value={trackingId || orderTrackingId}
-                    />
-                    <Button onClick={handleTrackingIdUpdate}>Update Tracking ID</Button>
-                  </div>
-                )}
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    placeholder="# Tracking ID"
+                    onChange={(e) => setOrderTrackingId(e.target.value)}
+                    value={trackingId || orderTrackingId}
+                  />
+                  <Button onClick={handleTrackingIdUpdate}>Update Tracking ID</Button>
+                </div>
 
                 {/* Order Status Select Button */}
                 <div>
                   <Label>Order Status</Label>
-                  <div className="flex gap-4">
-                    <Select onValueChange={(value) => setOrderStatus(value)}>
-                      <SelectTrigger className="capitalize">Change Order Status</SelectTrigger>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Select onValueChange={(value) => setOrderStatus(value)} defaultValue={order.status}>
+                      <SelectTrigger className="capitalize">
+                        <SelectValue placeholder="Change order status" />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="confirmed">Confirmed</SelectItem>
                         <SelectItem value="pending">Pending</SelectItem>
@@ -305,8 +303,8 @@ export default function OrderCard({
                 {/* Payment Status Select Button */}
                 <div>
                   <Label>Payment Status</Label>
-                  <div className="flex gap-4">
-                    <Select onValueChange={(value) => setOrderPaymentStatus(value)}>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Select onValueChange={(value) => setOrderPaymentStatus(value)} defaultValue={order.paymentStatus}>
                       <SelectTrigger className="capitalize">
                         <SelectValue placeholder="Change payment status" />
                       </SelectTrigger>

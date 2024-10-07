@@ -9,12 +9,14 @@ import Link from "next/link";
 import { X } from "lucide-react";
 
 // Store Hook
-import { useCartStore } from "@/hooks/use-store";
+import { useCartStore, useCurrencyStore } from "@/hooks/use-store";
 
 // UI Components
 import { useToast } from "@/components/ui/use-toast";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/functions";
 
 // --------------------
 // Cart Product Card Component
@@ -36,9 +38,13 @@ export default function CartProductCard({
   quantity: number;
   category: string;
 }) {
+  // States
+  const [currencyPrice, setCurrencyPrice] = useState<string>();
+
   // Hooks
   const { addToCart, removeFromCart, deleteFromCart } = useCartStore();
   const [user] = useAuthState(auth); // Get the current user
+  const { currency } = useCurrencyStore();
 
   // Toast Hook for showing alerts
   const { toast } = useToast();
@@ -55,6 +61,15 @@ export default function CartProductCard({
       description: "Your item has been removed from the cart",
     });
   };
+
+  // Format the price of the product with the currency
+  useEffect(() => {
+    const formatPrice = async () => {
+      const formattedPrice = await formatCurrency(price, currency);
+      setCurrencyPrice(formattedPrice);
+    };
+    formatPrice();
+  }, [price, currency]);
 
   // Delete the product from the cart (remove all quantities)
   const handleDelete = (e: React.MouseEvent) => {
@@ -127,7 +142,7 @@ export default function CartProductCard({
         </Link>
 
         {/* Price */}
-        <p className=" p-1 text-black font-bold text-2xl ">&#8377;{price}</p>
+        <p className=" p-1 text-black font-bold text-2xl ">&#8377;{currencyPrice}</p>
 
         <div className="flex justify-between">
           <div className="flex flex-col justify-between">

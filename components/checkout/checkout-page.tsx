@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import AddressSection from "../checkout/address-section";
-import { addressesSample } from "../profile/profile-page";
 import { useToast } from "@/components/ui/use-toast";
 import ReviewSection from "./review-section";
 import { Address, Cart, Order } from "@/lib/schema";
@@ -76,6 +75,7 @@ let checkIconVariants = {
 export default function ProgressSection() {
   // States
   const [address, setAddress] = useState<Address | null>(null); // Address
+  const [addresses, setAddresses] = useState<Address[]>([]); // Addresses
   let [step, setStep] = useState(1); // Step for the progress
   const [items, setItems] = useState<any[]>([]); // Items in the cart
   const [cartItems, setCartItems] = useState<any[]>([]); // Cart items
@@ -83,8 +83,8 @@ export default function ProgressSection() {
   const [order, setOrder] = useState<Order>(); // Order
 
   // Hooks
-  const [user] = useAuthState(auth); // User
-  const { cart } = useCartStore(); // Cart store
+  const [user, loading] = useAuthState(auth); // User
+  const { cart, clearCart } = useCartStore(); // Cart store
   const { toast } = useToast(); // Toast hook
   const router = useRouter();
 
@@ -92,7 +92,7 @@ export default function ProgressSection() {
     const fetchCart = async () => {
       if (user) {
         const cartItems: Cart = await getCart(user.uid as string);
-        setCartItems(cartItems.items);
+        setCartItems(cartItems?.items);
       } else {
         const cartObj = Object.values(cart);
         const localCart = cartObj.map((item) => {
@@ -108,6 +108,18 @@ export default function ProgressSection() {
 
     fetchCart(); // Fetch cart items from the database or local storage on mount
   }, []);
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      setIsLoading(true);
+      const res = await fetch(`/api/users/${user?.uid}`);
+      const data = await res.json();
+      setAddresses(data.user.addresses);
+      setIsLoading(false);
+    };
+
+    if (user && !loading) fetchAddresses(); // Fetch addresses from the database on mount
+  }, [user?.uid]);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -127,7 +139,7 @@ export default function ProgressSection() {
     };
 
     if (address) fetchItems(); // Fetch items from the database on mount and create an order
-  }, [address]);
+  }, [address]); // eslint-disable-line
 
   // ---- Handlers ----
   // Posting the order to the database
@@ -140,6 +152,14 @@ export default function ProgressSection() {
       },
       body: JSON.stringify(order),
     });
+    if (res.ok) {
+      clearCart(user?.uid as string);
+      toast({
+        title: "Order placed",
+        description: "Your order has been placed successfully.",
+        duration: 2000,
+      });
+    }
     console.log(res.json());
     return res.ok;
   };
@@ -174,7 +194,7 @@ export default function ProgressSection() {
   };
 
   return (
-    <main className="container flex min-h-screen items-start pt-10">
+    <main className="lg:px-10 md:px-6 px-2 flex min-h-screen items-start pt-10">
       <div className=" mx-auto w-full rounded-2xl bg-white border-2 border-neutral-100 shadow-sm">
         <div className="flex justify-between rounded py-8 max-w-[700px] mx-auto px-4 md:px-0 sm:px-8">
           <div className="flex flex-col gap-1 items-center">
@@ -193,7 +213,12 @@ export default function ProgressSection() {
 
         <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="sm:px-8 px-2">
           {step === 1 && (
-            <AddressSection selectedAddress={address} selectAddress={setAddress} addresses={addressesSample} />
+            <AddressSection
+              selectedAddress={address}
+              selectAddress={setAddress}
+              addresses={addresses}
+              isLoading={isLoading}
+            />
           )}
         </motion.section>
 

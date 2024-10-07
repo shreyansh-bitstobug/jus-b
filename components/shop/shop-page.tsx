@@ -1,5 +1,8 @@
 "use client";
 
+// Dependencies
+import { useState, useEffect } from "react";
+
 // Next Components and Hooks
 import Image from "next/image";
 
@@ -7,29 +10,29 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 // Data
-import { products, shopBanner } from "@/public/assets/data";
+import { shopBanner } from "@/public/assets/data";
+import { Product } from "@/lib/schema";
 
 // UI Components
 import ProductCard from "@/components/product/product-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CategoryPage from "./categorize";
-import SortingButton from "../sorting-button";
-import { useState, useEffect } from "react";
-import { Product } from "@/lib/schema";
+import SortingButton from "@/components/sorting-button";
+import { Skeleton } from "@/components/ui/skeleton";
+import CategorizePage from "./categorize";
 
 export default function ShopPage() {
-  const [products, setProducts] = useState<Product[]>();
   const [sortedProducts, setSortedProducts] = useState<Product[]>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const res = await fetch("/api/products");
       const data = await res.json();
-      setProducts(data.products);
       setSortedProducts(data.products);
     };
 
     fetchProducts();
+    setLoading(false);
   }, []);
 
   return (
@@ -58,21 +61,25 @@ export default function ShopPage() {
               <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
             </div>
             <div className="container py-4 flex flex-wrap gap-4">
-              {sortedProducts?.map((product, index) => (
-                <ProductCard
-                  key={index}
-                  name={product.name}
-                  price={product.price}
-                  image={product.images[0]}
-                  id={product.id}
-                  sizes={product.sizes}
-                  category={product.category}
-                />
-              ))}
+              {loading
+                ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((i_, index) => (
+                    <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />
+                  ))
+                : sortedProducts?.map((product, index) => (
+                    <ProductCard
+                      key={index}
+                      name={product.name}
+                      price={product.price}
+                      image={product.images[0]}
+                      id={product.id}
+                      sizes={product.sizes}
+                      category={product.category}
+                    />
+                  ))}
             </div>
           </TabsContent>
           <TabsContent value="categorize">
-            <CategoryPage />
+            <CategorizePage />
           </TabsContent>
         </Tabs>
       </section>

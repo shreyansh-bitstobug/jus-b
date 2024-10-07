@@ -56,6 +56,7 @@ export interface Product {
     features: string[];
   };
   sizes: string[];
+  sizesAvailable?: { size: string; quantity: number }[];
   category: string;
   images: string[];
   createdAt: Date;
