@@ -80,7 +80,7 @@ export default function ProductCard({
       <Link href={`/shop/${_.kebabCase(category)}/${id}`} className="block relative">
         <Image
           alt={name}
-          className="object-cover w-full h-80 transition-all group-hover:scale-105"
+          className="object-cover object-top w-full h-80 transition-all group-hover:scale-105"
           height="320"
           placeholder="blur"
           blurDataURL="/assets/placeholder.svg"
@@ -107,7 +107,7 @@ export default function ProductCard({
         {/* Product Name and Price */}
         <div className="space-y-1">
           <h3 className="font-semibold leading-3">{_.truncate(name, { length: 25 })}</h3>
-          <p className=" font-medium text-lg text-gray-400">&#8377;{currencyPrice}</p>
+          <p className=" font-medium text-lg text-gray-400">{currencyPrice}</p>
         </div>
 
         {/* Cart Button */}

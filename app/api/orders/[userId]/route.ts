@@ -4,9 +4,10 @@ import { Order } from "@/lib/schema";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 
 // Get all orders (GET /api/orders)
-export async function GET(req: Request, params: { userId: string }) {
+export async function GET(req: Request, { params }: { params: { userId: string } }) {
   try {
     const { userId } = params;
+    console.log("userId", userId);
 
     if (!userId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 

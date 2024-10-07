@@ -178,7 +178,7 @@ export default function ProfileModal() {
                       Contact Number <span className="text-red-600">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Phone number with extension" {...field} />
+                      <Input placeholder="Phone number with country code" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

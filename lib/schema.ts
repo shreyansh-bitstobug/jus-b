@@ -74,7 +74,7 @@ export interface Cart {
 export interface Wishlist {
   id: string;
   userId: string;
-  items: { productId: string }[];
+  items: string[];
   createdAt: Date;
   updatedAt: Date;
 }

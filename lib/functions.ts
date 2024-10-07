@@ -1,21 +1,25 @@
 import { CartItem, currency } from "@/hooks/use-store";
 import { Cart, Product, Wishlist, Order, Address } from "@/lib/schema";
+import { useCategoriesStore } from "@/hooks/use-store";
 
 export const removeSlash = (str: string) => {
   return str.charAt(0) === "/" ? str.slice(1) : str;
 };
 
 export const getCategories = async () => {
-  const res = await fetch("/api/products");
-  const data = await res.json();
-  console.log(data);
+  const { categories, setCategories } = useCategoriesStore.getState();
 
-  const categories = await data.products?.reduce((acc: string[], product: Product) => {
-    if (!acc.includes(product.category)) {
-      acc.push(product.category);
-    }
-    return acc;
-  }, []);
+  if (!categories) {
+    const res = await fetch("/api/products");
+    const data = await res.json();
+    const fetchedCategories = await data.products?.reduce((acc: string[], product: Product) => {
+      if (!acc.includes(product.category)) {
+        acc.push(product.category);
+      }
+      return acc;
+    }, []);
+    setCategories(fetchedCategories);
+  }
 
   return categories;
 };
@@ -61,12 +65,10 @@ export const cartUpdate = async (userId?: string, cart?: Record<string, CartItem
 export const wishlistUpdate = async (userId?: string, wishlist?: Set<string>) => {
   if (!userId) return;
 
+  console.log("wishlistUpdate items", userId, wishlist);
+
   // Convert Set<string> to the required format: an array of { productId: string }
-  const updatedWishlistItems = wishlist
-    ? Array.from(wishlist).map((productId) => ({
-        productId,
-      }))
-    : [];
+  const updatedWishlistItems = wishlist ? Array.from(wishlist).map((productId) => productId) : [];
 
   console.log(updatedWishlistItems);
 
@@ -110,7 +112,7 @@ const calculateFare = (
     size: string;
   }[]
 ): number => {
-  return items.reduce((total, item) => {
+  return items?.reduce((total, item) => {
     const productPrice = item.details.price;
     return total + productPrice * item.quantity;
   }, 0);
@@ -118,7 +120,7 @@ const calculateFare = (
 
 const cartToItems = (cart: any[], products: Product[]) => {
   return cart
-    .map((item) => {
+    ?.map((item) => {
       const product = products.find((product) => product.productId === item.productId);
       if (!product) return null;
 

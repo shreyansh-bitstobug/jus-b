@@ -1,4 +1,11 @@
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,19 +21,18 @@ import { Address } from "@/lib/schema";
 
 const addressFormSchema = z.object({
   name: z.string().min(2).max(30),
-  address1: z.string().min(2).max(100),
-  address2: z.string().min(2).max(100).optional(),
+  address1: z.string().min(2).max(30),
+  address2: z.string().min(2).max(30),
   city: z.string().min(2).max(30),
   state: z.string().min(2).max(30),
   postalCode: z.string().min(2).max(30),
-  country: z.string().min(2).max(30),
-  phone: z.string().min(2).max(30),
+  phoneNumber: z.string().min(2).max(30),
 });
 
 export default function AddressModal() {
   const { isOpen, closeModal, modalName } = useModalStore();
   const { editAddress, setEditAddress } = useEditAddressStore();
-  const [user] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const { change, setChange } = useChangeStore();
 
   const isModalOpen = isOpen && modalName === "addressForm";
@@ -37,43 +43,53 @@ export default function AddressModal() {
   });
 
   const close = () => {
-    closeModal();
-    form.reset();
     setEditAddress(null);
+    form.reset();
+    closeModal();
   };
 
   useEffect(() => {
     if (editAddress) {
-      form.reset(editAddress);
-      form.setValue("phone", editAddress.phoneNumber);
+      form.reset();
+      form.setValue("phoneNumber", editAddress.phoneNumber);
       form.setValue("address1", editAddress.address[0]);
       form.setValue("address2", editAddress.address[1]);
     }
-  }, [isModalOpen]);
+  }, [isModalOpen]); // eslint-disable-line
+
+  useEffect(() => {
+    console.log(form.getValues());
+  }, [form]);
 
   async function onSubmit(values: z.infer<typeof addressFormSchema>) {
-    if (!user) return;
+    try {
+      console.log("hello from submit");
+      if (!loading) {
+        if (!user) return;
+      }
 
-    console.log("values", values);
+      console.log("values", values);
 
-    const response = await fetch(`/api/users/${user.uid}`);
-    const data = await response.json();
-    const addresses = data.user.addresses;
-    const updatedAddresses = editAddress
-      ? addresses.map((address: Address) => (address.id === editAddress.id ? { ...address, ...values } : address))
-      : [...addresses, values];
+      const response = await fetch(`/api/users/${user?.uid}`);
+      const data = await response.json();
+      const addresses = data.user.addresses;
+      const updatedAddresses = editAddress
+        ? addresses.map((address: Address) => (address.id === editAddress.id ? { ...address, ...values } : address))
+        : [...addresses, values];
 
-    console.log("updatedAddresses", updatedAddresses);
+      console.log("updatedAddresses", updatedAddresses);
 
-    const res = await fetch(`/api/users/${user.uid}`, {
-      method: "POST",
-      body: JSON.stringify({ addresses: updatedAddresses }),
-    });
+      const res = await fetch(`/api/users/${user?.uid}`, {
+        method: "POST",
+        body: JSON.stringify({ addresses: updatedAddresses }),
+      });
 
-    if (res.ok) {
-      closeModal();
-      form.reset();
-      setChange(!change);
+      if (res.ok) {
+        close();
+        setChange(!change);
+      }
+    } catch (error) {
+      console.error("Error in address modal", error);
     }
   }
 
@@ -82,129 +98,141 @@ export default function AddressModal() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add address</DialogTitle>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <DialogDescription>Add more information for the delivery</DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Name field */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Name <span className="text-red-600">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormDescription className="text-xs">This name is for address only.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Address Line 1 field */}
+            <FormField
+              control={form.control}
+              name="address1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className=" whitespace-pre-line">
+                    Address Line 1 {""}
+                    <span className="text-red-600">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Flat, House no., Building, Company, Apartment" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Address Line 2 field */}
+            <FormField
+              control={form.control}
+              name="address2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="whitespace-pre-wrap">
+                    Address Line 2 <span className="text-red-600">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Area, Street, Sector, Village" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* City and State field */}
+            <div className="flex justify-between gap-8">
               <FormField
                 control={form.control}
-                name="name"
+                name="city"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Name <span className="text-red-600">*</span>
+                      City <span className="text-red-600">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input placeholder="City" className="w-40" {...field} />
                     </FormControl>
-                    <FormDescription className="text-xs">This name is for address only.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="address1"
+                name="state"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className=" whitespace-pre-line">
-                      Address Line 1 {""}
-                      <span className="text-red-600">*</span>
+                  <FormItem className="flex-grow">
+                    <FormLabel>
+                      State or Province <span className="text-red-600">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Flat, House no., Building, Company, Apartment" {...field} />
+                      <Input placeholder="State" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
 
+            {/* Postal code and Phone Number Field */}
+            <div className="flex justify-between gap-8">
               <FormField
                 control={form.control}
-                name="address2"
+                name="postalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="whitespace-pre-wrap">
-                      Address Line 2 <span className="text-red-600">*</span>
+                    <FormLabel>
+                      Postal Code <span className="text-red-600">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Area, Street, Sector, Village" {...field} />
+                      <Input type="number" placeholder="Postal Code" className="w-40" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="flex justify-between gap-8">
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        City <span className="text-red-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="City" className="w-40" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormLabel>
-                        State <span className="text-red-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="State" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex justify-between gap-8">
-                <FormField
-                  control={form.control}
-                  name="postalCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Postal Code <span className="text-red-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Postal Code" className="w-40" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormLabel>
-                        Contact Number <span className="text-red-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Phone number with extension" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex gap-4 justify-end">
-                <Button type="button" variant="outline">
-                  <DialogClose>Cancel</DialogClose>
-                </Button>
-                <Button type="submit">Save</Button>
-              </div>
-            </form>
-          </Form>
-        </DialogHeader>
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel>
+                      Contact Number <span className="text-red-600">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Phone number with country code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Cancel and Submit Button */}
+            <div className="flex gap-4 justify-end">
+              <Button type="button" variant="outline" onClick={close}>
+                Cancel
+              </Button>
+              <Button type="submit">Save</Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

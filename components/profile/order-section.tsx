@@ -37,8 +37,11 @@ export default function OrderSection() {
       });
       setOrders(data.orders);
     };
-    fetchOrders();
-  }, []);
+
+    if (!loading) {
+      if (user && user.uid) fetchOrders();
+    }
+  }, [user, loading]);
 
   return (
     <section className="flex flex-wrap gap-4">

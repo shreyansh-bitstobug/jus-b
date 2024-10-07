@@ -84,6 +84,7 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require("tailwind-scrollbar"),
     function ({ addUtilities }: { addUtilities: (utilities: any, variants?: any) => void }) {
       const newUtilities = {
         ".underline-thick": {

@@ -46,7 +46,7 @@ export default function HomePage() {
       <CardStack />
 
       {/* Luxe Section as 1 Large Image and 4 Product Cards */}
-      <MidSection />
+      <MidSection products={products} />
 
       {/* ---------------- */}
       <hr className="border-penn-red full mx-auto border-t-2" />

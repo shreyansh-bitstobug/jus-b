@@ -10,7 +10,7 @@ import Image from "next/image";
 
 // Hooks and Utils
 import { cn } from "@/lib/utils";
-import { useCartStore, useModalStore } from "@/hooks/use-store";
+import { useCartStore, useCategoriesStore, useModalStore } from "@/hooks/use-store";
 
 // Icons
 import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus } from "lucide-react";
@@ -32,15 +32,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { removeSlash } from "@/lib/functions";
+import { getCategories, removeSlash } from "@/lib/functions";
 import { Product } from "@/lib/schema";
 import CurrencyButton from "../currency-button";
 
 export default function Navbar1() {
   // State
-  const [products, setProducts] = useState([]); // Products from the API
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
-  const [categories, setCategories] = useState<string[]>([]); // Categories for the shop
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
   const [page, setPage] = useState(""); // Current page
 
@@ -53,6 +51,7 @@ export default function Navbar1() {
   // Stores
   const { cart } = useCartStore(); // Get the cart from the store for number of items in the cart
   const { openModal } = useModalStore(); // Get the openModal function from the store to open the search modal
+  const { categories } = useCategoriesStore(); // Get the categories from the store
 
   // Get the WhatsApp link based on the user's device
   useEffect(() => {
@@ -83,22 +82,7 @@ export default function Navbar1() {
     }
   }, [url]);
 
-  // Get the categories reduced from the products from API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await fetch("/api/products");
-      const data = await response.json();
-      setProducts(data);
-      const categories = await data.products?.reduce((acc: string[], product: Product) => {
-        if (!acc.includes(product.category)) {
-          acc.push(product.category);
-        }
-        return acc;
-      }, []);
-      setCategories(categories);
-    };
-    fetchProducts();
-  }, []);
+  getCategories();
 
   // Logout function
   const handleLogout = () => {

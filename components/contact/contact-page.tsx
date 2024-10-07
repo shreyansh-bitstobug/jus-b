@@ -151,7 +151,7 @@ export default function ContactPage() {
                   className=" bg-snow border-neutral-700"
                   {...form.register("phone")}
                   type="tel"
-                  placeholder="Phone number with extension*"
+                  placeholder="Phone number with country code*"
                 />
                 {form.formState.errors.phone && (
                   <span className="text-sm text-red-600">{form.formState.errors.phone.message}</span>

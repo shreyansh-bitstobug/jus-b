@@ -3,6 +3,7 @@ import { User } from "firebase/auth"; // Import the User type from Firebase Auth
 import { cartUpdate, getCart, wishlistUpdate } from "@/lib/functions";
 import { Address } from "@/lib/schema";
 
+// Type for the Home Page
 type HomePage = {
   loaderOn: boolean;
   setLoaderOn: (loaderOn: boolean) => void;
@@ -20,6 +21,21 @@ const useHomePageStore = create<HomePage>((set) => ({
   setPopupOn: (popupOn) => set({ popupOn }),
 }));
 
+// Type for the Categories store
+type CategoriesStore = {
+  categories: string[] | null;
+  setCategories: (categories: string[]) => void;
+};
+
+//  --------------------
+//  Categories Store
+//  --------------------
+const useCategoriesStore = create<CategoriesStore>((set) => ({
+  categories: null,
+  setCategories: (categories) => set({ categories }),
+}));
+
+// Type for the Auth store
 type AuthStoreType = {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -360,4 +376,5 @@ export {
   useDashCurrencyStore,
   useProfileStore,
   useChangeStore,
+  useCategoriesStore,
 };

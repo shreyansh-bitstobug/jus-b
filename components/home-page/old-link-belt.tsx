@@ -21,7 +21,7 @@ export default function AnimatedLinkBelt() {
   useEffect(() => {
     const fetchCategories = async () => {
       const categoriesFetched = await getCategories();
-      setCategories(categoriesFetched);
+      setCategories(categoriesFetched ?? []);
     };
 
     fetchCategories();

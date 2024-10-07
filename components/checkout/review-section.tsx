@@ -43,7 +43,7 @@ export default function ReviewSection({
       setCurrencyFare({ total, shipping, discount, amountPaid });
     };
     currencyCalc();
-  }, [fare]);
+  }, [fare, currency, items]);
 
   const responsiveTruncate = (text: string) => {
     const screenWidth = window.innerWidth;
@@ -105,7 +105,7 @@ export default function ReviewSection({
             <div className="flex items-start space-x-2">
               <MapPinIcon className="h-5 w-5 text-muted-foreground" />
               <div className="flex flex-col w-60">
-                <span>{address.address[0] + ", " + address.address[1] + ","}</span>
+                <span>{address.address && address.address[0] + ", " + address.address[1] + ","}</span>
                 <span>{address.city + ", " + address.state + ", " + address.country + " - " + address.postalCode}</span>
               </div>
             </div>

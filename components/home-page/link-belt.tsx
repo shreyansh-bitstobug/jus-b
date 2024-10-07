@@ -6,6 +6,7 @@ import _ from "lodash";
 import Image from "next/image";
 import ParallaxText from "../parallax-text";
 import { getCategories } from "@/lib/functions";
+import { useCategoriesStore } from "@/hooks/use-store";
 
 const CategoryBelt = ({ categories }: { categories: string[] }) => {
   return (
@@ -31,20 +32,13 @@ const CategoryBelt = ({ categories }: { categories: string[] }) => {
 };
 
 export default function AnimatedLinkBelt() {
-  const [categories, setCategories] = useState<string[]>([]);
+  const { categories } = useCategoriesStore();
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const categoriesFetched = await getCategories();
-      setCategories(categoriesFetched);
-    };
-
-    fetchCategories();
-  }, []);
+  getCategories();
 
   return (
     <ParallaxText baseVelocity={5}>
-      <CategoryBelt categories={categories} />
+      <CategoryBelt categories={categories as string[]} />
     </ParallaxText>
   );
 }

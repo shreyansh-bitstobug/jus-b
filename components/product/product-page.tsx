@@ -227,7 +227,7 @@ export default function ProductPage({ productId }: { productId: string }) {
                 </span>
               </Button>
             )}
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 overflow-x-scroll scrollbar-none">
               {product?.images.map((image, index) => {
                 return image !== video ? (
                   <Image
@@ -266,7 +266,7 @@ export default function ProductPage({ productId }: { productId: string }) {
           {loading ? (
             <Skeleton className="w-40 h-10 bg-muted-foreground/20" />
           ) : (
-            <p className="text-2xl font-semibold">&#8377;{currencyPrice}</p>
+            <p className="text-2xl font-semibold">{currencyPrice}</p>
           )}
           {loading ? (
             <div className="space-y-3">

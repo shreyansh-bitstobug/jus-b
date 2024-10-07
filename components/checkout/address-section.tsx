@@ -18,7 +18,12 @@ const AddressCard = ({
   selectedAddress: Address | null;
 }) => {
   return (
-    <Card className={cn("max-w-[500px] min-w-72 ", address.id === selectedAddress?.id ? "bg-blue-100" : "")}>
+    <Card
+      className={cn(
+        "max-w-[500px] min-w-72 ",
+        selectedAddress && address.id === selectedAddress.id ? "bg-blue-100" : ""
+      )}
+    >
       <CardContent className="flex flex-col md:flex-row items-start justify-between p-6 ">
         <div className="space-y-2 w-full">
           <div className="flex items-start space-x-2">
@@ -30,7 +35,7 @@ const AddressCard = ({
           <div className="flex items-start space-x-2">
             <MapPinIcon className="h-5 w-5 text-muted-foreground" />
             <div className="flex flex-col w-60">
-              <span>{address.address[0] + ", " + address.address[1] + ","}</span>
+              <span>{address.address && address.address[0] + ", " + address.address[1] + ","}</span>
               <span>{address.city + ", " + address.state + ", " + address.country + " - " + address.postalCode}</span>
             </div>
           </div>
@@ -52,10 +57,10 @@ const AddressCard = ({
         onClick={() => selectAddress(address)}
         className={cn(
           "p-1 text-center justify-center font-medium cursor-pointer",
-          address.id === selectedAddress?.id ? "bg-blue-300 " : "bg-neutral-200"
+          selectedAddress && address.id === selectedAddress.id ? "bg-blue-300 " : "bg-neutral-200"
         )}
       >
-        {address.id === selectedAddress?.id ? "Selected" : "Select"}
+        {selectedAddress && address.id === selectedAddress.id ? "Selected" : "Select"}
       </CardFooter>
     </Card>
   );
@@ -82,15 +87,17 @@ export default function AddressSection({
     openModal("addressForm");
   };
 
+  console.log("selectedAddress", selectedAddress);
+
   return (
     <section className="flex flex-col gap-8 items-center justify-center">
       <h1 className="text-3xl font-semibold">Delivery Address</h1>
       {isLoading ? (
         <Skeleton className="w-72 sm:w-96 h-48" />
       ) : (
-        addresses.map((address) => (
+        addresses.map((address, index) => (
           <AddressCard
-            key={address.id}
+            key={index}
             address={address}
             handleEditAddress={handleEditAddress}
             selectAddress={selectAddress}

@@ -107,7 +107,7 @@ export default function ProgressSection() {
     };
 
     fetchCart(); // Fetch cart items from the database or local storage on mount
-  }, []);
+  }, [cart, user]);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -115,11 +115,12 @@ export default function ProgressSection() {
       const res = await fetch(`/api/users/${user?.uid}`);
       const data = await res.json();
       setAddresses(data.user.addresses);
+      console.log("Addresses", data.user.addresses);
       setIsLoading(false);
     };
 
     if (user && !loading) fetchAddresses(); // Fetch addresses from the database on mount
-  }, [user?.uid]);
+  }, [user, loading]);
 
   useEffect(() => {
     const fetchItems = async () => {

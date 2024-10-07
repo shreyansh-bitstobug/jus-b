@@ -25,37 +25,48 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 mb-16 justify-items-center items-center">
-          <div className=" space-y-20">
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold">Jolly Brar Vij</h2>
-              <p className="text-gray-700">
-                An independent and inspired fashion designer with an endless imagination. Jolly blends traditional
-                Indian clothing with modern trendy styles. Her goal is to make an impact on the current fashion
-                industry. Starting as a merchandiser / fashion designer, she has worked hard to make her dream a
-                reality. Now settled in the UK, she continues to pursue her passion alongside her family.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold">Bharti Tanwar</h2>
-              <p className="text-gray-700">
-                A proud Delhite with a deep-seated love for fashion and clothing. After six years as an online retailer,
-                Bharti is now establishing her own clothing brand alongside her lifelong friend, Jolly. Her vision is to
-                dissolve the boundary between high fashion and affordability, making couture accessible to all. With
-                unwavering dedication, she&#39;s poised to redefine the fashion landscape.
-              </p>
-            </div>
-          </div>
+        <div className="grid md:grid-cols-2 gap-20 mb-16 justify-items-center items-center">
+          {/* Item-1 */}
           <div className="space-y-6">
-            <Image
-              src="/assets/founders/founder-1.jpg"
-              alt="Bharti Tanwar"
-              className="w-full h-screen object-cover rounded-lg shadow-md"
-              width={1000}
-              height={1000}
-            />
+            <h2 className="text-2xl font-semibold">Jolly Brar Vij</h2>
+            <p className="text-gray-700">
+              An independent and inspired fashion designer with an endless imagination. Jolly blends traditional Indian
+              clothing with modern trendy styles. Her goal is to make an impact on the current fashion industry.
+              Starting as a merchandiser / fashion designer, she has worked hard to make her dream a reality. Now
+              settled in the UK, she continues to pursue her passion alongside her family.
+            </p>
           </div>
+
+          {/* Item-2 */}
+          <Image
+            src="/assets/founders/founder-1.jpg"
+            alt="Bharti Tanwar"
+            className="w-full h-screen object-cover rounded-lg shadow-md"
+            width={1000}
+            height={1000}
+          />
+
+          {/* Item-3 */}
+          <Image
+            src="/assets/founders/founder-2.jpg"
+            alt="Jolly Brar Vij"
+            className="w-full h-screen object-cover rounded-lg shadow-md"
+            width={1000}
+            height={1000}
+          />
+
+          {/* Item-4 */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Bharti Tanwar</h2>
+            <p className="text-gray-700">
+              A proud Delhite with a deep-seated love for fashion and clothing. After six years as an online retailer,
+              Bharti is now establishing her own clothing brand alongside her lifelong friend, Jolly. Her vision is to
+              dissolve the boundary between high fashion and affordability, making couture accessible to all. With
+              unwavering dedication, she&#39;s poised to redefine the fashion landscape.
+            </p>
+          </div>
+
+          <div className="space-y-6"></div>
         </div>
 
         <div className="text-center mb-16">

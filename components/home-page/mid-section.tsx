@@ -14,21 +14,18 @@ import ProductCard from "@/components/product/product-card";
 // Schema
 import { Product } from "@/lib/schema";
 
-export default function MidSection() {
+export default function MidSection({ products }: { products: Product[] }) {
   const [luxeProducts, setLuxeProducts] = useState<Product[]>([]);
 
   // Get the luxe products
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await fetch("/api/products");
-      const data = await res.json();
-      const luxe = await data.products?.filter((product: Product) => product.category === "Jus-B Luxe");
-      console.log("Luxe", luxe);
+    const fetchProducts = () => {
+      const luxe = products.filter((product: Product) => product.category === "Jus-B Luxe");
       setLuxeProducts(luxe);
     };
 
     fetchProducts();
-  }, []);
+  }, [products]);
 
   return (
     <section className="py-6 md:py-12 lg:py-16 px-6">

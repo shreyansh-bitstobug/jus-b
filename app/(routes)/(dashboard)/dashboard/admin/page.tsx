@@ -19,7 +19,7 @@ export default function DashboardAdminPage() {
       // If not loading and no user, redirect to sign-in page
       if (!user) {
         router.push("/sign-in");
-      } else if (user?.uid !== "jL1A2ij8iMU24NSZnkh0zigIUto2") {
+      } else if (user?.uid !== "jL1A2ij8iMU24NSZnkh0zigIUto2" && user?.uid !== "xemjmEcRf4OCWp3E4BWhZFtK4uV2") {
         // If user is authenticated but not the admin, redirect to home
         router.push("/");
       }
