@@ -53,7 +53,7 @@ export default function AddressModal() {
       form.reset();
       form.setValue("phoneNumber", editAddress.phoneNumber);
       form.setValue("address1", editAddress.address && editAddress.address[0]);
-      form.setValue("address2", editAddress.address[1]);
+      form.setValue("address2", editAddress.address && editAddress.address[1]);
     }
   }, [isModalOpen]); // eslint-disable-line
 

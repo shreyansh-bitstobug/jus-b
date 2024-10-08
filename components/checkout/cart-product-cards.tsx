@@ -142,7 +142,7 @@ export default function CartProductCard({
         </Link>
 
         {/* Price */}
-        <p className=" p-1 text-black font-bold text-2xl ">&#8377;{currencyPrice}</p>
+        <p className=" p-1 text-black font-bold text-2xl">{currencyPrice}</p>
 
         <div className="flex justify-between">
           <div className="flex flex-col justify-between">
