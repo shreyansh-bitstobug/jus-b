@@ -20,6 +20,9 @@ import Link from "next/link";
 import _ from "lodash";
 import TooltipContext from "../tooltip-context";
 import { Order } from "@/lib/schema";
+import { useCurrencyStore } from "@/hooks/use-store";
+import { formatCurrency } from "@/lib/functions";
+import { useEffect, useState } from "react";
 
 interface OrderItem {
   name: string;
@@ -34,7 +37,12 @@ export default function OrderCard({
   order: Order;
   handleCopy: (e: React.MouseEvent, orderId: string) => void;
 }) {
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+  const [amountPaid, setAmountPaid] = useState<string>(""); // Amount paid by the user
+  const [currencyItems, setCurrencyItems] =
+    useState<{ id: string; details: any; quantity: number; size: string; total: string }[]>();
+  const [total, setTotal] = useState<string>(""); // Total amount of the order
+  const [discount, setDiscount] = useState<string>(""); // Discount amount
+  const [shipping, setShipping] = useState<string>(""); // Shipping cost
 
   const {
     orderId,
@@ -50,6 +58,30 @@ export default function OrderCard({
     trackingId,
     paymentMethod,
   } = order;
+
+  const timestampToDate = (timestamp: any) => new Date(timestamp.seconds * 1000);
+
+  const { currency } = useCurrencyStore();
+
+  useEffect(() => {
+    const handleCurrencies = async () => {
+      const formattedItems = await Promise.all(
+        items.map(async (product) => {
+          const { details, quantity } = product;
+          const total = await formatCurrency(details.price * quantity, currency);
+          return { ...product, details: { ...details }, total };
+        })
+      );
+
+      setCurrencyItems(formattedItems);
+
+      setAmountPaid(await formatCurrency(fare.amountPaid, currency));
+      setTotal(await formatCurrency(fare.total, currency));
+      setDiscount(await formatCurrency(fare.discount, currency));
+      setShipping(await formatCurrency(fare.shipping, currency));
+    };
+    handleCurrencies();
+  }, [fare, items, currency]);
 
   const responsiveTruncate = (text: string) => {
     const screenWidth = window.innerWidth;
@@ -83,7 +115,7 @@ export default function OrderCard({
                   onClick={(e) => handleCopy(e, orderId)}
                 />
               </CardTitle>
-              <CardDescription>Placed on {format(placedAt, "PP")}</CardDescription>
+              <CardDescription>Placed on {format(timestampToDate(placedAt), "PP")}</CardDescription>
             </div>
             <Badge
               className={cn(
@@ -109,7 +141,8 @@ export default function OrderCard({
                 {" "}
                 {deliveredAt ? (
                   <span>
-                    <span className="sm:inline-flex hidden">Delivered on </span> {format(deliveredAt, "PP")}
+                    <span className="sm:inline-flex hidden">Delivered on </span>{" "}
+                    {format(timestampToDate(deliveredAt), "PP")}
                   </span>
                 ) : (
                   " Order" + status
@@ -128,16 +161,47 @@ export default function OrderCard({
               <CalendarIcon className="h-5 w-5 text-muted-foreground" />
               <span>
                 <span className="hidden sm:inline-flex whitespace-pre-wrap">Ordered on </span>
-                {format(placedAt, "PP")}
+                {format(timestampToDate(placedAt), "PP")}
               </span>
             </div>
           </div>
           <Separator />
+
+          <div className="grid grid-cols-2">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Shipping Address</h3>
+              <p>{shippingAddress.address && shippingAddress.address[0] + ", " + shippingAddress.address[1] + ","}</p>
+              <p>
+                {shippingAddress.city +
+                  ", " +
+                  shippingAddress.state +
+                  ", " +
+                  shippingAddress.country +
+                  " - " +
+                  shippingAddress.postalCode}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Billing Address</h3>
+              <p>{shippingAddress.address && shippingAddress.address[0] + ", " + shippingAddress.address[1] + ","}</p>
+              <p>
+                {shippingAddress.city +
+                  ", " +
+                  shippingAddress.state +
+                  ", " +
+                  shippingAddress.country +
+                  " - " +
+                  shippingAddress.postalCode}
+              </p>
+            </div>
+          </div>
+          <Separator />
+
           <div>
             <h3 className="text-lg font-semibold mb-2">Order Items</h3>
             {items.length > 0 ? (
               <ul className="space-y-2">
-                {items.map((item) => {
+                {currencyItems?.map((item) => {
                   const { id, details, quantity } = item;
                   return (
                     <li key={id} className="flex justify-between items-center">
@@ -147,7 +211,7 @@ export default function OrderCard({
                           <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
                         </TooltipContext>
                       </div>
-                      <span>{formatCurrency(details.price * quantity)}</span>
+                      <span>{details.price * quantity}</span>
                     </li>
                   );
                 })}
@@ -160,19 +224,19 @@ export default function OrderCard({
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span>{formatCurrency(fare.total)}</span>
+              <span>{total}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping:</span>
-              <span>{formatCurrency(fare.shipping)}</span>
+              <span>{shipping}</span>
             </div>
             <div className="flex justify-between text-primary">
               <span>Discount:</span>
-              <span>-{formatCurrency(fare.discount)}</span>
+              <span>-{discount}</span>
             </div>
             <div className="flex justify-between font-bold">
               <span>Total:</span>
-              <span>{formatCurrency(fare.amountPaid)}</span>
+              <span>{amountPaid}</span>
             </div>
           </div>
         </CardContent>
