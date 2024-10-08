@@ -19,6 +19,8 @@ export default function OrderSection() {
 
   const [user, loading, error] = useAuthState(auth);
 
+  const timestampToDate = (timestamp: any) => new Date(timestamp.seconds * 1000);
+
   const handleCopy = (e: React.MouseEvent, orderId: string) => () => {
     e.stopPropagation();
     e.preventDefault();
@@ -31,8 +33,8 @@ export default function OrderSection() {
       const response = await fetch("/api/orders/" + user?.uid);
       const data = await response.json();
       data?.orders?.map((order: any) => {
-        order.createdAt = new Date(order.createdAt).toLocaleString();
-        order.updatedAt = new Date(order.updatedAt).toLocaleString();
+        order.createdAt = timestampToDate(order.createdAt);
+        order.updatedAt = timestampToDate(order.updatedAt);
         return order;
       });
 
