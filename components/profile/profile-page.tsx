@@ -49,7 +49,7 @@ export default function ProfilePage() {
 
     // If not loading and user, fetch user data from the database
     if (!loading && user) fetchDbUser();
-  }, [user?.uid, change]);
+  }, [user, change, loading]);
 
   // Handlers
   const handleAddAddress = () => {

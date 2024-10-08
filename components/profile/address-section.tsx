@@ -3,11 +3,46 @@ import { Badge } from "@/components/ui/badge";
 import { MapPinIcon, PhoneIcon, Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import { RiDeleteBinFill } from "react-icons/ri";
-import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
+import { useChangeStore, useEditAddressStore, useModalStore } from "@/hooks/use-store";
 import { Address } from "@/lib/schema";
 import Link from "next/link";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 const AddressCard = ({ address, handleEditAddress }: { address: Address; handleEditAddress: (id: string) => void }) => {
+  const { setChange, change } = useChangeStore();
+  const [user] = useAuthState(auth);
+
+  const handleMakingDefault = () => {
+    console.log("making default");
+    const updateAddress = async () => {
+      console.log("updating address");
+      const response = await fetch(`/api/users/${user?.uid}`);
+      const data = await response.json();
+      const addresses = data.user.addresses;
+
+      console.log("addresses", addresses);
+      const updatedAddresses = addresses?.map((add: Address) => {
+        if (add.id === address.id) {
+          return { ...address, isDefault: true };
+        }
+        return address;
+      });
+      console.log("updatedAddresses", updatedAddresses);
+
+      const res = await fetch(`/api/users/${user?.uid}`, {
+        method: "POST",
+        body: JSON.stringify({ address: updatedAddresses }),
+      });
+
+      console.log("res", res);
+
+      if (res.ok) {
+        setChange(!change);
+      }
+    };
+    updateAddress();
+  };
   return (
     <Card className="w-[500px] h-">
       <CardContent className="flex flex-col gap-4 md:flex-row items-start justify-between p-6 ">
@@ -15,7 +50,7 @@ const AddressCard = ({ address, handleEditAddress }: { address: Address; handleE
           <div className="flex items-start space-x-2">
             <MapPinIcon className="h-5 w-5 text-muted-foreground" />
             <div className="flex flex-col w-60">
-              <span>{address.address[0] + ", " + address.address[1] + ","}</span>
+              <span>{address.address && address.address[0] + ", " + address.address[1] + ","}</span>
               <span>{address.city + ", " + address.state + ", " + address.country + " - " + address.postalCode}</span>
             </div>
           </div>
@@ -28,7 +63,7 @@ const AddressCard = ({ address, handleEditAddress }: { address: Address; handleE
         <div className=" flex md:flex-col flex-row-reverse md:items-end md:h-full justify-between items-end w-full gap-2">
           {address.isDefault && <Badge className="h-fit my-[7.2px]">Default</Badge>}
           {!address.isDefault && (
-            <Button size="sm" variant="secondary">
+            <Button size="sm" variant="secondary" onClick={handleMakingDefault}>
               Make as default
             </Button>
           )}

@@ -35,7 +35,7 @@ export default function OrderSection() {
         order.updatedAt = new Date(order.updatedAt).toLocaleString();
         return order;
       });
-      setOrders(data.orders);
+      setOrders(data.orders || []);
     };
 
     if (!loading) {

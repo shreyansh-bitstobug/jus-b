@@ -7,6 +7,7 @@ import { Order } from "@/lib/schema";
 
 export default function OrderPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [change, setChange] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -17,10 +18,11 @@ export default function OrderPage() {
         order.updatedAt = new Date(order.updatedAt).toLocaleString();
         return order;
       });
+      console.log(change);
       setOrders(data.orders);
     };
     fetchOrders();
-  }, []);
+  }, [change]);
 
   const handleCopy = (e: React.MouseEvent, orderId: string) => () => {
     e.stopPropagation();
@@ -32,7 +34,13 @@ export default function OrderPage() {
   return (
     <main className="container py-10 ">
       {orders?.map((order) => (
-        <OrderCard key={order.orderId} order={order} handleCopy={(e) => handleCopy(e, order.orderId)} />
+        <OrderCard
+          key={order.orderId}
+          order={order}
+          change={change}
+          setChange={setChange}
+          handleCopy={(e) => handleCopy(e, order.orderId)}
+        />
       ))}
     </main>
   );

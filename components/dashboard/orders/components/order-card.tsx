@@ -30,9 +30,13 @@ import { useDashCurrencyStore } from "@/hooks/use-store";
 export default function OrderCard({
   order,
   handleCopy,
+  change,
+  setChange,
 }: {
   order: Order;
   handleCopy: (e: React.MouseEvent, orderId: string) => void;
+  change: boolean;
+  setChange: (state: boolean) => void;
 }) {
   const {
     orderId,
@@ -112,6 +116,9 @@ export default function OrderCard({
       body: JSON.stringify({ trackingId: orderTrackingId }),
     });
     const data = await response.json();
+    if (response.ok) {
+      setChange(!change);
+    }
     console.log(data);
   };
 
@@ -124,6 +131,9 @@ export default function OrderCard({
     });
     const data = await response.json();
     console.log(data);
+    if (response.ok) {
+      setChange(!change);
+    }
   };
 
   // Update payment status function
@@ -135,6 +145,9 @@ export default function OrderCard({
     });
     const data = await response.json();
     console.log(data);
+    if (response.ok) {
+      setChange(!change);
+    }
   };
 
   return (
@@ -210,9 +223,39 @@ export default function OrderCard({
             <div className="flex items-center space-x-2">
               <CalendarIcon className="h-5 w-5 text-muted-foreground" />
               <span>
-                <span className="hidden sm:inline-flex whitespace-pre-wrap">Ordered on </span>
-                {/* {format(new Date(placedAt.seconds) * 1000, "PPp")} */}
+                <span className="hidden sm:inline-flex whitespace-pre-wrap"> </span>
+                {/* {format(timestampToDate(order.updatedAt), "PPp")} */}
               </span>
+            </div>
+          </div>
+          <Separator />
+
+          <div className="grid grid-cols-2">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Shipping Address</h3>
+              <p>{shippingAddress.address && shippingAddress.address[0] + ", " + shippingAddress.address[1] + ","}</p>
+              <p>
+                {shippingAddress.city +
+                  ", " +
+                  shippingAddress.state +
+                  ", " +
+                  shippingAddress.country +
+                  " - " +
+                  shippingAddress.postalCode}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Billing Address</h3>
+              <p>{shippingAddress.address && shippingAddress.address[0] + ", " + shippingAddress.address[1] + ","}</p>
+              <p>
+                {shippingAddress.city +
+                  ", " +
+                  shippingAddress.state +
+                  ", " +
+                  shippingAddress.country +
+                  " - " +
+                  shippingAddress.postalCode}
+              </p>
             </div>
           </div>
           <Separator />
@@ -221,10 +264,10 @@ export default function OrderCard({
             {items.length > 0 ? (
               <ul className="space-y-2">
                 {currencyItems &&
-                  currencyItems.map((item) => {
+                  currencyItems.map((item, index) => {
                     const { id, details, quantity, total } = item;
                     return (
-                      <li key={id} className="flex justify-between items-center">
+                      <li key={`${id}-${index}`} className="flex justify-between items-center">
                         <div className="flex items-center space-x-2">
                           <PackageIcon className="h-5 w-5 text-muted-foreground" />
                           <TooltipContext content={details.name}>

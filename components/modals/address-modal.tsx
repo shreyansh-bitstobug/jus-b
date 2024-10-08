@@ -52,7 +52,7 @@ export default function AddressModal() {
     if (editAddress) {
       form.reset();
       form.setValue("phoneNumber", editAddress.phoneNumber);
-      form.setValue("address1", editAddress.address[0]);
+      form.setValue("address1", editAddress.address && editAddress.address[0]);
       form.setValue("address2", editAddress.address[1]);
     }
   }, [isModalOpen]); // eslint-disable-line

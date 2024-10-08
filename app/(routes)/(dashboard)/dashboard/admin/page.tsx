@@ -1,5 +1,6 @@
 "use client";
 
+import BlogPage from "@/components/dashboard/blogs/blog-page";
 import CurrencyButton from "@/components/dashboard/currency-button-dash";
 import OrderPage from "@/components/dashboard/orders/order-page";
 import ProductPage from "@/components/dashboard/products/product-page";
@@ -19,7 +20,11 @@ export default function DashboardAdminPage() {
       // If not loading and no user, redirect to sign-in page
       if (!user) {
         router.push("/sign-in");
-      } else if (user?.uid !== "jL1A2ij8iMU24NSZnkh0zigIUto2" && user?.uid !== "xemjmEcRf4OCWp3E4BWhZFtK4uV2") {
+      } else if (
+        user?.uid !== "jL1A2ij8iMU24NSZnkh0zigIUto2" &&
+        user?.uid !== "xemjmEcRf4OCWp3E4BWhZFtK4uV2" &&
+        user?.uid !== "ebWKT0EnZBZxFy7xutMlRLwY9a83"
+      ) {
         // If user is authenticated but not the admin, redirect to home
         router.push("/");
       }
@@ -44,12 +49,14 @@ export default function DashboardAdminPage() {
           <h1 className="text-2xl font-semibold text-center">Menu</h1>
           <Button onClick={() => setSection("Orders")}>Orders</Button>
           <Button onClick={() => setSection("Products")}>Products</Button>
+          <Button onClick={() => setSection("Blogs")}>Blogs</Button>
           <CurrencyButton />
         </nav>
       </section>
       <section className="col-span-4">
         {section === "Orders" && <OrderPage />}
         {section === "Products" && <ProductPage />}
+        {section === "Blogs" && <BlogPage />}
       </section>
     </main>
   );
