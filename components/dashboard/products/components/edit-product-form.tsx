@@ -8,6 +8,7 @@ import ImageUpload from "./image-upload";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/schema";
+import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid"; // Ensure you have uuidv4 for generating IDs
 import { toast } from "@/components/ui/use-toast";
 import { Copy } from "lucide-react";
@@ -25,14 +26,18 @@ const formSchema = z.object({
   sizes: z.array(z.string().min(1)).optional(), // Optional sizes array
 });
 
-export default function AddProductForm({
+export default function EditProductForm({
   productForm,
   setProductForm,
+  editProduct,
+  setEditProduct,
   change,
   setChange,
 }: {
   productForm: boolean;
   setProductForm: (state: boolean) => void;
+  editProduct?: Product | null;
+  setEditProduct: (product: Product | null) => void;
   change: boolean;
   setChange: (state: boolean) => void;
 }) {
@@ -53,6 +58,23 @@ export default function AddProductForm({
       sizes: [], // Initialize as empty array
     },
   });
+
+  useEffect(() => {
+    if (editProduct) {
+      form.reset({
+        productId: editProduct.productId,
+        productName: editProduct.name,
+        price: editProduct.price,
+        category: editProduct.category,
+        images: editProduct.images,
+        description: {
+          text: editProduct.description.text,
+          features: editProduct.description.features,
+        },
+        sizes: editProduct.sizes,
+      });
+    }
+  }, [editProduct, form]);
 
   const {
     fields: featureFields,
@@ -78,7 +100,7 @@ export default function AddProductForm({
   // Submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
     const newProduct: Product = {
-      id: values.productId || uuidv4(), // Generate a new ID if not editing
+      id: editProduct?.id || uuidv4(), // Generate a new ID if not editing
       productId: values.productId,
       name: values.productName,
       price: values.price,
@@ -89,14 +111,14 @@ export default function AddProductForm({
         features: values.description.features,
       },
       sizes: values.sizes || [],
-      createdAt: new Date(),
+      createdAt: editProduct?.createdAt || new Date(),
       updatedAt: new Date(),
     };
 
-    const addOrUpdateProduct = async () => {
-      let res;
+    console.log("New product", newProduct);
 
-      res = await fetch(`/api/products`, {
+    const addOrUpdateProduct = async () => {
+      const res = await fetch(`/api/products/${values.productId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,6 +141,7 @@ export default function AddProductForm({
 
   const handleClose = () => {
     setProductForm(false);
+    setEditProduct(null);
     form.reset();
   };
 
@@ -126,8 +149,8 @@ export default function AddProductForm({
     <Dialog open={productForm} onOpenChange={handleClose}>
       <DialogContent className="h-[90vh] overflow-y-scroll">
         <DialogHeader>
-          <DialogTitle>Add Product</DialogTitle>
-          <DialogDescription>Add details for the new product</DialogDescription>
+          <DialogTitle>Edit Product</DialogTitle>
+          <DialogDescription>Edit details of the product</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

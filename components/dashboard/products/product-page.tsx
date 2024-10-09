@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import AddProductForm from "./components/add-product-form";
 import { Product } from "@/lib/schema";
 import ProductCard from "./components/product-card";
+import EditProductForm from "./components/edit-product-form";
 
 export default function ProductPage() {
   const [productForm, setProductForm] = useState(false);
+  const [editForm, setEditForm] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [change, setChange] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
@@ -25,12 +27,14 @@ export default function ProductPage() {
 
   return (
     <main className="px-6 py-10">
-      <AddProductForm
-        productForm={productForm}
+      <AddProductForm productForm={productForm} change={change} setChange={setChange} setProductForm={setProductForm} />
+      <EditProductForm
+        productForm={editForm}
         change={change}
-        setChange={setChange}
-        setProductForm={setProductForm}
         editProduct={editProduct}
+        setChange={setChange}
+        setProductForm={setEditForm}
+        setEditProduct={setEditProduct}
       />
       <div className=" flex justify-between w-full ">
         <h1 className="text-3xl font-bold uppercase">Products {"(" + products.length + ")"}</h1>
@@ -45,7 +49,7 @@ export default function ProductPage() {
             change={change}
             setChange={setChange}
             setProduct={setEditProduct}
-            setProductForm={setProductForm}
+            setEditForm={setEditForm}
           />
         ))}
       </div>

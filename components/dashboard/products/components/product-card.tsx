@@ -26,13 +26,13 @@ import {
 export default function ProductCard({
   product,
   setProduct,
-  setProductForm,
+  setEditForm,
   change,
   setChange,
 }: {
   product: Product;
   setProduct: (product: Product) => void;
-  setProductForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditForm: React.Dispatch<React.SetStateAction<boolean>>;
   change: boolean;
   setChange: (state: boolean) => void;
 }) {
@@ -44,7 +44,7 @@ export default function ProductCard({
   const handleEditProduct = () => {
     console.log("Edit product", product);
     setProduct(product);
-    setProductForm(true);
+    setEditForm(true);
   };
 
   const handleDeleteProduct = () => {
@@ -194,13 +194,24 @@ export default function ProductCard({
                     height={100}
                     className="w-[100px] h-[150px] object-contain"
                   />
-                  <button
-                    type="button"
-                    onClick={() => deleteImageByUrl(image)}
-                    className="absolute bottom-0 right-0 bg-red-500 text-white"
-                  >
-                    Delete
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="absolute bottom-0 right-0 bg-red-500 text-white">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Image?</AlertDialogTitle>
+                      <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogAction asChild>
+                        <Button variant="destructive" onClick={() => deleteImageByUrl(image)}>
+                          Delete
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialog>
                 </div>
               )
             )}
