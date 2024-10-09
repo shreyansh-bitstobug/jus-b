@@ -33,7 +33,7 @@ export default function ProductPage() {
         editProduct={editProduct}
       />
       <div className=" flex justify-between w-full ">
-        <h1 className="text-3xl font-bold uppercase">Products</h1>
+        <h1 className="text-3xl font-bold uppercase">Products {"(" + products.length + ")"}</h1>
         <Button onClick={() => setProductForm(true)}>Create Product</Button>
       </div>
 

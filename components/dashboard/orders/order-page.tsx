@@ -12,7 +12,7 @@ export default function OrderPage() {
   const [orders, setOrders] = useState<Order[]>([]); // Original orders fetched from the API
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]); // Orders to display (filtered or sorted)
   const [change, setChange] = useState(false);
-  const [sortOrder, setSortOrder] = useState("asc"); // State to track the sorting order
+  const [sortOrder, setSortOrder] = useState("desc"); // State to track the sorting order
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -23,8 +23,13 @@ export default function OrderPage() {
         order.updatedAt = new Date(order.updatedAt).toLocaleString();
         return order;
       });
-      setFilteredOrders(data.orders);
-      setOrders(data.orders);
+
+      const sortedOrders = [...data.orders].sort((a, b) => {
+        return b.placedAt.seconds - a.placedAt.seconds; // Descending
+      });
+
+      setFilteredOrders(sortedOrders);
+      setOrders(sortedOrders);
     };
     fetchOrders();
   }, [change]);

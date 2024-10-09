@@ -11,6 +11,17 @@ import { Product } from "@/lib/schema";
 import _ from "lodash";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ProductCard({
   product,
@@ -138,9 +149,21 @@ export default function ProductCard({
           <Badge>{category}</Badge>
           <div className="flex gap-4">
             <Button onClick={handleEditProduct}>Edit</Button>
-            <Button onClick={handleDeleteProduct} variant="destructive">
-              Delete
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Delete</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Product?</AlertDialogTitle>
+                  <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteProduct}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
         <p>

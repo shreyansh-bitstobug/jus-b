@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/schema";
 import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid"; // Ensure you have uuidv4 for generating IDs
 
 const formSchema = z.object({
   productId: z.string().min(2),
@@ -20,6 +21,7 @@ const formSchema = z.object({
   }),
   category: z.string().min(2),
   images: z.array(z.string().min(2)),
+  sizes: z.array(z.string().min(1)).optional(), // Optional sizes array
 });
 
 export default function AddProductForm({
@@ -49,37 +51,52 @@ export default function AddProductForm({
         text: "",
         features: [""], // Initialize with one empty feature
       },
+      sizes: [], // Initialize as empty array
     },
   });
 
   useEffect(() => {
-    console.log(editProduct);
     if (editProduct) {
-      form.reset();
-      form.setValue("productId", editProduct.productId);
-      form.setValue("productName", editProduct.name);
-      form.setValue("price", editProduct.price);
-      form.setValue("category", editProduct.category);
-      form.setValue("images", editProduct.images);
-      form.setValue("description.text", editProduct.description.text);
-      form.setValue("description.features", editProduct.description.features);
+      form.reset({
+        productId: editProduct.productId,
+        productName: editProduct.name,
+        price: editProduct.price,
+        category: editProduct.category,
+        images: editProduct.images,
+        description: {
+          text: editProduct.description.text,
+          features: editProduct.description.features,
+        },
+        sizes: editProduct.sizes,
+      });
     }
   }, [editProduct, form]);
 
   const {
     fields: featureFields,
-    append,
-    remove,
+    append: appendFeature,
+    remove: removeFeature,
   } = useFieldArray({
     control: form.control,
     // @ts-ignore
     name: "description.features",
   });
 
+  const {
+    fields: sizeFields,
+    append: appendSize,
+    remove: removeSize,
+  } = useFieldArray({
+    control: form.control,
+    // @ts-ignore
+    name: "sizes",
+  });
+
   // ---------------------------------------------
   // Submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const newProduct = {
+    const newProduct: Product = {
+      id: editProduct?.id || uuidv4(), // Generate a new ID if not editing
       productId: values.productId,
       name: values.productName,
       price: values.price,
@@ -89,22 +106,42 @@ export default function AddProductForm({
         text: values.description.text,
         features: values.description.features,
       },
+      sizes: values.sizes || [],
+      createdAt: editProduct?.createdAt || new Date(),
+      updatedAt: new Date(),
     };
-    const addProducts = async () => {
-      const res = await fetch(`/api/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProduct),
-      });
+
+    const addOrUpdateProduct = async () => {
+      let res;
+
+      if (editProduct) {
+        res = await fetch(`/api/products/${values.productId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProduct),
+        });
+      } else {
+        res = await fetch(`/api/products`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProduct),
+        });
+      }
+
       if (res.ok) {
         setChange(!change);
-        console.log("Product added successfully");
+        console.log("Product saved successfully");
         handleClose();
+      } else {
+        console.error("Failed to save product");
       }
     };
-    addProducts();
+
+    addOrUpdateProduct();
     console.log(values);
   }
 
@@ -117,8 +154,10 @@ export default function AddProductForm({
     <Dialog open={productForm} onOpenChange={handleClose}>
       <DialogContent className="h-[90vh] overflow-y-scroll">
         <DialogHeader>
-          <DialogTitle>Add Product</DialogTitle>
-          <DialogDescription>Add details for the new product</DialogDescription>
+          <DialogTitle>{editProduct ? "Edit Product" : "Add Product"}</DialogTitle>
+          <DialogDescription>
+            {editProduct ? "Edit details of the product" : "Add details for the new product"}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -202,7 +241,7 @@ export default function AddProductForm({
                     <Input placeholder="Category Name" {...field} />
                   </FormControl>
                   <FormDescription>
-                    If it already exists, make sure it matches from the other product&#39;s category names.
+                    If it already exists, make sure it matches from the other product&apos;s category names.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -245,13 +284,42 @@ export default function AddProductForm({
                       </FormItem>
                     )}
                   />
-                  <Button type="button" onClick={() => remove(index)} className="ml-2">
+                  <Button type="button" onClick={() => removeFeature(index)} className="ml-2">
                     Remove
                   </Button>
                 </div>
               ))}
-              <Button type="button" onClick={() => append("")} className="">
+              <Button type="button" onClick={() => appendFeature("")} className="">
                 Add Feature
+              </Button>
+            </div>
+
+            {/* -------------------------- */}
+            {/* Sizes Input */}
+            {/* -------------------------- */}
+            <div className="flex flex-col gap-2">
+              <FormLabel>Sizes</FormLabel>
+              {sizeFields.map((field, index) => (
+                <div key={field.id} className="flex items-center">
+                  <FormField
+                    control={form.control}
+                    name={`sizes.${index}`}
+                    render={({ field }) => (
+                      <FormItem className="flex-grow">
+                        <FormControl>
+                          <Input placeholder={`Size ${index + 1}`} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="button" onClick={() => removeSize(index)} className="ml-2">
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" onClick={() => appendSize("")} className="">
+                Add Size
               </Button>
             </div>
 
