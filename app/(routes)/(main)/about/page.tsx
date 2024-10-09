@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { shopBanner } from "@/public/assets/data";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function AboutPage() {
   return (
@@ -71,9 +72,11 @@ export default function AboutPage() {
 
         <div className="text-center mb-16">
           <h2 className="text-2xl font-semibold mb-4">Follow Us</h2>
-          <Button variant="outline" className="rounded-full">
-            <Instagram className="mr-2 h-4 w-4" /> Instagram
-          </Button>
+          <Link href="https://www.instagram.com/jusb_jb" target="_blank">
+            <Button variant="outline" className="rounded-full">
+              <Instagram className="mr-2 h-4 w-4" /> Instagram
+            </Button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
