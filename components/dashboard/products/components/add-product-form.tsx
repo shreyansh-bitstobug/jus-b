@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/schema";
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid"; // Ensure you have uuidv4 for generating IDs
+import { toast } from "@/components/ui/use-toast";
+import { Copy } from "lucide-react";
 
 const formSchema = z.object({
   productId: z.string().min(2),
@@ -242,6 +244,25 @@ export default function AddProductForm({
                   </FormControl>
                   <FormDescription>
                     If it already exists, make sure it matches from the other product&apos;s category names.
+                    <br />{" "}
+                    <span
+                      onClick={() => form.setValue("category", "Jus-B Jashan")}
+                      className="text-blue-500 cursor-pointer hover:underline"
+                    >
+                      <Copy className="w-3 inline-flex" /> Jus-B Jashan{" "}
+                    </span>
+                    <span
+                      onClick={() => form.setValue("category", "Jus-B Luxe")}
+                      className="text-blue-500 cursor-pointer hover:underline"
+                    >
+                      <Copy className="w-3 inline-flex" /> Jus-B Luxe{" "}
+                    </span>
+                    <span
+                      onClick={() => form.setValue("category", "Jus-B Partywear")}
+                      className="text-blue-500 cursor-pointer hover:underline"
+                    >
+                      <Copy className="w-3 inline-flex" /> Jus-B Partywear{" "}
+                    </span>
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
