@@ -248,7 +248,7 @@ const useCartStore = create<cartStoreType>((set) => ({
       const newCart = {}; // Reset the cart to an empty object
 
       // Store the empty cart in localStorage or update the cart for the user
-      userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+      userId ? cartUpdate(userId, newCart).then(() => storeLocally(newCart)) : storeLocally(newCart);
 
       // Return the updated cart (empty)
       return { cart: newCart };

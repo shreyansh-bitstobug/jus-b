@@ -107,7 +107,7 @@ export default function ProductPage({ productId }: { productId: string }) {
       category = chosenProduct.category;
       const related = products.filter((product: Product) => product.category === category && product.id !== productId);
 
-      const video = chosenProduct.images.find((imgUrl: string) => imgUrl.includes("_video"));
+      const video = chosenProduct.images.find((imgUrl: string) => imgUrl.includes(".mp4"));
       setVideo(video);
 
       setRelatedProducts(related);

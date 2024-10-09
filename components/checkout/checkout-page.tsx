@@ -146,6 +146,15 @@ export default function ProgressSection() {
   // Posting the order to the database
   const postOrder = async () => {
     setIsLoading(true);
+
+    const message = `New order placed by ${user?.displayName}. Order ID: ${order?.id}.`;
+
+    const response = await fetch("/api/whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: {

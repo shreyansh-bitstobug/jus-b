@@ -32,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { getCategories, removeSlash } from "@/lib/functions";
+import { getCart, getCategories, removeSlash } from "@/lib/functions";
 import { Product } from "@/lib/schema";
 import CurrencyButton from "../currency-button";
 
@@ -41,6 +41,7 @@ export default function Navbar1() {
   const [cartCount, setCartCount] = useState(0); // Number of items in the cart
   const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
   const [page, setPage] = useState(""); // Current page
+  const [cartLoading, setCartLoading] = useState(true); // Cart loading state
 
   // Hooks
   const router = useRouter();
@@ -95,8 +96,25 @@ export default function Navbar1() {
 
   // Update the cart count when the cart changes in the store
   useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setCartLoading(true); // Set loading to true
+        if (user) {
+          const data = await getCart(user.uid); // Wait for the cart data to be fetched
+          setCartCount(data.items.length); // Update the state only after cart is fetched
+        } else if (cart) {
+          setCartCount(Object.keys(cart).length);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setCartLoading(false);
+      }
+    };
     setCartCount(Object.keys(cart).length);
-  }, [cart]);
+    fetchCart();
+    console.log("Cart in Navbar", cart);
+  }, [cart, user]);
 
   return (
     <header>
@@ -225,7 +243,7 @@ export default function Navbar1() {
               <Button variant="ghost" size="icon" className="shrink-0 relative flip-in-ver-right-hover">
                 <ShoppingBag className="h-5 w-5 " />
                 <span className="absolute top-0 right-1 h-4 p-1 w-4 bg-penn-red text-snow rounded-full text-sm flex items-center justify-center">
-                  {cartCount}
+                  {cartLoading ? 0 : cartCount}
                 </span>
                 <span className="sr-only">Open cart</span>
               </Button>

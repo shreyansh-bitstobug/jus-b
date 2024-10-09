@@ -1,8 +1,9 @@
 import { db } from "@/firebase/config";
 import { NextResponse } from "next/server";
-import { Product, User } from "@/lib/schema";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Product } from "@/lib/schema";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 
+// GET: Fetch product by ID
 export async function GET(req: Request, { params }: { params: { productId: string } }) {
   try {
     const { productId } = params;
@@ -35,6 +36,7 @@ export async function GET(req: Request, { params }: { params: { productId: strin
   }
 }
 
+// POST: Update product by ID
 export async function POST(req: Request, { params }: { params: { productId: string } }) {
   try {
     const { productId } = params;
@@ -44,7 +46,7 @@ export async function POST(req: Request, { params }: { params: { productId: stri
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
-      return NextResponse.json({ message: "product not found" }, { status: 404 });
+      return NextResponse.json({ message: "Product not found" }, { status: 404 });
     }
 
     const product = productSnap.data() as Product;
@@ -73,5 +75,26 @@ export async function POST(req: Request, { params }: { params: { productId: stri
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json({ message: "Failed to update product", error }, { status: 500 });
+  }
+}
+
+// DELETE: Remove product by ID
+export async function DELETE(req: Request, { params }: { params: { productId: string } }) {
+  try {
+    const { productId } = params;
+
+    const productRef = doc(db, "products", productId);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+      return NextResponse.json({ message: "Product not found" }, { status: 404 });
+    }
+
+    await deleteDoc(productRef);
+
+    return NextResponse.json({ message: "Product deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return NextResponse.json({ message: "Failed to delete product", error }, { status: 500 });
   }
 }

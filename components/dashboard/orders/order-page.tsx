@@ -66,7 +66,7 @@ export default function OrderPage() {
   return (
     <main className="container py-10">
       <div className="flex justify-between">
-        <h1 className="text-3xl">Orders</h1>
+        <h1 className="text-3xl font-bold uppercase">Orders</h1>
         <div className="flex gap-4">
           <Button onClick={handleSortClick} variant="outline">
             <ArrowDownUpIcon className="w-4 mr-1" />

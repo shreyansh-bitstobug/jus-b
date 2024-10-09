@@ -44,10 +44,8 @@ export default function CartPage() {
   // Handle checkout
   const handleCheckout = () => {
     if (!user) {
-      console.log("User not found");
       openModal("checkout");
     } else {
-      console.log("User found");
       router.push("/checkout");
     }
   };
@@ -58,11 +56,10 @@ export default function CartPage() {
       setLoading(true); // Set loading to true
       if (user) {
         const data = await getCart(user.uid); // Wait for the cart data to be fetched
-        console.log("cart items fetched from DB", data.items);
+        if (data.items.length === 0) setLoading(false);
         setCartItems(data.items); // Update the state only after cart is fetched
       } else if (cart) {
         const cartItemsFetched = Object.values(cart);
-        console.log("cart items fetched from store", cartItemsFetched);
         setCartItems(cartItemsFetched);
       }
     };
@@ -79,7 +76,6 @@ export default function CartPage() {
     };
 
     if (cartItems != undefined && cartItems?.length > 0) {
-      console.log("cartItems state", cartItems);
       fetchProducts(); // Fetch products only if there are cart items
     }
   }, [cartItems]);
@@ -91,8 +87,6 @@ export default function CartPage() {
       if (cartItems?.length > 0 && products?.length > 0) {
         const updatedCartProducts: CartProductType[] = [];
         let itemTotal = 0;
-
-        console.log("cartItems white updating cart products", cartItems);
 
         // Loop through each cart item and find the product
         cartItems.forEach((cartItem) => {

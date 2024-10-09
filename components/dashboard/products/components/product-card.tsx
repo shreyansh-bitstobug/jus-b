@@ -26,6 +26,7 @@ export default function ProductCard({
   setChange: (state: boolean) => void;
 }) {
   const [currencyPrice, setCurrencyPrice] = useState<string>();
+  const [video, setVideo] = useState<string | null>(null);
   const { name, price, images, productId, sizesAvailable, sizes, category, description } = product;
   const { currency } = useDashCurrencyStore();
 
@@ -33,6 +34,19 @@ export default function ProductCard({
     console.log("Edit product", product);
     setProduct(product);
     setProductForm(true);
+  };
+
+  const handleDeleteProduct = () => {
+    console.log("productId:", productId);
+    const deleteProduct = async () => {
+      const response = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      console.log(data);
+      setChange(!change);
+    };
+    deleteProduct();
   };
 
   const deleteImageByUrl = async (fileUrl: string) => {
@@ -67,6 +81,13 @@ export default function ProductCard({
 
   //   const [formSize, setFormSize] = useState<string>("");
   //   const [formQuantity, setFormQuantity] = useState<number>(0);
+
+  useEffect(() => {
+    const video = images.find((image) => image.includes(".mp4"));
+    if (video) {
+      setVideo(video);
+    }
+  }, [images]);
 
   useEffect(() => {
     const formatPrice = async () => {
@@ -115,7 +136,12 @@ export default function ProductCard({
       <CardContent className="space-y-2">
         <div className="flex justify-between">
           <Badge>{category}</Badge>
-          <Button onClick={handleEditProduct}>Edit</Button>
+          <div className="flex gap-4">
+            <Button onClick={handleEditProduct}>Edit</Button>
+            <Button onClick={handleDeleteProduct} variant="destructive">
+              Delete
+            </Button>
+          </div>
         </div>
         <p>
           <span className="font-semibold">Description Text: </span>
@@ -131,18 +157,30 @@ export default function ProductCard({
         </p>
         <div className="flex gap-2">
           {images.length > 0 &&
-            images.map((image, index) => (
-              <div key={index} className="w-[100px] h-[150px] relative overflow-hidden">
-                <Image src={image} alt={name} width={100} height={100} className="w-[100px] h-[150px] object-contain" />
-                <button
-                  type="button"
-                  onClick={() => deleteImageByUrl(image)}
-                  className="absolute bottom-0 right-0 bg-red-500 text-white"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+            images.map((image, index) =>
+              image === video ? (
+                <video key={index} id="vid1" className="video-js h-[150px]" controls>
+                  <source src={video} type="video/mp4" />
+                </video>
+              ) : (
+                <div key={index} className="w-[100px] h-[150px] relative overflow-hidden">
+                  <Image
+                    src={image}
+                    alt={name}
+                    width={100}
+                    height={100}
+                    className="w-[100px] h-[150px] object-contain"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => deleteImageByUrl(image)}
+                    className="absolute bottom-0 right-0 bg-red-500 text-white"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )
+            )}
         </div>
       </CardContent>
       {/* <CardFooter className="flex flex-col items-start">
