@@ -2,6 +2,62 @@ import { CartItem, currency } from "@/hooks/use-store";
 import { Cart, Product, Wishlist, Order, Address } from "@/lib/schema";
 import { useCategoriesStore } from "@/hooks/use-store";
 
+import { collection, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { db } from "@/firebase/config"; // Firebase configuration
+
+export const getCart = async (userId: string) => {
+  const cartRef = doc(db, "carts", userId);
+  const cartDoc = await getDoc(cartRef);
+  if (cartDoc.exists()) {
+    return cartDoc.data().items || [];
+  }
+  return [];
+};
+
+export const addToCartFirestore = async (userId: string, productId: string, size: string, quantity: number) => {
+  const cartRef = doc(db, "carts", userId);
+  const cartDoc = await getDoc(cartRef);
+
+  if (!cartDoc.exists()) {
+    await setDoc(cartRef, {
+      items: [{ productId, size, quantity }],
+    });
+  } else {
+    const items = cartDoc.data().items;
+    const existingItemIndex = items.findIndex((item: any) => item.productId === productId && item.size === size);
+
+    if (existingItemIndex >= 0) {
+      items[existingItemIndex].quantity += quantity;
+    } else {
+      items.push({ productId, size, quantity });
+    }
+    await setDoc(cartRef, { items });
+  }
+};
+
+export const removeFromCartFirestore = async (userId: string, productId: string, size: string) => {
+  const cartRef = doc(db, "carts", userId);
+  const cartDoc = await getDoc(cartRef);
+
+  if (cartDoc.exists()) {
+    const items = cartDoc.data().items;
+    const existingItemIndex = items.findIndex((item: any) => item.productId === productId && item.size === size);
+
+    if (existingItemIndex >= 0) {
+      items[existingItemIndex].quantity -= 1;
+      if (items[existingItemIndex].quantity <= 0) {
+        items.splice(existingItemIndex, 1);
+      }
+      await setDoc(cartRef, { items });
+    }
+  }
+};
+
+export const clearCartFirestore = async (userId: string) => {
+  const cartRef = doc(db, "carts", userId);
+  await setDoc(cartRef, { items: [] });
+};
+
 export const removeSlash = (str: string) => {
   return str.charAt(0) === "/" ? str.slice(1) : str;
 };
@@ -22,13 +78,6 @@ export const getCategories = async () => {
   }
 
   return categories;
-};
-
-export const getCart = async (userId: string) => {
-  const res = await fetch(`/api/cart/${userId}`);
-  const data = await res.json();
-  console.log("Cart in getCart function", data);
-  return data.cart;
 };
 
 export const cartUpdate = async (userId?: string, cart?: Record<string, CartItem>) => {

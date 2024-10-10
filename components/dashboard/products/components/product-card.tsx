@@ -170,6 +170,11 @@ export default function ProductCard({
           <span className="font-semibold">Description Text: </span>
           {description.text}
         </p>
+        <div className="grid grid-cols-2 text-[16px] gap-2 pb-4 ">
+          {product?.description.features.map((feature, index) => (
+            <li key={index}>{feature}</li>
+          ))}
+        </div>
         <p className=" whitespace-pre-wrap">
           <span className="font-semibold">Sizes: </span>
           {sizes.map((size) => (
@@ -196,21 +201,20 @@ export default function ProductCard({
                   />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="absolute bottom-0 right-0 bg-red-500 text-white">
+                      <Button variant="destructive" className="absolute bottom-0 right-0">
                         Delete
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Image?</AlertDialogTitle>
-                      <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogAction asChild>
-                        <Button variant="destructive" onClick={() => deleteImageByUrl(image)}>
-                          Delete
-                        </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Image?</AlertDialogTitle>
+                        <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteImageByUrl(image)}>Delete</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
                   </AlertDialog>
                 </div>
               )

@@ -92,19 +92,11 @@ export default function ImageUpload({ field }: ImageUploadProps) {
     const mediaToDelete = mediaFiles.find((media) => media.id === mediaId);
     if (!mediaToDelete) return;
 
-    if (mediaToDelete.uploading) {
-      // If it's a new upload, simply remove it from mediaFiles
-      setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
-    } else {
+    // If media has an associated file, it was just uploaded
+    if (mediaToDelete.file) {
       try {
-        // Parse the storage path from the URL
-        const url = new URL(mediaToDelete.url!);
-        const pathStartIndex = url.pathname.indexOf("/o/") + 3;
-        const pathEndIndex = url.pathname.indexOf("?");
-        const filePath = decodeURIComponent(url.pathname.substring(pathStartIndex, pathEndIndex));
-
         // Create a reference to the file to delete
-        const storageRef = ref(storage, filePath);
+        const storageRef = ref(storage, `media/${mediaId}`);
 
         // Delete the file from Firebase Storage
         await deleteObject(storageRef);
@@ -112,11 +104,14 @@ export default function ImageUpload({ field }: ImageUploadProps) {
         // Remove the media from state
         setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
 
-        // Update the form state by removing the deleted URL
+        // Update the form state by removing the deleted file
         field.onChange(field.value.filter((url) => url !== mediaToDelete.url));
       } catch (error) {
         console.error("Error deleting file:", error);
       }
+    } else {
+      // If it's an existing media with no file reference, simply remove it from mediaFiles
+      setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
     }
   };
 
@@ -160,13 +155,15 @@ export default function ImageUpload({ field }: ImageUploadProps) {
                 Your browser does not support the video tag.
               </video>
             )}
-            <button
-              type="button"
-              onClick={() => handleDelete(media.id)}
-              className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Delete
-            </button>
+            {media.file && (
+              <button
+                type="button"
+                onClick={() => handleDelete(media.id)}
+                className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded"
+              >
+                Delete
+              </button>
+            )}
           </div>
         ))}
       </div>
