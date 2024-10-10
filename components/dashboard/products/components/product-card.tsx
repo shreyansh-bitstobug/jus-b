@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Pencil } from "lucide-react";
 
 export default function ProductCard({
   product,
@@ -148,7 +149,10 @@ export default function ProductCard({
         <div className="flex justify-between">
           <Badge>{category}</Badge>
           <div className="flex gap-4">
-            <Button onClick={handleEditProduct}>Edit</Button>
+            <Button onClick={handleEditProduct}>
+              <Pencil />
+              Edit
+            </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive">Delete</Button>
@@ -187,9 +191,29 @@ export default function ProductCard({
           {images.length > 0 &&
             images.map((image, index) =>
               image === video ? (
-                <video key={index} id="vid1" className="video-js h-[150px]" controls>
-                  <source src={video} type="video/mp4" />
-                </video>
+                <div key={index} className="w-[100px] h-[150px] relative overflow-hidden">
+                  <video id="vid1" className="video-js h-[150px]" controls>
+                    <source src={video} type="video/mp4" />
+                  </video>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="absolute bottom-0 right-0">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Image?</AlertDialogTitle>
+                        <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteImageByUrl(image)}>Delete</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               ) : (
                 <div key={index} className="w-[100px] h-[150px] relative overflow-hidden">
                   <Image

@@ -63,7 +63,7 @@ export async function POST(req: Request, { params }: { params: { productId: stri
       name: body.name || name,
       price: body.price || price,
       description: body.description || description,
-      sizes: sizes || [],
+      sizes: body.sizes || sizes || [],
       category: body.category || category,
       images: body.images || images || [],
       updatedAt: new Date(),

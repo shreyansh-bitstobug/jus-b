@@ -3,6 +3,7 @@
 import AuthProvider from "@/components/auth-provider";
 import CheckoutPage from "@/components/checkout/checkout-page";
 import { auth } from "@/firebase/config";
+import AppInitializer from "@/hooks/cart";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -16,6 +17,7 @@ export default function Home() {
 
   return (
     <AuthProvider>
+      <AppInitializer />
       <CheckoutPage />
     </AuthProvider>
   );

@@ -140,7 +140,7 @@ export default function OrderCard({
               <span className="capitalize">
                 {" "}
                 {deliveredAt ? (
-                  <span>
+                  <span className=" whitespace-pre-wrap">
                     <span className="sm:inline-flex hidden">Delivered on </span>{" "}
                     {format(timestampToDate(deliveredAt), "PP")}
                   </span>

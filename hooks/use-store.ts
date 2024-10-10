@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "firebase/auth"; // Import the User type from Firebase Auth
-import { cartUpdate, getCart, wishlistUpdate } from "@/lib/functions";
+import { wishlistUpdate } from "@/lib/functions";
 import { Address } from "@/lib/schema";
 
 // Type for the Home Page
@@ -124,136 +124,138 @@ const useEditAddressStore = create<AddressStoreType>((set) => ({
   setEditAddress: (editAddress) => set({ editAddress }),
 }));
 
+// OLD CART STORE CODE
+/*
 // Type for the cart item
-export type CartItem = {
-  id: string;
-  quantity: number;
-  size: string;
-};
+// export type CartItem = {
+//   id: string;
+//   quantity: number;
+//   size: string;
+// };
 
 // Type for the cart store
-type cartStoreType = {
-  cart: Record<string, CartItem>;
-  addToCart: (id: string, size: string, userId?: string) => void;
-  removeFromCart: (id: string, size: string, userId?: string) => void;
-  deleteFromCart: (id: string, size: string, userId?: string) => void;
-  clearCart: (userId?: string) => void;
-};
+// type cartStoreType = {
+//   cart: Record<string, CartItem>;
+//   addToCart: (id: string, size: string, userId?: string) => void;
+//   removeFromCart: (id: string, size: string, userId?: string) => void;
+//   deleteFromCart: (id: string, size: string, userId?: string) => void;
+//   clearCart: (userId?: string) => void;
+// };
 
 // This function stores the cart locally when the user is not logged in
-const storeLocally = (cart: Record<string, CartItem>) => {
-  console.log("storing cart locally", cart);
-  if (typeof window !== "undefined") localStorage.setItem("jusb_cart", JSON.stringify(cart));
-};
+// const storeLocally = (cart: Record<string, CartItem>) => {
+//   console.log("storing cart locally", cart);
+//   if (typeof window !== "undefined") localStorage.setItem("jusb_cart", JSON.stringify(cart));
+// };
 
 // This function retrieves the cart from local storage
-const getLocalCart = () => {
-  if (typeof window === "undefined") return;
-  const savedCart = localStorage.getItem("jusb_cart");
-  return savedCart ? JSON.parse(savedCart) : {};
-};
+// const getLocalCart = () => {
+//   if (typeof window === "undefined") return;
+//   const savedCart = localStorage.getItem("jusb_cart");
+//   return savedCart ? JSON.parse(savedCart) : {};
+// };
 
 // This function generates a key for the cart item with the id and size
-const generateCartKey = (id: string, size: string) => `${id}-${size}`;
+// const generateCartKey = (id: string, size: string) => `${id}-${size}`;
 
 //  --------------------
 //  Cart Store
 //  --------------------
-const useCartStore = create<cartStoreType>((set) => ({
-  cart: useAuthStore.getState().user?.uid ? getCart(useAuthStore.getState().user?.uid || "") : getLocalCart(), // Get the cart from local storage when the user is not logged in with help of getLocalCart function
+// const useCartStore = create<cartStoreType>((set) => ({
+//   cart: useAuthStore.getState().user?.uid ? getCart(useAuthStore.getState().user?.uid || "") : getLocalCart(), // Get the cart from local storage when the user is not logged in with help of getLocalCart function
 
-  // Add to cart function
-  addToCart: (id, size, userId) =>
-    set((state) => {
-      const key = generateCartKey(id, size);
-      const item = state.cart[key];
+//   // Add to cart function
+//   addToCart: (id, size, userId) =>
+//     set((state) => {
+//       const key = generateCartKey(id, size);
+//       const item = state.cart[key];
 
-      if (item) {
-        // If item with the same size exists, update the quantity
-        const newCart = {
-          cart: {
-            ...state.cart,
-            [key]: {
-              ...item,
-              quantity: item.quantity + 1,
-            },
-          },
-        };
+//       if (item) {
+//         // If item with the same size exists, update the quantity
+//         const newCart = {
+//           cart: {
+//             ...state.cart,
+//             [key]: {
+//               ...item,
+//               quantity: item.quantity + 1,
+//             },
+//           },
+//         };
 
-        // Store the updated cart in localStorage
-        storeLocally(newCart.cart);
-        userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
+//         // Store the updated cart in localStorage
+//         storeLocally(newCart.cart);
+//         userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
 
-        // Return the updated cart
-        return newCart;
-      } else {
-        // If item does not exist, add it to the cart
-        const newCart = {
-          cart: {
-            ...state.cart,
-            [key]: {
-              id,
-              quantity: 1,
-              size,
-            },
-          },
-        };
+//         // Return the updated cart
+//         return newCart;
+//       } else {
+//         // If item does not exist, add it to the cart
+//         const newCart = {
+//           cart: {
+//             ...state.cart,
+//             [key]: {
+//               id,
+//               quantity: 1,
+//               size,
+//             },
+//           },
+//         };
 
-        // Store the updated cart in localStorage
-        userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
+//         // Store the updated cart in localStorage
+//         userId ? cartUpdate(userId, newCart.cart) : storeLocally(newCart.cart);
 
-        // Return the updated cart
-        return newCart;
-      }
-    }),
+//         // Return the updated cart
+//         return newCart;
+//       }
+//     }),
 
-  // Reduce the quantity of the item in the cart
-  removeFromCart: (id, size, userId) => {
-    set((state) => {
-      const key = generateCartKey(id, size);
-      const newCart = { ...state.cart };
-      const item = newCart[key];
-      const newQuantity = item.quantity - 1; // Reduce the quantity by 1
-      newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key]; // If quantity is greater than 0, update the quantity, else delete the item
+//   // Reduce the quantity of the item in the cart
+//   removeFromCart: (id, size, userId) => {
+//     set((state) => {
+//       const key = generateCartKey(id, size);
+//       const newCart = { ...state.cart };
+//       const item = newCart[key];
+//       const newQuantity = item.quantity - 1; // Reduce the quantity by 1
+//       newQuantity > 0 ? (newCart[key] = { ...item, quantity: newQuantity }) : delete newCart[key]; // If quantity is greater than 0, update the quantity, else delete the item
 
-      // Store the updated cart in localStorage
-      userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+//       // Store the updated cart in localStorage
+//       userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
 
-      // Return the updated cart
-      return { cart: newCart };
-    });
-  },
+//       // Return the updated cart
+//       return { cart: newCart };
+//     });
+//   },
 
-  // Completely remove the item from the cart
-  deleteFromCart: (id, size, userId) =>
-    set((state) => {
-      const key = generateCartKey(id, size);
-      const newCart = { ...state.cart };
+//   // Completely remove the item from the cart
+//   deleteFromCart: (id, size, userId) =>
+//     set((state) => {
+//       const key = generateCartKey(id, size);
+//       const newCart = { ...state.cart };
 
-      // If the item exists, delete it
-      if (newCart[key]) {
-        delete newCart[key];
+//       // If the item exists, delete it
+//       if (newCart[key]) {
+//         delete newCart[key];
 
-        // Store the updated cart in localStorage
-        userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
-      }
+//         // Store the updated cart in localStorage
+//         userId ? cartUpdate(userId, newCart) : storeLocally(newCart);
+//       }
 
-      // Return the updated cart
-      return { cart: newCart };
-    }),
+//       // Return the updated cart
+//       return { cart: newCart };
+//     }),
 
-  // Clear all items from the cart
-  clearCart: (userId) =>
-    set(() => {
-      const newCart = {}; // Reset the cart to an empty object
+//   // Clear all items from the cart
+//   clearCart: (userId) =>
+//     set(() => {
+//       const newCart = {}; // Reset the cart to an empty object
 
-      // Store the empty cart in localStorage or update the cart for the user
-      userId ? cartUpdate(userId, newCart).then(() => storeLocally(newCart)) : storeLocally(newCart);
+//       // Store the empty cart in localStorage or update the cart for the user
+//       userId ? cartUpdate(userId, newCart).then(() => storeLocally(newCart)) : storeLocally(newCart);
 
-      // Return the updated cart (empty)
-      return { cart: newCart };
-    }),
-}));
+//       // Return the updated cart (empty)
+//       return { cart: newCart };
+//     }),
+// }));*/
 
 // Type for the wishlist store
 type WishlistStore = {
@@ -365,7 +367,7 @@ const useDashCurrencyStore = create<CurrencyStore>((set) => ({
 
 // Export the custom hooks
 export {
-  useCartStore,
+  // useCartStore,
   useWishlistStore,
   useModalStore,
   useShareModalStore,

@@ -9,14 +9,14 @@ import Link from "next/link";
 import { X } from "lucide-react";
 
 // Store Hook
-import { useCartStore, useCurrencyStore } from "@/hooks/use-store";
+import { useCurrencyStore } from "@/hooks/use-store";
 
 // UI Components
 import { useToast } from "@/components/ui/use-toast";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/config";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/functions";
+import { useCartStore } from "@/hooks/use-cart-store";
+import AppInitializer from "@/hooks/cart";
 
 // --------------------
 // Cart Product Card Component
@@ -29,6 +29,8 @@ export default function CartProductCard({
   size, // Product size (for cart)
   quantity, // Product quantity (for cart)
   category, // Product category
+  setCheck, // Set the check state
+  check, // Check state
 }: {
   name: string;
   price: number;
@@ -37,14 +39,15 @@ export default function CartProductCard({
   size: string;
   quantity: number;
   category: string;
+  setCheck: (state: boolean) => void;
+  check: boolean;
 }) {
   // States
   const [currencyPrice, setCurrencyPrice] = useState<string>();
 
   // Hooks
-  const { addToCart, removeFromCart, deleteFromCart } = useCartStore();
-  const [user] = useAuthState(auth); // Get the current user
-  const { currency } = useCurrencyStore();
+  const { addToCart, removeFromCart, deleteFromCart } = useCartStore(); // Cart store
+  const { currency } = useCurrencyStore(); // Get the currency from the store
 
   // Toast Hook for showing alerts
   const { toast } = useToast();
@@ -54,7 +57,8 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    removeFromCart(id, size, user?.uid); // Call the remove from cart function
+    removeFromCart({ productId: id, size, quantity: 1 }); // Call the remove from cart function
+    setCheck(!check); // Set the check state to update the cart
 
     toast({
       title: "Removed from cart",
@@ -76,7 +80,7 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    deleteFromCart(id, size, user?.uid); // Call the delete from cart function
+    deleteFromCart({ productId: id, size, quantity: 0 }); // Call the delete from cart function
 
     toast({
       title: "Deleted from cart",
@@ -89,7 +93,7 @@ export default function CartProductCard({
     e.stopPropagation(); // Stop the click event from propagating to the Link
     e.preventDefault(); // Prevent the default link behavior
 
-    addToCart(id, size, user?.uid); // Call the add to cart function
+    addToCart({ productId: id, size, quantity: 1 }); // Call the add to cart function
 
     toast({
       title: "Added to cart",
@@ -102,6 +106,7 @@ export default function CartProductCard({
   // --------------------
   return (
     <div className="group p-4 bg-white shadow-lg relative  rounded-lg sm:w-[420px] w-96 hover:scale-105 hover:shadow-xl transition-all flex gap-4">
+      <AppInitializer />
       <div className="flex flex-col justify-between gap-2">
         {/* Small Image of Product */}
         <Link href={`/shop/${category}/${id}`} className="h-32 w-32 overflow-hidden">
