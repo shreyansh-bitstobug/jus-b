@@ -118,6 +118,7 @@ export default function EditProductForm({
     console.log("New product", newProduct);
 
     const addOrUpdateProduct = async () => {
+      console.log(newProduct, "Product saved successfully");
       const res = await fetch(`/api/products/${values.productId}`, {
         method: "POST",
         headers: {
@@ -125,7 +126,6 @@ export default function EditProductForm({
         },
         body: JSON.stringify(newProduct),
       });
-
       if (res.ok) {
         setChange(!change);
         console.log("Product saved successfully");

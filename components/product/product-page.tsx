@@ -23,20 +23,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 
 // Stores and store types
-import {
-  CartItem,
-  useCartStore,
-  useCurrencyStore,
-  useModalStore,
-  useShareModalStore,
-  useWishlistStore,
-} from "@/hooks/use-store";
+import { useCurrencyStore, useModalStore, useShareModalStore, useWishlistStore } from "@/hooks/use-store";
+import { CartItem, useCartStore } from "@/hooks/use-cart-store";
 import { usePathname } from "next/navigation";
 import { formatCurrency, removeSlash } from "@/lib/functions";
 import _ from "lodash";
 import Link from "next/link";
 import { Product } from "@/lib/schema";
 import { Skeleton } from "../ui/skeleton";
+import AppInitializer from "@/hooks/cart";
 
 export default function ProductPage({ productId }: { productId: string }) {
   // States
@@ -45,10 +40,10 @@ export default function ProductPage({ productId }: { productId: string }) {
   const [mainImage, setMainImage] = useState(""); // Main image state
   const [video, setVideo] = useState<string>(); // Videos state
   const [relatedProducts, setRelatedProducts] = useState<Product[]>(); // Related products array state
-  const [itemInCart, setItemInCart] = useState<CartItem>(); // Item in cart state
   const [alert, setAlert] = useState(false); // Alert state for size selection
   const [loading, setLoading] = useState(true); // Loading state
   const [currencyPrice, setCurrencyPrice] = useState<string>(); // Currency price state
+  const [cartQuantity, setCartQuantity] = useState<number>(0); // Cart quantity state
 
   // Hooks
   const { currency } = useCurrencyStore(); // Get the currency
@@ -58,9 +53,9 @@ export default function ProductPage({ productId }: { productId: string }) {
 
   // Stores
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlistStore();
-  const { addToCart, cart, removeFromCart } = useCartStore();
   const { openModal } = useModalStore();
   const { setLink, setMessage } = useShareModalStore();
+  const { cart, addToCart, removeFromCart } = useCartStore();
 
   // Format the price with the selected currency
   useEffect(() => {
@@ -71,22 +66,11 @@ export default function ProductPage({ productId }: { productId: string }) {
     formatPrice();
   }, [product, currency]);
 
-  // Check if item is in cart and set the item in cart state
+  // Get the cart quantity of the product
   useEffect(() => {
-    if (!selectedSize) {
-      product?.sizes.forEach((size) => {
-        const foundCartItem = cart[`${productId}-${size}`];
-        if (foundCartItem) {
-          setItemInCart(foundCartItem);
-          setSelectedSize(size);
-          return;
-        }
-      });
-    } else {
-      const foundCartItem = cart[`${productId}-${selectedSize}`];
-      setItemInCart(foundCartItem);
-    }
-  }, [cart, product, selectedSize]); // eslint-disable-line
+    const cartItem = cart.find((item: CartItem) => item.productId === productId && item.size === selectedSize);
+    setCartQuantity(cartItem?.quantity || 0);
+  }, [cart, productId, selectedSize]);
 
   // Fetch product and related products on mount
   useEffect(() => {
@@ -139,7 +123,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   const handleRemoveFromCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    removeFromCart(productId, selectedSize, user?.uid);
+    removeFromCart({ productId: productId, size: selectedSize, quantity: 1 });
     toast({ title: "Removed from cart", description: "Your item has been removed from the cart" });
   };
 
@@ -157,7 +141,7 @@ export default function ProductPage({ productId }: { productId: string }) {
       });
       return;
     }
-    addToCart(productId, selectedSize, user?.uid);
+    addToCart({ productId: productId, size: selectedSize, quantity: 1 });
     toast({ title: "Added to cart", description: "Your item has been added to the cart" });
   };
 
@@ -174,6 +158,7 @@ export default function ProductPage({ productId }: { productId: string }) {
   return (
     <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
+      <AppInitializer />
       <nav className="flex mb-8 text-sm">
         <Link href="/" className="text-muted-foreground hover:text-primary">
           Home
@@ -317,12 +302,12 @@ export default function ProductPage({ productId }: { productId: string }) {
               </Select>
             </div>
 
-            {itemInCart && itemInCart.quantity > 0 ? (
+            {selectedSize && cartQuantity && cartQuantity > 0 ? (
               <div className="flex items-center justify-between border rounded-md overflow-hidden">
                 <Button size="icon" variant="ghost" onClick={handleRemoveFromCart} className="rounded-none">
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span className="font-semibold text-lg">{itemInCart.quantity}</span>
+                <span className="font-semibold text-lg">{cartQuantity}</span>
                 <Button size="icon" variant="ghost" onClick={handleAddToCart} className="rounded-none">
                   <Plus className="h-4 w-4" />
                 </Button>

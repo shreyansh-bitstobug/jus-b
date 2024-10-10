@@ -2,7 +2,7 @@
 
 // Dependencies
 import { useEffect, useState } from "react";
-import { useCartStore, useCurrencyStore, useModalStore } from "@/hooks/use-store";
+import { useCurrencyStore, useModalStore } from "@/hooks/use-store";
 
 // Types
 import { CartProductType } from "@/lib/types";
@@ -14,27 +14,29 @@ import { auth } from "@/firebase/config";
 // Next Components & Hooks
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCartStore } from "@/hooks/use-cart-store";
 
 // Components
 import CartProductCard from "@/components/checkout/cart-product-cards";
 import { Button } from "@/components/ui/button";
 import { Cart, Product } from "@/lib/schema";
-import { formatCurrency, getCart } from "@/lib/functions";
+import { formatCurrency } from "@/lib/functions";
 import { Skeleton } from "@/components/ui/skeleton";
+import AppInitializer from "@/hooks/cart";
 
 export default function CartPage() {
   const [products, setProducts] = useState<Product[]>([]); // Products from API
   const [cartProducts, setCartProducts] = useState<CartProductType[]>([]);
   const [cartTotal, setCartTotal] = useState("0");
   const [itemTotal, setItemTotal] = useState(0);
-  const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [check, setCheck] = useState(false);
 
   // Get user from firebase
   const [user] = useAuthState(auth);
 
   // Stores
-  const { cart } = useCartStore(); // Get cart from store
+  const { cart } = useCartStore(); // Cart store
   const { openModal } = useModalStore(); // Get onOpen function from store
   const { currency } = useCurrencyStore(); // Get currency from store
 
@@ -50,23 +52,6 @@ export default function CartPage() {
     }
   };
 
-  // Fetch cart items from the database or store depending on user
-  useEffect(() => {
-    const fetchCart = async () => {
-      setLoading(true); // Set loading to true
-      if (user) {
-        const data = await getCart(user.uid); // Wait for the cart data to be fetched
-        if (data.items.length === 0) setLoading(false);
-        setCartItems(data.items); // Update the state only after cart is fetched
-      } else if (cart) {
-        const cartItemsFetched = Object.values(cart);
-        setCartItems(cartItemsFetched);
-      }
-    };
-
-    fetchCart(); // Call the function to fetch the cart
-  }, [cart, user]); // Ensure it runs when cart or user changes
-
   // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
@@ -75,21 +60,23 @@ export default function CartPage() {
       setProducts(data.products);
     };
 
-    if (cartItems != undefined && cartItems?.length > 0) {
+    if (cart != undefined && cart?.length > 0) {
       fetchProducts(); // Fetch products only if there are cart items
     }
-  }, [cartItems]);
+  }, [cart]); // Fetch products when cart items change
 
   // Update cart products when cart items or products change
   useEffect(() => {
+    console.log("Cart and products changed", cart);
+    // Why the cart length is 0? when the cart is not empty and there is 1 item in the cart
     const calculateTotal = async () => {
       let total = 0;
-      if (cartItems?.length > 0 && products?.length > 0) {
+      if (cart?.length > 0 && products?.length > 0) {
         const updatedCartProducts: CartProductType[] = [];
         let itemTotal = 0;
 
         // Loop through each cart item and find the product
-        cartItems.forEach((cartItem) => {
+        cart.forEach((cartItem) => {
           const productId = cartItem.productId;
           const foundProduct = products.find((product) => product.id === productId);
 
@@ -117,11 +104,13 @@ export default function CartPage() {
       const cartTotalCurrency = await formatCurrency(total, currency);
       setCartTotal(cartTotalCurrency); // Update cart amount total
     };
+    setLoading(false); // Set loading to true
     calculateTotal();
-  }, [cartItems, products, currency]); // Wait for both cartItems and products to be fetched ( Refresh when they change and currency changes)
+  }, [cart, products, currency, check]); // Wait for both cart and products to be fetched ( Refresh when they change and currency changes)
 
   return (
     <main className="container flex-grow flex flex-col gap-6 py-6 pb-14">
+      <AppInitializer />
       <div className=" flex justify-between items-center sm:flex-row flex-col gap-2">
         <h1 className=" md:text-2xl text-xl items-end">
           <span>Subtotal &#40;{itemTotal} items&#41;:</span> <span className="font-bold">{cartTotal}</span>
@@ -160,6 +149,8 @@ export default function CartPage() {
               size={size}
               quantity={quantity}
               category={category}
+              setCheck={setCheck}
+              check={check}
             />
           ))}
         </div>

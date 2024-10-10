@@ -1,9 +1,6 @@
 import { currency } from "@/hooks/use-store";
-import { Cart, Product, Wishlist, Order, Address } from "@/lib/schema";
+import { Product, Wishlist, Order, Address } from "@/lib/schema";
 import { useCategoriesStore } from "@/hooks/use-store";
-
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase/config"; // Firebase configuration
 
 export const removeSlash = (str: string) => {
   return str.charAt(0) === "/" ? str.slice(1) : str;

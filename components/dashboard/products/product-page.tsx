@@ -6,7 +6,8 @@ import AddProductForm from "./components/add-product-form";
 import { Product } from "@/lib/schema";
 import ProductCard from "./components/product-card";
 import EditProductForm from "./components/edit-product-form";
-import { RefreshCw } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
+import FilterButton from "./components/filter-button";
 
 export default function ProductPage() {
   const [productForm, setProductForm] = useState(false);
@@ -14,6 +15,7 @@ export default function ProductPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [change, setChange] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -21,6 +23,7 @@ export default function ProductPage() {
       const res = await fetch("/api/products");
       const data = await res.json();
       setProducts(data.products);
+      setFilteredProducts(data.products);
     };
 
     fetchProducts();
@@ -39,7 +42,7 @@ export default function ProductPage() {
       />
       <div className=" flex justify-between w-full ">
         <h1 className="text-3xl font-bold uppercase flex gap-1 items-center">
-          Products {"(" + products.length + ")"}{" "}
+          Products {"(" + filteredProducts.length + ")"}{" "}
           <Button className="group">
             <RefreshCw
               onClick={() => setChange(!change)}
@@ -47,11 +50,16 @@ export default function ProductPage() {
             />
           </Button>
         </h1>
-        <Button onClick={() => setProductForm(true)}>Create Product</Button>
+        <div className="flex gap-2">
+          <FilterButton setFilteredProducts={setFilteredProducts} products={products} />
+          <Button onClick={() => setProductForm(true)}>
+            <Plus className="mr-1 w-5" /> Add Product
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-8">
-        {products.map((product, index) => (
+        {filteredProducts.map((product, index) => (
           <ProductCard
             key={index}
             product={product}

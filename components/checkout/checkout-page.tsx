@@ -6,12 +6,13 @@ import AddressSection from "../checkout/address-section";
 import { useToast } from "@/components/ui/use-toast";
 import ReviewSection from "./review-section";
 import { Address, Cart, Order } from "@/lib/schema";
-import { createOrder, getCart } from "@/lib/functions";
+import { createOrder } from "@/lib/functions";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
-import { useCartStore } from "@/hooks/use-store";
+import { useCartStore } from "@/hooks/use-cart-store";
 import Confirmation from "./confirmation";
 import { useRouter } from "next/navigation";
+import AppInitializer from "@/hooks/cart";
 
 let x = 1;
 const t = (v: any) => x * v;
@@ -89,27 +90,6 @@ export default function ProgressSection() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCart = async () => {
-      if (user) {
-        const cartItems: Cart = await getCart(user.uid as string);
-        setCartItems(cartItems?.items);
-      } else {
-        const cartObj = Object.values(cart);
-        const localCart = cartObj.map((item) => {
-          return {
-            productId: item.id,
-            quantity: item.quantity,
-            size: item.size,
-          };
-        });
-        setCartItems(localCart);
-      }
-    };
-
-    fetchCart(); // Fetch cart items from the database or local storage on mount
-  }, [cart, user]);
-
-  useEffect(() => {
     const fetchAddresses = async () => {
       setIsLoading(true);
       const res = await fetch(`/api/users/${user?.uid}`);
@@ -163,7 +143,7 @@ export default function ProgressSection() {
       body: JSON.stringify(order),
     });
     if (res.ok) {
-      clearCart(user?.uid as string);
+      clearCart();
       toast({
         title: "Order placed",
         description: "Your order has been placed successfully.",
@@ -205,6 +185,7 @@ export default function ProgressSection() {
 
   return (
     <main className="lg:px-10 md:px-6 px-2 flex min-h-screen items-start pt-10">
+      <AppInitializer />
       <div className=" mx-auto w-full rounded-2xl bg-white border-2 border-neutral-100 shadow-sm">
         <div className="flex justify-between rounded py-8 max-w-[700px] mx-auto px-4 md:px-0 sm:px-8">
           <div className="flex flex-col gap-1 items-center">
