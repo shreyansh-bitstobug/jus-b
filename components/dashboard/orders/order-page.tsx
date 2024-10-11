@@ -18,6 +18,7 @@ export default function OrderPage() {
     const fetchOrders = async () => {
       const response = await fetch("/api/orders");
       const data = await response.json();
+
       data.orders.map((order: any) => {
         order.createdAt = new Date(order.createdAt).toLocaleString();
         order.updatedAt = new Date(order.updatedAt).toLocaleString();

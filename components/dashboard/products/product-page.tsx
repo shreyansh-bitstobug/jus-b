@@ -17,10 +17,38 @@ export default function ProductPage() {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
+  const handleStockUpdate = async (productId: string) => {
+    const res = await fetch(`/api/products/${productId}`);
+    const data = await res.json();
+    const product = data.product;
+
+    console.log("Product Stock before update:", product.stockUpdate);
+
+    const stock = product.stockUpdate ? false : true;
+
+    const updatedProduct: Product = {
+      ...product,
+      stockUpdate: stock,
+    };
+
+    console.log("Product Stock after update:", updatedProduct.stockUpdate);
+
+    const res2 = await fetch(`/api/products/${productId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProduct),
+    });
+
+    if (res2.ok) {
+      setChange(!change);
+    }
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
-      console.log(change);
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/products/dashboard");
       const data = await res.json();
       setProducts(data.products);
       setFilteredProducts(data.products);
@@ -67,6 +95,7 @@ export default function ProductPage() {
             setChange={setChange}
             setProduct={setEditProduct}
             setEditForm={setEditForm}
+            handleStockUpdate={handleStockUpdate}
           />
         ))}
       </div>

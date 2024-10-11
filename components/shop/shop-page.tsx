@@ -19,10 +19,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SortingButton from "@/components/sorting-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategorizePage from "./categorize";
+import { useParams, usePathname } from "next/navigation";
 
 export default function ShopPage() {
   const [sortedProducts, setSortedProducts] = useState<Product[]>();
   const [loading, setLoading] = useState(true);
+  const [shopBy, setShopBy] = useState("all");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,7 +48,7 @@ export default function ShopPage() {
       </section>
 
       <section className="flex items-center justify-center py-8 ">
-        <Tabs defaultValue="all" className=" ">
+        <Tabs defaultValue={shopBy} className=" ">
           <TabsList className=" block w-fit mx-auto scale-125 bg-black/10">
             <TabsTrigger value="all" className="">
               All

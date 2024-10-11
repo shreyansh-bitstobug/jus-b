@@ -24,12 +24,6 @@ import { useCurrencyStore } from "@/hooks/use-store";
 import { formatCurrency } from "@/lib/functions";
 import { useEffect, useState } from "react";
 
-interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-}
-
 export default function OrderCard({
   order,
   handleCopy,
@@ -202,16 +196,16 @@ export default function OrderCard({
             {items.length > 0 ? (
               <ul className="space-y-2">
                 {currencyItems?.map((item) => {
-                  const { id, details, quantity } = item;
+                  const { id, details, quantity, total } = item;
                   return (
                     <li key={id} className="flex justify-between items-center">
                       <div className="flex items-center space-x-2">
                         <PackageIcon className="h-5 w-5 text-muted-foreground" />
                         <TooltipContext content={details.name}>
-                          <span className="">{responsiveTruncate(details.name)}</span> x {quantity}
+                          <span className=" capitalize">{responsiveTruncate(details.name)}</span> x {quantity}
                         </TooltipContext>
                       </div>
-                      <span>{details.price * quantity}</span>
+                      <span>{total}</span>
                     </li>
                   );
                 })}

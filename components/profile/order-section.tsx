@@ -17,7 +17,7 @@ export default function OrderSection() {
   const [orders, setOrders] = useState<Order[]>([]);
   const { toast } = useToast();
 
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
 
   const handleCopy = (e: React.MouseEvent, orderId: string) => () => {
     e.stopPropagation();
@@ -30,7 +30,12 @@ export default function OrderSection() {
     const fetchOrders = async () => {
       const response = await fetch("/api/orders/" + user?.uid);
       const data = await response.json();
-      setOrders(data.userOrders || []);
+
+      const sortedOrders = [...data.userOrders].sort((a, b) => {
+        return b.placedAt.seconds - a.placedAt.seconds; // Descending
+      });
+
+      setOrders(sortedOrders || []);
     };
 
     if (!loading) {

@@ -90,6 +90,10 @@ export default function ProgressSection() {
   const router = useRouter();
 
   useEffect(() => {
+    setCartItems(cart);
+  }, [cart]);
+
+  useEffect(() => {
     const fetchAddresses = async () => {
       setIsLoading(true);
       const res = await fetch(`/api/users/${user?.uid}`);
@@ -107,6 +111,8 @@ export default function ProgressSection() {
       const res = await fetch("/api/products");
       const data = await res.json();
 
+      setCartItems(cart);
+
       const newOrder = createOrder(
         user?.uid as string,
         cartItems,
@@ -119,8 +125,8 @@ export default function ProgressSection() {
       setOrder(newOrder);
     };
 
-    if (address) fetchItems(); // Fetch items from the database on mount and create an order
-  }, [address]); // eslint-disable-line
+    if (address && cartItems.length !== 0) fetchItems(); // Fetch items from the database on mount and create an order
+  }, [address, cart]); // eslint-disable-line
 
   // ---- Handlers ----
   // Posting the order to the database

@@ -1,48 +1,30 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { MapPinIcon, PhoneIcon, Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import { RiDeleteBinFill } from "react-icons/ri";
-import { useChangeStore, useEditAddressStore, useModalStore } from "@/hooks/use-store";
+import { useEditAddressStore, useModalStore } from "@/hooks/use-store";
 import { Address } from "@/lib/schema";
-import Link from "next/link";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/config";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
-const AddressCard = ({ address, handleEditAddress }: { address: Address; handleEditAddress: (id: string) => void }) => {
-  const { setChange, change } = useChangeStore();
-  const [user] = useAuthState(auth);
-
-  const handleMakingDefault = () => {
-    console.log("making default");
-    const updateAddress = async () => {
-      console.log("updating address");
-      const response = await fetch(`/api/users/${user?.uid}`);
-      const data = await response.json();
-      const addresses = data.user.addresses;
-
-      console.log("addresses", addresses);
-      const updatedAddresses = addresses?.map((add: Address) => {
-        if (add.id === address.id) {
-          return { ...address, isDefault: true };
-        }
-        return address;
-      });
-      console.log("updatedAddresses", updatedAddresses);
-
-      const res = await fetch(`/api/users/${user?.uid}`, {
-        method: "POST",
-        body: JSON.stringify({ address: updatedAddresses }),
-      });
-
-      console.log("res", res);
-
-      if (res.ok) {
-        setChange(!change);
-      }
-    };
-    updateAddress();
-  };
+const AddressCard = ({
+  address,
+  handleEditAddress,
+  handleDeleteAddress,
+}: {
+  address: Address;
+  handleEditAddress: (id: string) => void;
+  handleDeleteAddress: (id: string) => void;
+}) => {
   return (
     <Card className="w-[500px] h-">
       <CardContent className="flex flex-col gap-4 md:flex-row items-start justify-between p-6 ">
@@ -61,19 +43,27 @@ const AddressCard = ({ address, handleEditAddress }: { address: Address; handleE
         </div>
 
         <div className=" flex md:flex-col flex-row-reverse md:items-end md:h-full justify-between items-end w-full gap-2">
-          {address.isDefault && <Badge className="h-fit my-[7.2px]">Default</Badge>}
-          {!address.isDefault && (
-            <Button size="sm" variant="secondary" onClick={handleMakingDefault}>
-              Make as default
-            </Button>
-          )}
           <div className="flex gap-2">
             <Button variant="outline" size="icon" onClick={() => handleEditAddress(address.id)} className="">
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button variant="destructive" size="icon" className="">
-              <RiDeleteBinFill className="h-4 w-4" />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="text-lg" size="icon">
+                  <RiDeleteBinFill />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Address?</AlertDialogTitle>
+                  <AlertDialogDescription>This action can not be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDeleteAddress(address.id)}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </CardContent>
@@ -81,7 +71,13 @@ const AddressCard = ({ address, handleEditAddress }: { address: Address; handleE
   );
 };
 
-export default function AddressSection({ addresses }: { addresses: Address[] }) {
+export default function AddressSection({
+  addresses,
+  handleDeleteAddress,
+}: {
+  addresses: Address[];
+  handleDeleteAddress: (id: string) => void;
+}) {
   // Hooks
   const { openModal } = useModalStore(); // Modal store
   const { setEditAddress } = useEditAddressStore(); // Address store
@@ -95,6 +91,7 @@ export default function AddressSection({ addresses }: { addresses: Address[] }) 
     }
     openModal("addressForm");
   };
+
   return (
     <section className="flex flex-wrap gap-10">
       {addresses?.length === 0 ? (
@@ -103,7 +100,12 @@ export default function AddressSection({ addresses }: { addresses: Address[] }) 
         </div>
       ) : (
         addresses?.map((address, index) => (
-          <AddressCard address={address} handleEditAddress={handleEditAddress} key={index} />
+          <AddressCard
+            address={address}
+            handleEditAddress={handleEditAddress}
+            key={index}
+            handleDeleteAddress={handleDeleteAddress}
+          />
         ))
       )}
     </section>

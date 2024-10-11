@@ -7,7 +7,7 @@ export interface Address {
   country: string;
   phoneNumber: string;
   postalCode: string;
-  isDefault: boolean;
+  isDefault?: boolean;
 }
 
 export interface Order {
@@ -59,6 +59,7 @@ export interface Product {
   sizesAvailable?: { size: string; quantity: number }[];
   category: string;
   images: string[];
+  stockUpdate?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

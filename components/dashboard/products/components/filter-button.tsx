@@ -45,6 +45,9 @@ export default function FilterButton({
             {category}
           </DropdownMenuItem>
         ))}
+
+        <Separator />
+        <DropdownMenuItem onClick={() => setFilteredProducts(products)}>Show All</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

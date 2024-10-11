@@ -74,7 +74,7 @@ export default function ReviewSection({
           {currencyItems && currencyItems?.length > 0 ? (
             <ul className="space-y-2">
               {currencyItems.map((item) => {
-                const { id, details, quantity } = item;
+                const { id, details, quantity, total } = item;
                 return (
                   <li key={id} className="flex justify-between w-full">
                     <div className="flex items-center space-x-2">
@@ -83,7 +83,7 @@ export default function ReviewSection({
                         <span>{responsiveTruncate(details.name)}</span> x {quantity}
                       </TooltipContext>
                     </div>
-                    <div>{details.price * quantity}</div>
+                    <div>{total}</div>
                   </li>
                 );
               })}

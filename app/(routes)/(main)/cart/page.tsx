@@ -70,7 +70,17 @@ export default function CartPage() {
     console.log("Cart and products changed", cart);
     // Why the cart length is 0? when the cart is not empty and there is 1 item in the cart
     const calculateTotal = async () => {
+      setLoading(true); // Set loading to true
       let total = 0;
+
+      if (cart?.length === 0) {
+        setCartProducts([]); // Reset cart products
+        setCartTotal("0"); // Reset cart total
+        setItemTotal(0); // Reset item total
+        setLoading(false); // Set loading to false
+        return;
+      }
+
       if (cart?.length > 0 && products?.length > 0) {
         const updatedCartProducts: CartProductType[] = [];
         let itemTotal = 0;

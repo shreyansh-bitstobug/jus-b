@@ -25,6 +25,7 @@ const addressFormSchema = z.object({
   address2: z.string().min(2).max(30),
   city: z.string().min(2).max(30),
   state: z.string().min(2).max(30),
+  country: z.string().min(2).max(30),
   postalCode: z.string().min(2).max(30),
   phoneNumber: z.string().min(2).max(30),
 });
@@ -51,6 +52,11 @@ export default function AddressModal() {
   useEffect(() => {
     if (editAddress) {
       form.reset();
+      form.setValue("name", editAddress.name);
+      form.setValue("city", editAddress.city);
+      form.setValue("state", editAddress.state);
+      form.setValue("country", editAddress.country);
+      form.setValue("postalCode", editAddress.postalCode);
       form.setValue("phoneNumber", editAddress.phoneNumber);
       form.setValue("address1", editAddress.address && editAddress.address[0]);
       form.setValue("address2", editAddress.address && editAddress.address[1]);
@@ -69,13 +75,32 @@ export default function AddressModal() {
       }
 
       console.log("values", values);
+      let uniqId: string;
+
+      if (editAddress) {
+        uniqId = editAddress.id;
+      } else {
+        uniqId = new Date().toString();
+      }
 
       const response = await fetch(`/api/users/${user?.uid}`);
       const data = await response.json();
       const addresses = data.user.addresses;
+
+      const newAddress: Address = {
+        id: uniqId,
+        name: values.name,
+        phoneNumber: values.phoneNumber,
+        address: [values.address1, values.address2],
+        city: values.city,
+        state: values.state,
+        postalCode: values.postalCode,
+        country: values.country,
+      };
+
       const updatedAddresses = editAddress
-        ? addresses.map((address: Address) => (address.id === editAddress.id ? { ...address, ...values } : address))
-        : [...addresses, values];
+        ? addresses.map((address: Address) => (address.id === editAddress.id ? { ...address, ...newAddress } : address))
+        : [...addresses, newAddress];
 
       console.log("updatedAddresses", updatedAddresses);
 
@@ -128,7 +153,7 @@ export default function AddressModal() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className=" whitespace-pre-line">
-                    Address Line 1 {""}
+                    Address{""}
                     <span className="text-red-600">*</span>
                   </FormLabel>
                   <FormControl>
@@ -145,9 +170,6 @@ export default function AddressModal() {
               name="address2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="whitespace-pre-wrap">
-                    Address Line 2 <span className="text-red-600">*</span>
-                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Area, Street, Sector, Village" {...field} />
                   </FormControl>
@@ -209,6 +231,24 @@ export default function AddressModal() {
               />
               <FormField
                 control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel>
+                      Country <span className="text-red-600">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Country" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex justify-between gap-8">
+              <FormField
+                control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem className="flex-grow">
@@ -222,14 +262,13 @@ export default function AddressModal() {
                   </FormItem>
                 )}
               />
-            </div>
-
-            {/* Cancel and Submit Button */}
-            <div className="flex gap-4 justify-end">
-              <Button type="button" variant="outline" onClick={close}>
-                Cancel
-              </Button>
-              <Button type="submit">Save</Button>
+              {/* Cancel and Submit Button */}
+              <div className="flex gap-4 justify-end items-end">
+                <Button type="button" variant="outline" onClick={close}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </div>
             </div>
           </form>
         </Form>

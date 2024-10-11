@@ -313,7 +313,7 @@ export default function ProductPage({ productId }: { productId: string }) {
                 </Button>
               </div>
             ) : (
-              <Button className="w-full" variant="action" onClick={handleAddToCart}>
+              <Button disabled={product?.stockUpdate} className="w-full" variant="action" onClick={handleAddToCart}>
                 <ShoppingCart className="mr-2 h-4 w-4" /> Add to cart
               </Button>
             )}

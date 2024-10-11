@@ -14,6 +14,7 @@ import OrderSection from "./order-section";
 import { orders } from "@/lib/data";
 import { Address, User } from "@/lib/schema";
 import { Skeleton } from "../ui/skeleton";
+import { toast } from "../ui/use-toast";
 
 export default function ProfilePage() {
   const [userInfo, setUserInfo] = useState<User>();
@@ -28,7 +29,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { openModal } = useModalStore();
   const { setProfile } = useProfileStore();
-  const { change } = useChangeStore();
+  const { change, setChange } = useChangeStore();
 
   // Redirect to sign-in page if user is not signed in
   if (!user) router.push("/sign-in?redirect=profile");
@@ -54,6 +55,38 @@ export default function ProfilePage() {
   // Handlers
   const handleAddAddress = () => {
     openModal("addressForm");
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+    if (!user) {
+      toast({ title: "Error", description: "User not authenticated", variant: "destructive" });
+      return;
+    }
+
+    // Create updated addresses array
+    const updatedAddresses = addresses?.filter((address) => address.id !== id);
+
+    try {
+      const res = await fetch(`/api/users/${user.uid}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ addresses: updatedAddresses }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete address");
+      }
+
+      toast({ title: "Address Deleted", description: "Address has been removed successfully" });
+
+      // Trigger a re-fetch by toggling 'change'
+      setChange(!change);
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to delete address", variant: "destructive" });
+    }
   };
 
   const handleEditProfile = () => {
@@ -100,7 +133,7 @@ export default function ProfilePage() {
               <span className="font-semibold">Add new</span>
             </Button>
           </div>
-          <AddressSection addresses={addresses as Address[]} />
+          <AddressSection addresses={addresses as Address[]} handleDeleteAddress={handleDeleteAddress} />
         </TabsContent>
 
         {/* Orders Tab */}

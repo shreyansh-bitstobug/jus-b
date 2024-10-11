@@ -67,6 +67,7 @@ export async function POST(req: Request, { params }: { params: { productId: stri
       category: body.category || category,
       images: body.images || images || [],
       updatedAt: new Date(),
+      stockUpdate: typeof body.stockUpdate === undefined ? false : body.stockUpdate,
     };
 
     await setDoc(productRef, newProduct);

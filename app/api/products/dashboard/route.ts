@@ -13,15 +13,13 @@ export async function GET() {
     const products: Product[] = productSnap.docs.map((doc) => doc.data() as Product);
 
     if (products.length === 0) {
-      return NextResponse.json({ message: "No products found" }, { status: 404 });
+      return NextResponse.json({ message: "No users found" }, { status: 404 });
     }
-
-    const filteredProducts = products.filter((product) => product.stockUpdate === true);
 
     return NextResponse.json(
       {
-        message: "Products retrieved successfully",
-        products: filteredProducts,
+        message: "Users retrieved successfully",
+        products,
       },
       { status: 200 }
     );
@@ -42,8 +40,8 @@ export async function POST(req: Request) {
       description: body.description,
       sizes: body.sizes || [],
       category: body.category,
-      images: body.images || [],
       stockUpdate: true,
+      images: body.images || [],
       createdAt: new Date(),
       updatedAt: new Date(),
     };

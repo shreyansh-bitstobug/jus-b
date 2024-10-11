@@ -71,7 +71,7 @@ export default function MidSection({ products }: { products: Product[] }) {
           <h3 className="font-bold text-2xl">Jus-B Luxe</h3>
           <p className="text-neutral-600">Shop the latest collection of high-quality luxurious fashion essentials</p>
         </div>
-        <Link href="/shop">
+        <Link href="/shop/jus-b-luxe">
           <Button>
             View All Products
             <ChevronRight className="ml-2 h-4 w-4" />

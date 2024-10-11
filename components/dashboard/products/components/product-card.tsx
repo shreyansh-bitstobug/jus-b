@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Pencil } from "lucide-react";
+import { Pencil, SquareChartGantt } from "lucide-react";
 
 export default function ProductCard({
   product,
@@ -30,16 +30,18 @@ export default function ProductCard({
   setEditForm,
   change,
   setChange,
+  handleStockUpdate,
 }: {
   product: Product;
   setProduct: (product: Product) => void;
   setEditForm: React.Dispatch<React.SetStateAction<boolean>>;
   change: boolean;
   setChange: (state: boolean) => void;
+  handleStockUpdate: (id: string) => void;
 }) {
   const [currencyPrice, setCurrencyPrice] = useState<string>();
   const [video, setVideo] = useState<string | null>(null);
-  const { name, price, images, productId, sizesAvailable, sizes, category, description } = product;
+  const { name, price, images, productId, sizesAvailable, sizes, category, description, stockUpdate } = product;
   const { currency } = useDashCurrencyStore();
 
   const handleEditProduct = () => {
@@ -149,8 +151,12 @@ export default function ProductCard({
         <div className="flex justify-between">
           <Badge>{category}</Badge>
           <div className="flex gap-4">
+            <Button onClick={() => handleStockUpdate(productId)}>
+              <SquareChartGantt className="ml-1 w-4" />
+              Make {stockUpdate ? "Out of Stock" : "In Stock"}
+            </Button>
             <Button onClick={handleEditProduct}>
-              <Pencil />
+              <Pencil className="mr-1 w-4" />
               Edit
             </Button>
             <AlertDialog>

@@ -67,17 +67,20 @@ export default function HomePage() {
         {/* Product Grid */}
         <div className="container px-4 md:px-6">
           <div className="grid gap-4 mt-8 grid-cols-[repeat(auto-fit,minmax(308px,1fr))] justify-items-center">
-            {products?.slice(0, 4).map(({ name, price, id, images, sizes, category }) => (
-              <ProductCard
-                name={name}
-                price={price}
-                key={id}
-                id={id}
-                image={images[0]}
-                sizes={sizes}
-                category={category}
-              />
-            ))}
+            {products
+              ?.filter((product) => product.category === "Jus-B Partywear")
+              .slice(0, 4)
+              .map(({ name, price, id, images, sizes, category }) => (
+                <ProductCard
+                  name={name}
+                  price={price}
+                  key={id}
+                  id={id}
+                  image={images[0]}
+                  sizes={sizes}
+                  category={category}
+                />
+              ))}
           </div>
         </div>
 
@@ -87,7 +90,7 @@ export default function HomePage() {
             <h3 className="font-bold text-2xl">Just-JB Partywear</h3>
             <p className="text-neutral-600">Shop the latest collection of high-quality fashion essentials</p>
           </div>
-          <Link href="/shop">
+          <Link href="/shop/jus-b-partywear">
             <Button>
               View All Products
               <ChevronRight className="ml-2 h-4 w-4" />
