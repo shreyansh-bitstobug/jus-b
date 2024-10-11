@@ -106,7 +106,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className=" container py-20 space-y-14 min-h-screen ">
+    <main className=" container py-20 space-y-14">
       <section className="space-y-1">
         <p className="flex gap-3">
           <Image src="/assets/contact-icon.svg" width={20} height={20} alt="Contact" />

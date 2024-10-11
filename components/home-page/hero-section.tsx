@@ -101,7 +101,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative border-b-2 border-penn-red md:pb-0 pb-5">
-      <div className=" md:min-h-screen lg:space-y-0 space-y-6">
+      <div className=" lg:space-y-0 space-y-6">
         {/* Center Content (for medium screen sizes) */}
         <CenterDiv className="lg:hidden space-y-4 py-8 flex flex-col px-8" />
 
@@ -153,7 +153,7 @@ export default function HeroSection() {
           <CenterDiv className="hidden lg:flex lg:flex-col" />
 
           {/* Right Image */}
-          <div className="group md:h-screen sm:h-[50vh] h-[30vh]  overflow-hidden relative">
+          <div className="group flex items-end justify-end md:h-screen sm:h-[50vh] h-[30vh]  overflow-hidden relative">
             {/* -------- Empty Div --------- */}
             <div
               className={cn(
@@ -179,6 +179,7 @@ export default function HeroSection() {
               />
             </div>
 
+            {/* -------- Image --------- */}
             <div
               className={cn(
                 " overflow-hidden absolute top-0 z-10 transition-all duration-1000 ease-in",

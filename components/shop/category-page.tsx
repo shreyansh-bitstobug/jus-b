@@ -67,7 +67,7 @@ export default function CategoryPage() {
         <div className="px-14">
           <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
         </div>
-        <div className=" py-4 grid sm:grid-cols-2 grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
+        <div className="container py-4 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2  gap-4 justify-center">
           {loading
             ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((i_, index) => (
                 <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />

@@ -19,7 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SortingButton from "@/components/sorting-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategorizePage from "./categorize";
-import { useParams, usePathname } from "next/navigation";
 
 export default function ShopPage() {
   const [sortedProducts, setSortedProducts] = useState<Product[]>();
@@ -62,7 +61,7 @@ export default function ShopPage() {
             <div className="px-24">
               <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
             </div>
-            <div className="container py-4 flex flex-wrap gap-4 justify-center">
+            <div className="container py-4 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2  gap-4 justify-center">
               {loading
                 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((i_, index) => (
                     <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />
