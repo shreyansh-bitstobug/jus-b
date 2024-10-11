@@ -13,6 +13,7 @@ import { useCartStore } from "@/hooks/use-cart-store";
 import Confirmation from "./confirmation";
 import { useRouter } from "next/navigation";
 import AppInitializer from "@/hooks/cart";
+import { useChangeStore } from "@/hooks/use-store";
 
 let x = 1;
 const t = (v: any) => x * v;
@@ -88,6 +89,7 @@ export default function ProgressSection() {
   const { cart, clearCart } = useCartStore(); // Cart store
   const { toast } = useToast(); // Toast hook
   const router = useRouter();
+  const { change } = useChangeStore();
 
   useEffect(() => {
     setCartItems(cart);
@@ -104,7 +106,7 @@ export default function ProgressSection() {
     };
 
     if (user && !loading) fetchAddresses(); // Fetch addresses from the database on mount
-  }, [user, loading]);
+  }, [user, loading, change]);
 
   useEffect(() => {
     const fetchItems = async () => {
