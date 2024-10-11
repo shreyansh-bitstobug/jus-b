@@ -60,6 +60,7 @@ export default function OrderCard({
   const [orderStatus, setOrderStatus] = useState<string>(status);
   const [orderTrackingId, setOrderTrackingId] = useState<string>(trackingId);
   const [orderPaymentStatus, setOrderPaymentStatus] = useState<string>(paymentStatus);
+  const [trackingIdSuccess, setTrackingIdSuccess] = useState<boolean>(false);
 
   const { currency } = useDashCurrencyStore();
 
@@ -118,6 +119,10 @@ export default function OrderCard({
     const data = await response.json();
     if (response.ok) {
       setChange(!change);
+      setTrackingIdSuccess(true);
+      setTimeout(() => {
+        setTrackingIdSuccess(false);
+      }, 2000);
     }
     console.log(data);
   };
@@ -317,9 +322,14 @@ export default function OrderCard({
                   <Input
                     placeholder="# Tracking ID"
                     onChange={(e) => setOrderTrackingId(e.target.value)}
-                    value={trackingId || orderTrackingId}
+                    value={orderTrackingId}
                   />
-                  <Button onClick={handleTrackingIdUpdate}>Update Tracking ID</Button>
+                  <Button
+                    className={cn(trackingIdSuccess && "hover:bg-green-800 bg-green-800 text-white")}
+                    onClick={handleTrackingIdUpdate}
+                  >
+                    {trackingIdSuccess ? "Success" : "Update Tracking ID"}
+                  </Button>
                 </div>
 
                 {/* Order Status Select Button */}

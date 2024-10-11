@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { storage } from "@/firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
 
 interface MediaPreview {
   id: string;
@@ -35,7 +34,7 @@ export default function ImageUpload({ field }: ImageUploadProps) {
 
         // Create a new media object
         const newMedia: MediaPreview = {
-          id: uuidv4(), // Generate a unique ID
+          id: url.split("/").pop()?.split("?")[0] || "", // Extract the file name from URL
           url,
           progress: 100,
           uploading: false,
@@ -51,10 +50,10 @@ export default function ImageUpload({ field }: ImageUploadProps) {
     const selectedFiles = Array.from(e.target.files || []);
 
     selectedFiles.forEach((file) => {
-      const mediaId = uuidv4();
+      const fileName = file.name; // Use the file name directly
       const fileType = file.type.startsWith("image/") ? "image" : "video";
       const newMedia: MediaPreview = {
-        id: mediaId,
+        id: fileName, // Use file name as the mediaId
         file,
         url: null,
         progress: 0,
@@ -65,23 +64,23 @@ export default function ImageUpload({ field }: ImageUploadProps) {
       setMediaFiles((prev) => [...prev, newMedia]);
 
       // Upload to Firebase Storage
-      const storageRef = ref(storage, `media/${mediaId}`);
+      const storageRef = ref(storage, `media/${fileName}`); // Use file name with extension
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setMediaFiles((prev) => prev.map((media) => (media.id === mediaId ? { ...media, progress } : media)));
+          setMediaFiles((prev) => prev.map((media) => (media.id === fileName ? { ...media, progress } : media)));
         },
         (error) => {
           console.error("Upload failed:", error);
-          setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
+          setMediaFiles((prev) => prev.filter((media) => media.id !== fileName));
         },
         async () => {
           const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
           setMediaFiles((prev) =>
-            prev.map((media) => (media.id === mediaId ? { ...media, url: downloadUrl, uploading: false } : media))
+            prev.map((media) => (media.id === fileName ? { ...media, url: downloadUrl, uploading: false } : media))
           );
         }
       );
@@ -135,12 +134,6 @@ export default function ImageUpload({ field }: ImageUploadProps) {
             {media.uploading ? (
               <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex flex-col items-center justify-center">
                 <p>{Math.round(media.progress)}%</p>
-                <button
-                  onClick={() => handleCancelUpload(media.id)}
-                  className="mt-2 px-2 py-1 bg-red-500 text-white rounded"
-                >
-                  Cancel
-                </button>
               </div>
             ) : media.type === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element

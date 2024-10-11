@@ -111,6 +111,7 @@ export default function EditProductForm({
         features: values.description.features,
       },
       sizes: values.sizes || [],
+      stockUpdate: editProduct?.stockUpdate,
       createdAt: editProduct?.createdAt || new Date(),
       updatedAt: new Date(),
     };

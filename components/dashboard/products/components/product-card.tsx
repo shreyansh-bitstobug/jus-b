@@ -71,6 +71,15 @@ export default function ProductCard({
       const pathStartIndex = fileUrl.indexOf("/o/") + 3;
       const pathEndIndex = fileUrl.indexOf("?alt=");
       const filePath = decodeURIComponent(fileUrl.substring(pathStartIndex, pathEndIndex));
+      console.log("File path:", filePath);
+
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ images: images.filter((image) => image !== fileUrl), stockUpdate: stockUpdate }),
+      });
 
       // Create a reference to the file to delete
       const fileRef = ref(storage, filePath);
@@ -78,14 +87,6 @@ export default function ProductCard({
       // Delete the file
       await deleteObject(fileRef);
       setChange(!change);
-
-      const res = await fetch(`/api/products/${productId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ images: images.filter((image) => image !== fileUrl) }),
-      });
 
       console.log(`File deleted successfully: ${fileUrl}`);
     } catch (error) {

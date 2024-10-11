@@ -58,6 +58,8 @@ export async function POST(req: Request, { params }: { params: { productId: stri
       return NextResponse.json({ message: "Required details" }, { status: 400 });
     }
 
+    const stockToUpdate = typeof body.stockUpdate == undefined ? false : body.stockUpdate;
+
     const newProduct: Product = {
       ...product,
       name: body.name || name,
@@ -67,8 +69,10 @@ export async function POST(req: Request, { params }: { params: { productId: stri
       category: body.category || category,
       images: body.images || images || [],
       updatedAt: new Date(),
-      stockUpdate: typeof body.stockUpdate === undefined ? false : body.stockUpdate,
+      stockUpdate: stockToUpdate,
     };
+
+    console.log("New product Images:", newProduct.images);
 
     await setDoc(productRef, newProduct);
 
