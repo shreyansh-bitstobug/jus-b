@@ -10,6 +10,7 @@ import { useCurrencyStore } from "@/hooks/use-store";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 export default function ReviewSection({
   address,
@@ -17,15 +18,22 @@ export default function ReviewSection({
   paymentMethod,
   fare,
   applyCoupon,
+  setCoupon,
+  couponStatus,
+  isCouponValidating,
+  coupon,
 }: {
   address: Address;
   items: { id: string; details: Product; quantity: number; size: string }[];
   paymentMethod: string;
   fare: { total: number; shipping?: number; discount?: number; amountPaid: number };
-  applyCoupon: (coupon: string) => void;
+  applyCoupon: () => void;
+  setCoupon: (value: string) => void;
+  couponStatus: "success" | "error" | "idle";
+  isCouponValidating: boolean;
+  coupon: string;
 }) {
   const [currencyFare, setCurrencyFare] = useState({ total: "", shipping: "", discount: "", amountPaid: "" });
-  const [coupon, setCoupon] = useState<string>("");
   const { currency } = useCurrencyStore();
   const [currencyItems, setCurrencyItems] =
     useState<{ id: string; details: Product; quantity: number; size: string; total: string }[]>(); // Items with currency
@@ -70,14 +78,36 @@ export default function ReviewSection({
 
   return (
     <div className="max-w-[500px] min-w-72 w-full mx-auto">
-      <div className="border-neutral-200 border rounded-lg p-4">
-        <Label>Apply Coupon Code</Label>
-        <div className="flex gap-4">
-          <Input placeholder="Apply Coupon Code" onChange={(e) => setCoupon(e.target.value)} />
-          <Button className="" onClick={() => applyCoupon(coupon)}>
-            Apply
-          </Button>
-        </div>
+      <div
+        className={cn(
+          " border rounded-lg p-4 mb-2",
+          couponStatus === "idle"
+            ? "border-neutral-200"
+            : couponStatus === "success"
+            ? "border-green-200 bg-green-100"
+            : "border-red-200 bg-red-100"
+        )}
+      >
+        {couponStatus === "success" ? (
+          <p className="text-green-700 text-center">
+            <span className="font-semibold">{coupon}</span> coupon successfully applied!
+          </p>
+        ) : (
+          <div className="flex gap-4">
+            <Input
+              disabled={isCouponValidating}
+              placeholder="Apply Coupon Code"
+              onChange={(e) => setCoupon(e.target.value)}
+            />
+            <Button
+              disabled={isCouponValidating}
+              className={cn(couponStatus === "error" ? "border-red-600" : "")}
+              onClick={() => applyCoupon()}
+            >
+              Apply
+            </Button>
+          </div>
+        )}
       </div>
       <Card className="max-w-[500px] min-w-72 w-full mx-auto">
         <CardHeader>

@@ -5,7 +5,7 @@ import { Order } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { Check, CopyIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Confirmation({ order }: { order: Order }) {
   const [copied, setCopied] = useState(false);
@@ -17,6 +17,7 @@ export default function Confirmation({ order }: { order: Order }) {
       setCopied(false);
     }, 2000);
   };
+
   return (
     <div className="text-center max-w-[500px] flex flex-col items-center mx-auto gap-4 py-4">
       <h1 className={cn("text-3xl font-semibold", syne.className)}>Congratulations</h1>

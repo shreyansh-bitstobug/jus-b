@@ -30,7 +30,6 @@ export async function POST(req: Request) {
       code: body.code,
       discountType: body.discountType,
       value: body.value,
-      minOrderValue: body.minOrderValue,
       maxDiscount: body.maxDiscount,
       isActive: true, // Default to true
     };

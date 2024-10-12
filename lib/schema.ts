@@ -93,7 +93,14 @@ export interface Coupons {
   code: string;
   discountType: "percentage" | "fixed";
   value: number;
-  minOrderValue: number;
   maxDiscount: number;
   isActive: boolean;
+  usedBy?: [
+    {
+      userId: string;
+      orderId: string;
+      orderStatus: string;
+      usedAt: Date;
+    }
+  ];
 }

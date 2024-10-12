@@ -83,7 +83,9 @@ export default function ProgressSection() {
   const [cartItems, setCartItems] = useState<any[]>([]); // Cart items
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [order, setOrder] = useState<Order>(); // Order
-  const [fareDetails, setFareDetails] = useState<any>(); // Fare details
+  const [coupon, setCoupon] = useState(""); // Coupon code
+  const [couponStatus, setCouponStatus] = useState<"success" | "error" | "idle">("idle"); // Coupon status
+  const [isCouponValidating, setIsCouponValidating] = useState(false); // Coupon validating state
 
   // Hooks
   const [user, loading] = useAuthState(auth); // User
@@ -142,11 +144,22 @@ export default function ProgressSection() {
 
     const message = `New order placed by ${user?.displayName}. Order ID: ${order?.id}.`;
 
-    const response = await fetch("/api/whatsapp", {
+    await fetch("/api/whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message }),
     });
+
+    console.log("Discount while posting the order", order?.fare.discount);
+
+    if (order?.fare.discount) {
+      console.log("Applying coupon", coupon, "Discount", order?.fare.discount);
+      await fetch("/api/coupons/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.uid, orderId: order?.id, placedAt: order?.placedAt, code: coupon }),
+      });
+    }
 
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -168,18 +181,26 @@ export default function ProgressSection() {
   };
 
   // Applying the coupon code to the order
-  const applyCoupon = async (coupon: string) => {
+  const applyCoupon = async () => {
     try {
-      const res = await fetch(`/api/coupons/apply`, {
+      setCouponStatus("idle");
+      setIsCouponValidating(true);
+      const res = await fetch(`/api/coupons/validate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code: coupon, subtotal: order?.fare.total }),
+        body: JSON.stringify({ code: coupon, subtotal: order?.fare.total, userId: user?.uid }),
       });
 
       if (res.ok) {
         const data = await res.json();
+        toast({
+          title: "Coupon applied",
+          description: data.message,
+          duration: 2000,
+        });
+        setCouponStatus("success");
         const newFare = {
           total: order?.fare.total as number,
           shipping: order?.fare.shipping as number,
@@ -188,7 +209,18 @@ export default function ProgressSection() {
         };
         const newOrder = { ...order, fare: newFare };
         setOrder(newOrder as Order);
+      } else {
+        res.json().then((data) => {
+          toast({
+            title: "Coupon not applied",
+            description: data.message,
+            variant: "destructive",
+            duration: 2000,
+          });
+          setCouponStatus("error");
+        });
       }
+      setIsCouponValidating(false);
     } catch (error) {
       console.error(error);
     }
@@ -262,6 +294,10 @@ export default function ProgressSection() {
               items={items ?? []}
               paymentMethod="COD"
               applyCoupon={applyCoupon}
+              setCoupon={setCoupon}
+              couponStatus={couponStatus}
+              isCouponValidating={isCouponValidating}
+              coupon={coupon}
             />
           )}
         </motion.section>
