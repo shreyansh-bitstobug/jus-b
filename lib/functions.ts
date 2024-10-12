@@ -109,7 +109,8 @@ export const createOrder = (
   cartItems: any[],
   shippingAddress: Address,
   billingAddress: Address,
-  products: Product[]
+  products: Product[],
+  discountValue?: number
 ): Order => {
   const orderId = generateOrderId(); // Generate a unique order ID
 
@@ -119,10 +120,11 @@ export const createOrder = (
   console.log("Billing address in createOrder", billingAddress);
   console.log("User ID in createOrder", userId);
 
-  const itemsWithDetails = cartToItems(cartItems, products);
+  const itemsWithDetails = cartToItems(cartItems, products); // Get items with details
   const fareTotal = calculateFare(itemsWithDetails); // Calculate total amount for items
   const shippingCost = 50; // Example shipping cost, you can modify based on logic
-  const discount = 0; // Default discount (modify if applicable)
+  const discount = discountValue ?? 0; // Default discount (modify if applicable)
+  console.log("Discount in createOrder", discount);
 
   const order: Order = {
     id: orderId, // Will be for Firestore document ID

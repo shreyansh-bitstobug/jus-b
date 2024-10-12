@@ -83,6 +83,7 @@ export default function ProgressSection() {
   const [cartItems, setCartItems] = useState<any[]>([]); // Cart items
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [order, setOrder] = useState<Order>(); // Order
+  const [fareDetails, setFareDetails] = useState<any>(); // Fare details
 
   // Hooks
   const [user, loading] = useAuthState(auth); // User
@@ -91,10 +92,13 @@ export default function ProgressSection() {
   const router = useRouter();
   const { change } = useChangeStore();
 
+  // ------ Effects ------
+  // Set the cart items
   useEffect(() => {
     setCartItems(cart);
   }, [cart]);
 
+  // Fetch addresses from the database
   useEffect(() => {
     const fetchAddresses = async () => {
       setIsLoading(true);
@@ -108,6 +112,7 @@ export default function ProgressSection() {
     if (user && !loading) fetchAddresses(); // Fetch addresses from the database on mount
   }, [user, loading, change]);
 
+  // Fetch items from the database and create an order
   useEffect(() => {
     const fetchItems = async () => {
       const res = await fetch("/api/products");
@@ -162,6 +167,34 @@ export default function ProgressSection() {
     return res.ok;
   };
 
+  // Applying the coupon code to the order
+  const applyCoupon = async (coupon: string) => {
+    try {
+      const res = await fetch(`/api/coupons/apply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: coupon, subtotal: order?.fare.total }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const newFare = {
+          total: order?.fare.total as number,
+          shipping: order?.fare.shipping as number,
+          discount: data.discount as number,
+          amountPaid: data.total as number,
+        };
+        const newOrder = { ...order, fare: newFare };
+        setOrder(newOrder as Order);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // ---- Actions ----
   // Next button action
   const nextAction = () => {
     if (address === null) {
@@ -223,7 +256,13 @@ export default function ProgressSection() {
 
         <motion.section animate={{ display: "hidden" }} transition={{ duration: 0.3 }} className="sm:px-8 px-2 ">
           {step === 2 && order?.fare && (
-            <ReviewSection fare={order?.fare} address={address as Address} items={items ?? []} paymentMethod="COD" />
+            <ReviewSection
+              fare={order?.fare}
+              address={address as Address}
+              items={items ?? []}
+              paymentMethod="COD"
+              applyCoupon={applyCoupon}
+            />
           )}
         </motion.section>
 

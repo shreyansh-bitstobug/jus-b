@@ -7,19 +7,25 @@ import { useEffect, useState } from "react";
 import { Separator } from "@radix-ui/react-separator";
 import { formatCurrency } from "@/lib/functions";
 import { useCurrencyStore } from "@/hooks/use-store";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
 
 export default function ReviewSection({
   address,
   items,
   paymentMethod,
   fare,
+  applyCoupon,
 }: {
   address: Address;
   items: { id: string; details: Product; quantity: number; size: string }[];
   paymentMethod: string;
   fare: { total: number; shipping?: number; discount?: number; amountPaid: number };
+  applyCoupon: (coupon: string) => void;
 }) {
   const [currencyFare, setCurrencyFare] = useState({ total: "", shipping: "", discount: "", amountPaid: "" });
+  const [coupon, setCoupon] = useState<string>("");
   const { currency } = useCurrencyStore();
   const [currencyItems, setCurrencyItems] =
     useState<{ id: string; details: Product; quantity: number; size: string; total: string }[]>(); // Items with currency
@@ -63,81 +69,94 @@ export default function ReviewSection({
   };
 
   return (
-    <Card className="max-w-[500px] min-w-72 w-full mx-auto">
-      <CardHeader>
-        <CardTitle className="text-3xl">Order Details</CardTitle>
-        <Separator orientation="horizontal" className="border-neutral-300 border-t-2" />
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6 items-start justify-between px-6 ">
-        <section className="w-full">
-          <h3 className="text-xl font-semibold mb-2">Order Items</h3>
-          {currencyItems && currencyItems?.length > 0 ? (
-            <ul className="space-y-2">
-              {currencyItems.map((item) => {
-                const { id, details, quantity, total } = item;
-                return (
-                  <li key={id} className="flex justify-between w-full">
-                    <div className="flex items-center space-x-2">
-                      <PackageIcon className="h-5 w-5 text-muted-foreground" />
-                      <TooltipContext content={details.name}>
-                        <span>{responsiveTruncate(details.name)}</span> x {quantity}
-                      </TooltipContext>
-                    </div>
-                    <div>{total}</div>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground">No items in this order.</p>
-          )}
-        </section>
+    <div className="max-w-[500px] min-w-72 w-full mx-auto">
+      <div className="border-neutral-200 border rounded-lg p-4">
+        <Label>Apply Coupon Code</Label>
+        <div className="flex gap-4">
+          <Input placeholder="Apply Coupon Code" onChange={(e) => setCoupon(e.target.value)} />
+          <Button className="" onClick={() => applyCoupon(coupon)}>
+            Apply
+          </Button>
+        </div>
+      </div>
+      <Card className="max-w-[500px] min-w-72 w-full mx-auto">
+        <CardHeader>
+          <CardTitle className="text-3xl">Order Details</CardTitle>
+          <Separator orientation="horizontal" className="border-neutral-300 border-t-2" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6 items-start justify-between px-6 ">
+          <section className="w-full">
+            <h3 className="text-xl font-semibold mb-2">Order Items</h3>
+            {currencyItems && currencyItems?.length > 0 ? (
+              <ul className="space-y-2">
+                {currencyItems.map((item) => {
+                  const { id, details, quantity, total } = item;
+                  return (
+                    <li key={id} className="flex justify-between w-full">
+                      <div className="flex items-center space-x-2">
+                        <PackageIcon className="h-5 w-5 text-muted-foreground" />
+                        <TooltipContext content={details.name}>
+                          <span>{responsiveTruncate(details.name)}</span> x {quantity}
+                        </TooltipContext>
+                      </div>
+                      <div>{total}</div>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="text-muted-foreground">No items in this order.</p>
+            )}
+          </section>
 
-        <section className="flex flex-col gap-3">
-          <h1 className="text-xl font-semibold">Delivery Address</h1>
-          <div className="space-y-2 w-full">
-            <div className="flex items-start space-x-2">
-              <User className="h-5 w-5 text-muted-foreground" />
-              <div className="flex flex-col w-60">
-                <span>{address.name}</span>
+          <section className="flex flex-col gap-3">
+            <h1 className="text-xl font-semibold">Delivery Address</h1>
+            <div className="space-y-2 w-full">
+              <div className="flex items-start space-x-2">
+                <User className="h-5 w-5 text-muted-foreground" />
+                <div className="flex flex-col w-60">
+                  <span>{address.name}</span>
+                </div>
+              </div>
+              <div className="flex items-start space-x-2">
+                <MapPinIcon className="h-5 w-5 text-muted-foreground" />
+                <div className="flex flex-col w-60">
+                  <span>{address.address && address.address[0] + ", " + address.address[1] + ","}</span>
+                  <span>
+                    {address.city + ", " + address.state + ", " + address.country + " - " + address.postalCode}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <PhoneIcon className="h-5 w-5 text-muted-foreground" />
+                <span>{address.phoneNumber}</span>
               </div>
             </div>
-            <div className="flex items-start space-x-2">
-              <MapPinIcon className="h-5 w-5 text-muted-foreground" />
-              <div className="flex flex-col w-60">
-                <span>{address.address && address.address[0] + ", " + address.address[1] + ","}</span>
-                <span>{address.city + ", " + address.state + ", " + address.country + " - " + address.postalCode}</span>
+          </section>
+
+          <section className="space-y-4 w-full">
+            <h3 className="text-lg font-semibold mb-2">Total Price</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span>{currencyFare.total}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping:</span>
+                <span>{currencyFare.shipping}</span>
+              </div>
+              <div className="flex justify-between text-primary">
+                <span>Discount:</span>
+                <span>-{currencyFare.discount}</span>
+              </div>
+              <div className="flex justify-between font-bold">
+                <span>Total:</span>
+                <span>{currencyFare.amountPaid}</span>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <PhoneIcon className="h-5 w-5 text-muted-foreground" />
-              <span>{address.phoneNumber}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-4 w-full">
-          <h3 className="text-lg font-semibold mb-2">Total Price</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>{currencyFare.total}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shipping:</span>
-              <span>{currencyFare.shipping}</span>
-            </div>
-            <div className="flex justify-between text-primary">
-              <span>Discount:</span>
-              <span>-{currencyFare.discount}</span>
-            </div>
-            <div className="flex justify-between font-bold">
-              <span>Total:</span>
-              <span>{currencyFare.amountPaid}</span>
-            </div>
-          </div>
-        </section>
-      </CardContent>
-    </Card>
+          </section>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

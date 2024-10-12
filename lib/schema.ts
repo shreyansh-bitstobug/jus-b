@@ -87,3 +87,13 @@ export interface Blog {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Coupons {
+  id: string;
+  code: string;
+  discountType: "percentage" | "fixed";
+  value: number;
+  minOrderValue: number;
+  maxDiscount: number;
+  isActive: boolean;
+}
