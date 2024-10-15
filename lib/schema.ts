@@ -83,7 +83,7 @@ export interface Wishlist {
 export interface Blog {
   id: string;
   title: string;
-  content: string;
+  content: string[];
   createdAt: Date;
   updatedAt: Date;
 }
