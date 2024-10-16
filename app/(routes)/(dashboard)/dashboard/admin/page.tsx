@@ -1,6 +1,7 @@
 "use client";
 
 import BlogPage from "@/components/dashboard/blogs/blog-page";
+import CouponsOfferPage from "@/components/dashboard/coupons-offers/coupons-offer-page";
 import CurrencyButton from "@/components/dashboard/currency-button-dash";
 import OrderPage from "@/components/dashboard/orders/order-page";
 import ProductPage from "@/components/dashboard/products/product-page";
@@ -50,6 +51,7 @@ export default function DashboardAdminPage() {
           <Button onClick={() => setSection("Orders")}>Orders</Button>
           <Button onClick={() => setSection("Products")}>Products</Button>
           <Button onClick={() => setSection("Blogs")}>Blogs</Button>
+          <Button onClick={() => setSection("Coupons")}>Coupons & Offer</Button>
           <CurrencyButton />
         </nav>
       </section>
@@ -57,6 +59,7 @@ export default function DashboardAdminPage() {
         {section === "Orders" && <OrderPage />}
         {section === "Products" && <ProductPage />}
         {section === "Blogs" && <BlogPage />}
+        {section === "Coupons" && <CouponsOfferPage />}
       </section>
     </main>
   );

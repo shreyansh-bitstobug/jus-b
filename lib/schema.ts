@@ -104,3 +104,8 @@ export interface Coupons {
     }
   ];
 }
+
+export interface Offer {
+  id: string;
+  offer: string;
+}
