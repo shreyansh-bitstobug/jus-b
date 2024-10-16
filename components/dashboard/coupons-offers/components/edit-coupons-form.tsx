@@ -106,7 +106,15 @@ export default function EditCouponsForm({
                     <Input
                       placeholder="Type the coupon code"
                       {...field}
-                      onChange={(e) => form.setValue("code", e.target.value.toUpperCase())}
+                      onKeyDown={(e) => {
+                        if (e.key === " ") {
+                          e.preventDefault(); // Prevent space input
+                        }
+                      }}
+                      onChange={(e) => {
+                        const valueWithoutSpaces = e.target.value.replace(/\s+/g, ""); // Remove spaces
+                        form.setValue("code", valueWithoutSpaces.toUpperCase()); // Convert to uppercase
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
