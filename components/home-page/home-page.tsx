@@ -20,6 +20,7 @@ import Popup from "../popup";
 import CardStack from "@/components/home-page/scroll-section/scroll-based-div";
 import { Product } from "@/lib/schema";
 import { useEffect, useState } from "react";
+import MobileProductCard from "../product/mobile-product-card";
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -66,20 +67,33 @@ export default function HomePage() {
 
         {/* Product Grid */}
         <div className="container px-4 md:px-6">
-          <div className="grid gap-4 mt-8 grid-cols-[repeat(auto-fit,minmax(308px,1fr))] justify-items-center">
+          <div className="grid gap-4 mt-8 sm:grid-cols-[repeat(auto-fit,minmax(308px,1fr))] grid-cols-2 justify-items-center">
             {products
               ?.filter((product) => product.category === "Jus-B Partywear")
               .slice(0, 4)
               .map(({ name, price, id, images, sizes, category }) => (
-                <ProductCard
-                  name={name}
-                  price={price}
-                  key={id}
-                  id={id}
-                  image={images[0]}
-                  sizes={sizes}
-                  category={category}
-                />
+                <>
+                  <ProductCard
+                    name={name}
+                    price={price}
+                    key={id}
+                    id={id}
+                    image={images[0]}
+                    sizes={sizes}
+                    category={category}
+                    className="sm:block hidden"
+                  />
+                  <MobileProductCard
+                    name={name}
+                    price={price}
+                    key={id}
+                    id={id}
+                    image={images[0]}
+                    sizes={sizes}
+                    category={category}
+                    className="sm:hidden"
+                  />
+                </>
               ))}
           </div>
         </div>

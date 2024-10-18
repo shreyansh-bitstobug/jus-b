@@ -13,6 +13,7 @@ import ProductCard from "@/components/product/product-card";
 
 // Schema
 import { Product } from "@/lib/schema";
+import MobileProductCard from "../product/mobile-product-card";
 
 export default function MidSection({ products }: { products: Product[] }) {
   const [luxeProducts, setLuxeProducts] = useState<Product[]>([]);
@@ -43,9 +44,9 @@ export default function MidSection({ products }: { products: Product[] }) {
       </div>
 
       {/* Product Grid */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_1fr_308px_308px] justify-items-center">
+      <div className="grid gap-6 lg:grid-cols-2 justify-items-center">
         {/* One Large Image */}
-        <div className=" md:h-full h-[70vh]  overflow-hidden md:col-span-2 lg:col-span-2 lg:row-span-3">
+        <div className=" md:h-full h-[70vh] overflow-hidden lg:row-span-3">
           <div className="max-w-[700px] w-full md:h-full h-[70vh] overflow-hidden">
             <video
               src="./assets/products/13.mp4"
@@ -59,10 +60,34 @@ export default function MidSection({ products }: { products: Product[] }) {
           </div>
         </div>
 
-        {/* Four Product Cards */}
-        {luxeProducts?.slice(0, 6).map(({ name, price, id, images, sizes, category }) => (
-          <ProductCard key={id} name={name} price={price} image={images[0]} id={id} sizes={sizes} category={category} />
-        ))}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Four Product Cards */}
+          {luxeProducts?.slice(0, 6).map(({ name, price, id, images, sizes, category }) => (
+            <>
+              <ProductCard
+                key={id}
+                name={name}
+                price={price}
+                image={images[0]}
+                id={id}
+                sizes={sizes}
+                category={category}
+                className="sm:block hidden"
+              />
+
+              <MobileProductCard
+                key={id}
+                name={name}
+                price={price}
+                image={images[0]}
+                id={id}
+                sizes={sizes}
+                category={category}
+                className="sm:hidden block"
+              />
+            </>
+          ))}
+        </div>
       </div>
 
       {/* CTA */}
