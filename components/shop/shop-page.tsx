@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SortingButton from "@/components/sorting-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategorizePage from "./categorize";
+import MobileProductCard from "../product/mobile-product-card";
 
 export default function ShopPage() {
   const [sortedProducts, setSortedProducts] = useState<Product[]>();
@@ -61,21 +62,37 @@ export default function ShopPage() {
             <div className="px-24">
               <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
             </div>
-            <div className="container py-4 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2  gap-4 justify-center">
+            <div className="sm:container px-4 py-4 grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2  gap-4 justify-center justify-items-center">
               {loading
                 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((i_, index) => (
-                    <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />
+                    <Skeleton
+                      key={index}
+                      className="sm:w-[308px] sm:h-[396px] w-[174px] h-[240px] bg-muted-foreground/20"
+                    />
                   ))
                 : sortedProducts?.map((product, index) => (
-                    <ProductCard
-                      key={index}
-                      name={product.name}
-                      price={product.price}
-                      image={product.images[0]}
-                      id={product.id}
-                      sizes={product.sizes}
-                      category={product.category}
-                    />
+                    <>
+                      <ProductCard
+                        key={index}
+                        name={product.name}
+                        price={product.price}
+                        image={product.images[0]}
+                        id={product.id}
+                        sizes={product.sizes}
+                        category={product.category}
+                        className="sm:block hidden"
+                      />
+                      <MobileProductCard
+                        key={index}
+                        name={product.name}
+                        price={product.price}
+                        image={product.images[0]}
+                        id={product.id}
+                        sizes={product.sizes}
+                        category={product.category}
+                        className="sm:hidden"
+                      />
+                    </>
                   ))}
             </div>
           </TabsContent>

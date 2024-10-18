@@ -27,7 +27,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { formatCurrency, removeSlash } from "@/lib/functions";
 import { useEffect, useState } from "react";
 
-export default function ProductCard({
+export default function MobileProductCard({
   name,
   price,
   image,
@@ -79,7 +79,7 @@ export default function ProductCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-sm shadow-sm w-[308px] h-[396px] transition-all duration-300 bg-white",
+        "group relative overflow-hidden rounded-sm shadow-sm w-[174px] h-[240px] transition-all duration-300 bg-white",
         className
       )}
     >
@@ -87,22 +87,24 @@ export default function ProductCard({
       <Link href={`/shop/${_.kebabCase(category)}/${id}`} className="block relative">
         <Image
           alt={name}
-          className="object-cover object-top w-full h-80 transition-all group-hover:scale-105"
-          height="320"
+          className="object-cover object-top w-full h-48 transition-all group-hover:scale-105"
+          height="192"
           placeholder="blur"
           blurDataURL="/assets/placeholder.svg"
           src={`${image ?? "/assets/placeholder.svg"}`}
-          width="320"
+          width="192"
         />
 
         {/* Category Badge */}
-        <Badge className="absolute top-2 left-2 bg-white text-neutral-800 hover:bg-neutral-100">{category}</Badge>
+        <Badge className="absolute top-1 left-1 scale-75 bg-white text-neutral-800 hover:bg-neutral-100">
+          {category}
+        </Badge>
 
         {/* Wishlist Button */}
         <Button
           size="icon"
           variant="secondary"
-          className="absolute top-2 right-2 rounded-full transition-opacity"
+          className="absolute top-1 right-1 rounded-full transition-opacity scale-75"
           onClick={handleWishlist}
         >
           <Heart className={cn("h-5 w-5", isInWishlist(id) ? "fill-red-500 text-red-500" : "")} />
@@ -110,11 +112,11 @@ export default function ProductCard({
       </Link>
 
       {/* Description of Card */}
-      <div className="p-4 flex justify-between items-start">
+      <div className="p-2 flex justify-between items-start">
         {/* Product Name and Price */}
         <div className="space-y-1">
-          <h3 className="font-semibold leading-3">{_.truncate(_.capitalize(name), { length: 25 })}</h3>
-          <p className=" font-medium text-lg text-gray-400">{currencyPrice}</p>
+          <h3 className="font-semibold leading-3 text-sm">{_.truncate(_.capitalize(name), { length: 15 })}</h3>
+          <p className=" font-medium text-gray-400">{currencyPrice}</p>
         </div>
 
         {/* Cart Button */}

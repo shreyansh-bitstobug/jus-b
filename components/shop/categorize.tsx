@@ -8,6 +8,7 @@ import { ArrowRightIcon } from "lucide-react";
 import _ from "lodash";
 import { Product } from "@/lib/schema";
 import { Skeleton } from "@/components/ui/skeleton";
+import MobileProductCard from "../product/mobile-product-card";
 
 export default function CategorizePage() {
   const [products, setProducts] = useState<Product[]>();
@@ -35,16 +36,16 @@ export default function CategorizePage() {
   return (
     <section className="flex flex-col gap-8 py-8">
       {uniqueCategories.map((category) => (
-        <div key={category} className="container">
+        <div key={category} className="sm:container px-4">
           <div className="flex justify-between items-center bg-neutral-400/10 rounded-lg px-4 py-2 mb-4">
-            <h1 className="text-2xl font-bold text-penn-red ">{category}</h1>
+            <h1 className="sm:text-2xl text-xl font-bold text-penn-red ">{category}</h1>
             <Link href={`/shop/${_.kebabCase(category)}`}>
               <Button variant="outline" className="font-semibold">
                 View all <ArrowRightIcon size={16} className="ml-2" />
               </Button>
             </Link>
           </div>
-          <div className=" flex flex-wrap gap-4">
+          <div className=" sm:flex sm:flex-wrap grid grid-cols-2 gap-4">
             {products
               ?.filter((product) => product.category === category)
               .map((product, index) =>
@@ -52,15 +53,28 @@ export default function CategorizePage() {
                   loading ? (
                     <Skeleton key={index} className="w-[308px] h-[396px] bg-muted-foreground/20" />
                   ) : (
-                    <ProductCard
-                      key={index}
-                      name={product.name}
-                      price={product.price}
-                      image={product.images[0]}
-                      id={product.id}
-                      sizes={product.sizes}
-                      category={product.category}
-                    />
+                    <>
+                      <ProductCard
+                        key={index}
+                        name={product.name}
+                        price={product.price}
+                        image={product.images[0]}
+                        id={product.id}
+                        sizes={product.sizes}
+                        category={product.category}
+                        className="sm:block hidden"
+                      />
+                      <MobileProductCard
+                        key={index}
+                        name={product.name}
+                        price={product.price}
+                        image={product.images[0]}
+                        id={product.id}
+                        sizes={product.sizes}
+                        category={product.category}
+                        className="sm:hidden"
+                      />
+                    </>
                   )
                 ) : null
               )}

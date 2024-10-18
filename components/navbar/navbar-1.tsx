@@ -211,12 +211,18 @@ export default function Navbar1() {
         {/* ------------------------------- */}
         <div className="justify-self-end">
           <div className="flex items-center md:gap-4">
+            {/* Currency Button */}
+            <CurrencyButton />
+
             {/* Search Button */}
-            <Button variant="ghost" size="icon" onClick={() => openModal("search")} className="flip-in-ver-right-hover">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => openModal("search")}
+              className="flip-in-ver-right-hover ml-2"
+            >
               <Search className="mx-auto" />
             </Button>
-
-            <CurrencyButton />
 
             {/* Cart Button */}
             <Link href="/cart">
