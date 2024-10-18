@@ -184,7 +184,7 @@ export default function Navbar1() {
                   </Link>
 
                   <DropdownMenu>
-                    <DropdownMenuTrigger className=" rounded-lg text-neutral-600 shrink-0 flex justify-center items-center hover:text-accent-foreground group text-left group">
+                    <DropdownMenuTrigger className=" rounded-lg text-neutral-600 shrink-0 flex justify-start items-center hover:text-accent-foreground group text-left group">
                       <span>Account</span>
                       <HiChevronDown className="w-5 h-5 ml-1 inline group-hover:rotate-180 transition-all duration-500" />
                     </DropdownMenuTrigger>
