@@ -183,6 +183,60 @@ export default function Navbar1() {
                     <SheetClose>About us</SheetClose>
                   </Link>
 
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className=" rounded-lg text-neutral-600 shrink-0 sm:flex justify-center items-center hover:text-accent-foreground group text-left group">
+                      <span>Account</span>
+                      <HiChevronDown className="w-5 h-5 ml-1 inline group-hover:rotate-180 transition-all duration-500" />
+                    </DropdownMenuTrigger>
+                    {!user ? (
+                      <DropdownMenuContent align="end">
+                        {/* Sign In Button */}
+                        <DropdownMenuItem className="hover:bg-neutral-300">
+                          <Link href={`/sign-in?redirect=${page}`} className="w-full flex items-center">
+                            <LogIn className="w-5 mr-2" />
+                            Sign In
+                          </Link>
+                        </DropdownMenuItem>
+
+                        {/* Sign Up Button */}
+                        <DropdownMenuItem className="hover:bg-neutral-300">
+                          <Link href={`/sign-up?redirect=${page}`} className="w-full flex items-center">
+                            <UserPlus className="w-5 mr-2" />
+                            Sign Up
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    ) : (
+                      <DropdownMenuContent align="end">
+                        {/* Profile Button */}
+                        <DropdownMenuItem className="hover:bg-neutral-300">
+                          <Link href="/profile" className="w-full flex items-center">
+                            <User className="w-5 mr-2" />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+
+                        {/* Whishlist Button */}
+                        <DropdownMenuItem className="hover:bg-neutral-300">
+                          <Link href="/wishlist" className="w-full flex items-center">
+                            <Heart className="w-5 mr-2" />
+                            Wishlist
+                          </Link>
+                        </DropdownMenuItem>
+
+                        {/* ------------------------------------------------- */}
+                        <DropdownMenuSeparator className=" bg-neutral-300" />
+                        {/* Logout Button */}
+                        <DropdownMenuItem className="p-0">
+                          <Button onClick={handleLogout} variant="destructive" className="w-full flex items-center">
+                            <LogOut className="w-5 mr-2 " />
+                            Log out
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    )}
+                  </DropdownMenu>
+
                   <hr />
                 </nav>
 
@@ -215,18 +269,13 @@ export default function Navbar1() {
             <CurrencyButton />
 
             {/* Search Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => openModal("search")}
-              className="flip-in-ver-right-hover ml-2"
-            >
-              <Search className="mx-auto" />
+            <Button variant="ghost" size="icon" onClick={() => openModal("search")} className=" ml-2 px-2">
+              <Search className="mx-auto " />
             </Button>
 
             {/* Cart Button */}
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="shrink-0 relative flip-in-ver-right-hover">
+              <Button variant="ghost" size="icon" className="shrink-0 relative group">
                 <ShoppingBag className="h-5 w-5 " />
                 <span className="absolute top-0 right-1 h-4 p-1 w-4 bg-penn-red text-snow rounded-full text-sm flex items-center justify-center">
                   {cart.length}
@@ -237,7 +286,7 @@ export default function Navbar1() {
 
             {/* Account Button as Dropdown for Profile, whishlist, Logout button */}
             <DropdownMenu>
-              <DropdownMenuTrigger className=" rounded-lg shrink-0 flex justify-center items-center hover:bg-accent hover:text-accent-foreground h-10 w-10 flip-in-ver-right-hover">
+              <DropdownMenuTrigger className="hidden rounded-lg shrink-0 sm:flex justify-center items-center hover:bg-accent hover:text-accent-foreground h-10 w-10 group">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Account</span>
               </DropdownMenuTrigger>
