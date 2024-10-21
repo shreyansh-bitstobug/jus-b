@@ -63,9 +63,9 @@ export default function CategoryPage() {
         </h1>
       </section>
 
-      <section className="container flex flex-col items-end justify-center py-8 ">
+      <section className="flex flex-col sm:items-end justify-center py-8 ">
         {/* All Product Grid */}
-        <div className="px-14">
+        <div className="sm:px-14 px-8">
           <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
         </div>
         <div className="sm:container px-4 py-4 grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2  gap-4 justify-center justify-items-center">

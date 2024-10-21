@@ -59,7 +59,7 @@ export default function ShopPage() {
           </TabsList>
           <TabsContent value="all" className="flex flex-col items-end">
             {/* All Product Grid */}
-            <div className="px-24">
+            <div className="sm:px-24 px-8">
               <SortingButton products={sortedProducts || []} setSortedProducts={setSortedProducts} />
             </div>
             <div className="sm:container px-4 py-4 grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2  gap-4 justify-center justify-items-center">
