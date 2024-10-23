@@ -36,7 +36,7 @@ export default function Popup() {
       >
         <Image src="/assets/popup-image.png" width={300} height={300} alt="Popup Image" />
 
-        <div className="py-10  flex flex-col">
+        <div className="sm:scale-100 scale-75 sm:py-10 py-0 m-auto flex flex-col">
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl text-center uppercase font-light tracking-tight">Want to get a discount?</h1>
