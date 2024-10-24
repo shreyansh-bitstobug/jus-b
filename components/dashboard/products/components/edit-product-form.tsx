@@ -104,7 +104,7 @@ export default function EditProductForm({
       productId: values.productId,
       name: values.productName,
       price: values.price,
-      category: values.category,
+      category: values.category.trim(),
       images: values.images,
       description: {
         text: values.description.text,
