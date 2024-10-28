@@ -167,7 +167,11 @@ export default function EditProductForm({
                   <FormItem>
                     <FormLabel>Product ID</FormLabel>
                     <FormControl>
-                      <Input placeholder="category-1" {...field} />
+                      <Input
+                        placeholder="category-1"
+                        {...field}
+                        onChange={(e) => form.setValue("productId", e.target.value.toString().toLowerCase())}
+                      />
                     </FormControl>
                     <FormDescription>
                       Unique ID for each product. No spaces allowed. Only single hyphen(-) allowed.

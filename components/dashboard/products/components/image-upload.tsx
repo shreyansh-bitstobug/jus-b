@@ -114,9 +114,9 @@ export default function ImageUpload({ field }: ImageUploadProps) {
     }
   };
 
-  const handleCancelUpload = (mediaId: string) => {
-    setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
-  };
+  // const handleCancelUpload = (mediaId: string) => {
+  //   setMediaFiles((prev) => prev.filter((media) => media.id !== mediaId));
+  // };
 
   // Update the form state whenever the mediaFiles array changes
   useEffect(() => {

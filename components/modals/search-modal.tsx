@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Product } from "@/lib/schema";
 import { Skeleton } from "../ui/skeleton";
 import { formatCurrency } from "@/lib/functions";
+import _ from "lodash";
 
 const SearchCard = ({ product, currency }: { product: Product; currency: any }) => {
   const [price, setPrice] = useState<string>();
@@ -25,7 +26,10 @@ const SearchCard = ({ product, currency }: { product: Product; currency: any }) 
 
   // const price = formatCurrency(product.price, currency);
   return (
-    <Link href={`/products/${product.id}`} className="flex items-center space-x-2 p-2 border-b border-gray-200">
+    <Link
+      href={`/shop/${_.kebabCase(product.category)}/${product.id}`}
+      className="flex items-center space-x-2 p-2 border-b border-gray-200"
+    >
       <Image
         src={product.images[0]}
         alt={product.name}
