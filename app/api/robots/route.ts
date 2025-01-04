@@ -5,7 +5,7 @@ export async function GET() {
     User-agent: *
     Disallow:
 
-    Sitemap: https://yourdomain.com/api/sitemap
+    Sitemap: https://www.jus-b-fashion.com/api/sitemap
   `;
 
   return new NextResponse(robots, {
