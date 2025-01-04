@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const baseUrl = "https://www.jus-b-fashion.com/"; // Replace with your base URL or add in .env
+  const baseUrl = "https://www.jus-b-fashion.com"; // Replace with your base URL or add in .env
   const staticPages = ["/about", "/contact", "/policy"]; // Add your static routes here
   const dynamicPages = [
     "/shop",
