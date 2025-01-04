@@ -20,7 +20,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Jus - b - Premium Fashion Store for Partywear & Western Dresses Online",
+    default:
+      "Jus - b - Premium Fashion Store for Partywear & Western Dresses Online",
     template: "%s - Jus - b",
   },
   description:
@@ -37,7 +38,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://www.jus-b-fashion.com/",
-    title: "Jus-b: Premium Fashion Store for Partywear & Western Dresses Online",
+    title:
+      "Jus-b: Premium Fashion Store for Partywear & Western Dresses Online",
     description:
       "Explore Jus-b, your ultimate online fashion store for premium styles. From partywear dresses to chic western dresses for women, find high-quality clothing designed for elegance and comfort.",
     images: [
@@ -51,7 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jus-b: Premium Fashion Store for Partywear & Western Dresses Online",
+    title:
+      "Jus-b: Premium Fashion Store for Partywear & Western Dresses Online",
     description:
       "Explore Jus-b, your ultimate online fashion store for premium styles. From partywear dresses to chic western dresses for women, find high-quality clothing designed for elegance and comfort.",
   },
@@ -64,7 +67,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(poppins.className, "bg-snow flex flex-col min-h-screen")}>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="2YBR-IHT9Ok7HrxaDwlP7bBu7fZueLj5vW5cR7D2lWE"
+        />
+      </head>
+      <body
+        className={cn(poppins.className, "bg-snow flex flex-col min-h-screen")}
+      >
         {/* <PageLoader /> */}
         {children}
         <Toaster />
