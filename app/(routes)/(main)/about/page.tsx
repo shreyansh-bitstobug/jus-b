@@ -5,6 +5,47 @@ import Image from "next/image";
 import { shopBanner } from "@/public/assets/data";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "About Us",
+    template: "%s - Jus   b",
+  },
+  description:
+    "Learn more about Jus-b, a premium online fashion store specializing in elegant partywear and chic western dresses. Discover our mission, vision, and commitment to delivering high-quality clothing.",
+  keywords: [
+    "about Jus-b",
+    "Jus-b story",
+    "Jus-b mission",
+    "premium fashion brand",
+    "high-quality clothing",
+    "Jus-b vision",
+    "online fashion store",
+  ],
+  openGraph: {
+    type: "website",
+    url: "https://www.jus-b-fashion.com/about",
+    title: "About Us - Jus-b",
+    description:
+      "Learn more about Jus-b, a premium online fashion store specializing in elegant partywear and chic western dresses. Discover our mission, vision and commitment to delivering high-quality clothing.",
+    images: [
+      {
+        url: "/assets/hero4.jpg",
+        width: 1200,
+        height: 630,
+        alt: "About Jus-b - Premium Fashion Store",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us - Jus-b",
+    description:
+      "Learn more about Jus-b, a premium online fashion store specializing in elegant partywear and chic western dresses. Discover our mission, vision, and commitment to delivering high-quality clothing.",
+  },
+};
+
 
 export default function AboutPage() {
   return (
