@@ -56,8 +56,8 @@ const CardStack = () => {
         <div className="lg:hidden flex flex-col items-center gap-6">
           <div className="flex md:flex-row flex-col md:gap-0 gap-10">
             <Card
-              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-jashan.png?alt=media"
-              categoryName="Jus-B Jashan"
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/media%2FWhatsApp%20Image%202024-11-19%20at%2018.11.17.jpeg?alt=media&token=16c5cfbe-6a0b-4791-810e-fd9e0b87c9e2"
+              categoryName="Winter Wear"
               className=" -rotate-12"
             />
             <Card
@@ -103,8 +103,8 @@ const CardStack = () => {
           {/* Second card (moves left and tilts left) */}
           <motion.div ref={ref} className=" absolute top-1/4 right-1/2 translate-x-1/2 z-20">
             <Card
-              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/category%2Fjus-b-jashan.png?alt=media"
-              categoryName="Jus-B Jashan"
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/media%2FWhatsApp%20Image%202024-11-19%20at%2018.11.17.jpeg?alt=media&token=16c5cfbe-6a0b-4791-810e-fd9e0b87c9e2"
+              categoryName="Winter Wear"
             />
           </motion.div>
 
