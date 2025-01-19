@@ -223,7 +223,7 @@ export default function AddressModal() {
                       Postal Code <span className="text-red-600">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Postal Code" className="w-40" {...field} />
+                      <Input placeholder="Postal Code" className="w-40" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
