@@ -13,7 +13,7 @@ export default function AnimatedLinkBelt() {
   useEffect(() => {
     const animationInterval = setInterval(() => {
       setOffset((prevOffset) => (prevOffset + 1) % 100);
-    }, 300);
+    }, 150);
 
     return () => clearInterval(animationInterval);
   }, []);

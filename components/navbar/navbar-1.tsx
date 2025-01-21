@@ -13,7 +13,15 @@ import { cn } from "@/lib/utils";
 import { useCategoriesStore, useModalStore } from "@/hooks/use-store";
 
 // Icons
-import { Heart, LogIn, LogOut, Search, ShoppingBag, User, UserPlus } from "lucide-react";
+import {
+  Heart,
+  LogIn,
+  LogOut,
+  Search,
+  ShoppingBag,
+  User,
+  UserPlus,
+} from "lucide-react";
 import { RiInstagramLine, RiWhatsappLine } from "react-icons/ri";
 import { HiChevronDown, HiMenuAlt2 } from "react-icons/hi";
 
@@ -22,9 +30,18 @@ import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
 
 // UI Components
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +56,9 @@ import { useCartStore } from "@/hooks/use-cart-store";
 
 export default function Navbar1() {
   // State
-  const [whatsappLink, setWhatsappLink] = useState("https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"); // WhatsApp group link
+  const [whatsappLink, setWhatsappLink] = useState(
+    "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"
+  ); // WhatsApp group link
   const [page, setPage] = useState(""); // Current page
   const [cartLoading, setCartLoading] = useState(true); // Cart loading state
 
@@ -60,12 +79,17 @@ export default function Navbar1() {
   useEffect(() => {
     // Get the current page from the URL for active link
     const pathPart = url?.split("/")[1];
-    const currentPage = pathPart?.split("#")[0] ? pathPart.split("#")[0] : pathPart;
+    const currentPage = pathPart?.split("#")[0]
+      ? pathPart.split("#")[0]
+      : pathPart;
     setPage(currentPage);
 
     const groupLink = "https://chat.whatsapp.com/BfPHIvJq0Gg4FJeohDBjry"; // WhatsApp group link
     const whatsappSchemeLink = "whatsapp://chat?code=BfPHIvJq0Gg4FJeohDBjry"; // Custom scheme to open app
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     // Detect if user is on Windows or Mobile
     if (navigator.userAgent.includes("Windows")) {
@@ -126,7 +150,10 @@ export default function Navbar1() {
               </button>
             </SheetTrigger>
 
-            <SheetContent side="left" className="max-w-[240px] md:max-w-80 flex flex-col justify-between">
+            <SheetContent
+              side="left"
+              className="max-w-[240px] md:max-w-80 flex flex-col justify-between"
+            >
               <div className="flex flex-col justify-between h-screen">
                 <nav className=" grid gap-6 font-medium ">
                   {/* Logo */}
@@ -135,7 +162,12 @@ export default function Navbar1() {
                     className="group flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden gap-2 bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                   >
                     <SheetClose>
-                      <Image src="/assets/logo.svg" alt="logo" width={40} height={40} />
+                      <Image
+                        src="/assets/logo.svg"
+                        alt="logo"
+                        width={40}
+                        height={40}
+                      />
                     </SheetClose>
                   </Link>
 
@@ -144,7 +176,9 @@ export default function Navbar1() {
                     href="/"
                     className={cn(
                       " text-neutral-600 hover:text-black",
-                      page != "" ? "text-neutral-600" : "text-black font-semibold"
+                      page != ""
+                        ? "text-neutral-600"
+                        : "text-black font-semibold"
                     )}
                   >
                     <SheetClose>Home</SheetClose>
@@ -155,10 +189,31 @@ export default function Navbar1() {
                     href="/shop"
                     className={cn(
                       " text-neutral-600 hover:text-black",
-                      page != "/shop" ? "text-neutral-600" : "text-black font-semibold"
+                      page != "/shop"
+                        ? "text-neutral-600"
+                        : "text-black font-semibold"
                     )}
                   >
-                    <SheetClose>Shop</SheetClose>
+                    <SheetClose>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center gap-1">
+                          Shop
+                          <HiChevronDown className="w-4 h-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="flex flex-col gap-2">
+                          {categories?.map((category) => (
+                            <DropdownMenuItem key={category}>
+                              <Link
+                                href={`/shop/${_.kebabCase(category)}`}
+                                className="hover:text-black"
+                              >
+                                {category}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </SheetClose>
                   </Link>
 
                   {/* Contact Link */}
@@ -166,7 +221,9 @@ export default function Navbar1() {
                     href="/contact"
                     className={cn(
                       " text-neutral-600 hover:text-black",
-                      page != "/contact" ? "text-neutral-600" : "text-black font-semibold"
+                      page != "/contact"
+                        ? "text-neutral-600"
+                        : "text-black font-semibold"
                     )}
                   >
                     <SheetClose>Contact us</SheetClose>
@@ -177,7 +234,9 @@ export default function Navbar1() {
                     href="/about"
                     className={cn(
                       " text-neutral-600 hover:text-black",
-                      page != "/about" ? "text-neutral-600" : "text-black font-semibold"
+                      page != "/about"
+                        ? "text-neutral-600"
+                        : "text-black font-semibold"
                     )}
                   >
                     <SheetClose>About us</SheetClose>
@@ -192,7 +251,10 @@ export default function Navbar1() {
                       <DropdownMenuContent align="end">
                         {/* Sign In Button */}
                         <DropdownMenuItem className="hover:bg-neutral-300">
-                          <Link href={`/sign-in?redirect=${page}`} className="w-full flex items-center">
+                          <Link
+                            href={`/sign-in?redirect=${page}`}
+                            className="w-full flex items-center"
+                          >
                             <LogIn className="w-5 mr-2" />
                             Sign In
                           </Link>
@@ -200,7 +262,10 @@ export default function Navbar1() {
 
                         {/* Sign Up Button */}
                         <DropdownMenuItem className="hover:bg-neutral-300">
-                          <Link href={`/sign-up?redirect=${page}`} className="w-full flex items-center">
+                          <Link
+                            href={`/sign-up?redirect=${page}`}
+                            className="w-full flex items-center"
+                          >
                             <UserPlus className="w-5 mr-2" />
                             Sign Up
                           </Link>
@@ -210,7 +275,10 @@ export default function Navbar1() {
                       <DropdownMenuContent align="end">
                         {/* Profile Button */}
                         <DropdownMenuItem className="hover:bg-neutral-300">
-                          <Link href="/profile" className="w-full flex items-center">
+                          <Link
+                            href="/profile"
+                            className="w-full flex items-center"
+                          >
                             <User className="w-5 mr-2" />
                             Profile
                           </Link>
@@ -218,7 +286,10 @@ export default function Navbar1() {
 
                         {/* Whishlist Button */}
                         <DropdownMenuItem className="hover:bg-neutral-300">
-                          <Link href="/wishlist" className="w-full flex items-center">
+                          <Link
+                            href="/wishlist"
+                            className="w-full flex items-center"
+                          >
                             <Heart className="w-5 mr-2" />
                             Wishlist
                           </Link>
@@ -228,7 +299,11 @@ export default function Navbar1() {
                         <DropdownMenuSeparator className=" bg-neutral-300" />
                         {/* Logout Button */}
                         <DropdownMenuItem className="p-0">
-                          <Button onClick={handleLogout} variant="destructive" className="w-full flex items-center">
+                          <Button
+                            onClick={handleLogout}
+                            variant="destructive"
+                            className="w-full flex items-center"
+                          >
                             <LogOut className="w-5 mr-2 " />
                             Log out
                           </Button>
@@ -269,13 +344,22 @@ export default function Navbar1() {
             <CurrencyButton />
 
             {/* Search Button */}
-            <Button variant="ghost" size="icon" onClick={() => openModal("search")} className=" ml-2 px-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => openModal("search")}
+              className=" ml-2 px-2"
+            >
               <Search className="mx-auto " />
             </Button>
 
             {/* Cart Button */}
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="shrink-0 relative group">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0 relative group"
+              >
                 <ShoppingBag className="h-5 w-5 " />
                 <span className="absolute top-0 right-1 h-4 p-1 w-4 bg-penn-red text-snow rounded-full text-sm flex items-center justify-center">
                   {cart.length}
@@ -294,7 +378,10 @@ export default function Navbar1() {
                 <DropdownMenuContent align="end">
                   {/* Sign In Button */}
                   <DropdownMenuItem className="hover:bg-neutral-300">
-                    <Link href={`/sign-in?redirect=${page}`} className="w-full flex items-center">
+                    <Link
+                      href={`/sign-in?redirect=${page}`}
+                      className="w-full flex items-center"
+                    >
                       <LogIn className="w-5 mr-2" />
                       Sign In
                     </Link>
@@ -302,7 +389,10 @@ export default function Navbar1() {
 
                   {/* Sign Up Button */}
                   <DropdownMenuItem className="hover:bg-neutral-300">
-                    <Link href={`/sign-up?redirect=${page}`} className="w-full flex items-center">
+                    <Link
+                      href={`/sign-up?redirect=${page}`}
+                      className="w-full flex items-center"
+                    >
                       <UserPlus className="w-5 mr-2" />
                       Sign Up
                     </Link>
@@ -330,7 +420,11 @@ export default function Navbar1() {
                   <DropdownMenuSeparator className=" bg-neutral-300" />
                   {/* Logout Button */}
                   <DropdownMenuItem className="p-0">
-                    <Button onClick={handleLogout} variant="destructive" className="w-full flex items-center">
+                    <Button
+                      onClick={handleLogout}
+                      variant="destructive"
+                      className="w-full flex items-center"
+                    >
                       <LogOut className="w-5 mr-2 " />
                       Log out
                     </Button>
@@ -370,7 +464,11 @@ export default function Navbar1() {
           <HoverCardContent className="flex flex-col w-fit gap-2 p-3 text-neutral-700">
             {categories?.map((category) => {
               return (
-                <Link key={category} href={`/shop/${_.kebabCase(category)}`} className="hover:text-black">
+                <Link
+                  key={category}
+                  href={`/shop/${_.kebabCase(category)}`}
+                  className="hover:text-black"
+                >
                   {category}
                 </Link>
               );
