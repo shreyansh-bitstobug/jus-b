@@ -122,7 +122,7 @@ export const createOrder = (
 
   const itemsWithDetails = cartToItems(cartItems, products); // Get items with details
   const fareTotal = calculateFare(itemsWithDetails); // Calculate total amount for items
-  const shippingCost = 50; // Example shipping cost, you can modify based on logic
+  const shippingCost = 0; // Example shipping cost, you can modify based on logic
   const discount = discountValue ?? 0; // Default discount (modify if applicable)
   console.log("Discount in createOrder", discount);
 
