@@ -104,12 +104,7 @@ export default function ProductPage({ productId }: { productId: string }) {
     const fetchData = async () => {
       const response = await fetch("/api/products");
       const datas = await response.json();
-      let products = datas.products;
-
-      products = products.sort(
-        (a: Product, b: Product) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      const products = datas.products;
 
       const res = await fetch("/api/products/" + productId);
 
