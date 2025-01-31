@@ -4,7 +4,15 @@
 import { useEffect, useState } from "react";
 
 // Icons
-import { ChevronRight, Heart, Minus, PlayCircleIcon, Plus, Share2, ShoppingCart } from "lucide-react";
+import {
+  ChevronRight,
+  Heart,
+  Minus,
+  PlayCircleIcon,
+  Plus,
+  Share2,
+  ShoppingCart,
+} from "lucide-react";
 
 // Next Components and Hooks
 import Image from "next/image";
@@ -19,11 +27,22 @@ import { cn } from "@/lib/utils";
 // UI Components
 import ProductCard from "@/components/product/product-card";
 import { useToast } from "@/components/ui/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 // Stores and store types
-import { useCurrencyStore, useModalStore, useShareModalStore, useWishlistStore } from "@/hooks/use-store";
+import {
+  useCurrencyStore,
+  useModalStore,
+  useShareModalStore,
+  useWishlistStore,
+} from "@/hooks/use-store";
 import { CartItem, useCartStore } from "@/hooks/use-cart-store";
 import { usePathname } from "next/navigation";
 import { formatCurrency, removeSlash } from "@/lib/functions";
@@ -52,7 +71,8 @@ export default function ProductPage({ productId }: { productId: string }) {
   const { toast } = useToast(); // Get the toast function
 
   // Stores
-  const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlistStore();
+  const { isInWishlist, removeFromWishlist, addToWishlist } =
+    useWishlistStore();
   const { openModal } = useModalStore();
   const { setLink, setMessage } = useShareModalStore();
   const { cart, addToCart, removeFromCart } = useCartStore();
@@ -60,7 +80,10 @@ export default function ProductPage({ productId }: { productId: string }) {
   // Format the price with the selected currency
   useEffect(() => {
     const formatPrice = async () => {
-      const formattedPrice = await formatCurrency(product?.price || 0, currency);
+      const formattedPrice = await formatCurrency(
+        product?.price || 0,
+        currency
+      );
       setCurrencyPrice(formattedPrice);
     };
     formatPrice();
@@ -68,7 +91,10 @@ export default function ProductPage({ productId }: { productId: string }) {
 
   // Get the cart quantity of the product
   useEffect(() => {
-    const cartItem = cart.find((item: CartItem) => item.productId === productId && item.size === selectedSize);
+    const cartItem = cart.find(
+      (item: CartItem) =>
+        item.productId === productId && item.size === selectedSize
+    );
     setCartQuantity(cartItem?.quantity || 0);
   }, [cart, productId, selectedSize]);
 
@@ -78,7 +104,12 @@ export default function ProductPage({ productId }: { productId: string }) {
     const fetchData = async () => {
       const response = await fetch("/api/products");
       const datas = await response.json();
-      const products = datas.products;
+      let products = datas.products;
+
+      products = products.sort(
+        (a: Product, b: Product) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
 
       const res = await fetch("/api/products/" + productId);
 
@@ -89,9 +120,14 @@ export default function ProductPage({ productId }: { productId: string }) {
       setProduct(chosenProduct);
 
       category = chosenProduct.category;
-      const related = products.filter((product: Product) => product.category === category && product.id !== productId);
+      const related = products.filter(
+        (product: Product) =>
+          product.category === category && product.id !== productId
+      );
 
-      const video = chosenProduct.images.find((imgUrl: string) => imgUrl.includes(".mp4"));
+      const video = chosenProduct.images.find((imgUrl: string) =>
+        imgUrl.includes(".mp4")
+      );
       setVideo(video);
 
       setRelatedProducts(related);
@@ -112,10 +148,16 @@ export default function ProductPage({ productId }: { productId: string }) {
     e.preventDefault();
     if (isInWishlist(productId)) {
       removeFromWishlist(productId, user?.uid);
-      toast({ title: "Removed from wishlist", description: "This item has been removed from your wishlist" });
+      toast({
+        title: "Removed from wishlist",
+        description: "This item has been removed from your wishlist",
+      });
     } else {
       addToWishlist(productId, user?.uid);
-      toast({ title: "Added to wishlist", description: "This item has been added to your wishlist" });
+      toast({
+        title: "Added to wishlist",
+        description: "This item has been added to your wishlist",
+      });
     }
   };
 
@@ -124,7 +166,10 @@ export default function ProductPage({ productId }: { productId: string }) {
     e.stopPropagation();
     e.preventDefault();
     removeFromCart({ productId: productId, size: selectedSize, quantity: 1 });
-    toast({ title: "Removed from cart", description: "Your item has been removed from the cart" });
+    toast({
+      title: "Removed from cart",
+      description: "Your item has been removed from the cart",
+    });
   };
 
   // Handle add to cart
@@ -142,7 +187,10 @@ export default function ProductPage({ productId }: { productId: string }) {
       return;
     }
     addToCart({ productId: productId, size: selectedSize, quantity: 1 });
-    toast({ title: "Added to cart", description: "Your item has been added to the cart" });
+    toast({
+      title: "Added to cart",
+      description: "Your item has been added to the cart",
+    });
   };
 
   // Handle share
@@ -151,7 +199,9 @@ export default function ProductPage({ productId }: { productId: string }) {
       ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}${url}`
       : `http://localhost:3000${url}`;
     setLink(link);
-    setMessage(`Check out this amazing product: ${product?.name} \n Link: ${url}`);
+    setMessage(
+      `Check out this amazing product: ${product?.name} \n Link: ${url}`
+    );
     openModal("share");
   };
 
@@ -168,7 +218,10 @@ export default function ProductPage({ productId }: { productId: string }) {
           Shop
         </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
-        <Link href={`/shop/${_.kebabCase(product?.category)}`} className="text-muted-foreground hover:text-primary">
+        <Link
+          href={`/shop/${_.kebabCase(product?.category)}`}
+          className="text-muted-foreground hover:text-primary"
+        >
           {product?.category}
         </Link>
         <ChevronRight className="mx-2 h-4 w-4" />
@@ -208,7 +261,9 @@ export default function ProductPage({ productId }: { productId: string }) {
                   )}
                 />
                 <span className=" sr-only">
-                  {isInWishlist(productId) ? "Remover from wishlist" : "Add to wishlist"}
+                  {isInWishlist(productId)
+                    ? "Remover from wishlist"
+                    : "Add to wishlist"}
                 </span>
               </Button>
             )}
@@ -221,7 +276,8 @@ export default function ProductPage({ productId }: { productId: string }) {
                     alt={`${product?.name} ${index + 1}`}
                     className={cn(
                       "w-20 h-20 object-contain rounded-md cursor-pointer ",
-                      image === mainImage && "border-2 border-primary border-neutral-200 "
+                      image === mainImage &&
+                        "border-2 border-primary border-neutral-200 "
                     )}
                     onClick={() => setMainImage(image)}
                     width={80}
@@ -260,7 +316,9 @@ export default function ProductPage({ productId }: { productId: string }) {
               <Skeleton className="w-full h-6 bg-muted-foreground/20" />
             </div>
           ) : (
-            <p className="text-muted-foreground text-[16px] leading-5">{product?.description.text}</p>
+            <p className="text-muted-foreground text-[16px] leading-5">
+              {product?.description.text}
+            </p>
           )}
 
           <div className="grid grid-cols-2 text-[16px] gap-2 pb-4 ">
@@ -278,7 +336,9 @@ export default function ProductPage({ productId }: { productId: string }) {
                 <Skeleton className="w-full my-2 h-6 bg-muted-foreground/20" />
               </>
             ) : (
-              product?.description.features.map((feature, index) => <li key={index}>{feature}</li>)
+              product?.description.features.map((feature, index) => (
+                <li key={index}>{feature}</li>
+              ))
             )}
           </div>
 
@@ -287,7 +347,10 @@ export default function ProductPage({ productId }: { productId: string }) {
             <div>
               <Select value={selectedSize} onValueChange={setSelectedSize}>
                 <SelectTrigger
-                  className={cn("w-fit min-w-14", alert ? "border-red-700 text-red-700" : "")}
+                  className={cn(
+                    "w-fit min-w-14",
+                    alert ? "border-red-700 text-red-700" : ""
+                  )}
                   id="size-select"
                 >
                   <SelectValue placeholder="Size" />
@@ -304,16 +367,31 @@ export default function ProductPage({ productId }: { productId: string }) {
 
             {selectedSize && cartQuantity && cartQuantity > 0 ? (
               <div className="flex items-center justify-between border rounded-md overflow-hidden">
-                <Button size="icon" variant="ghost" onClick={handleRemoveFromCart} className="rounded-none">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleRemoveFromCart}
+                  className="rounded-none"
+                >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <span className="font-semibold text-lg">{cartQuantity}</span>
-                <Button size="icon" variant="ghost" onClick={handleAddToCart} className="rounded-none">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleAddToCart}
+                  className="rounded-none"
+                >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
-              <Button disabled={!product?.stockUpdate} className="w-full" variant="action" onClick={handleAddToCart}>
+              <Button
+                disabled={!product?.stockUpdate}
+                className="w-full"
+                variant="action"
+                onClick={handleAddToCart}
+              >
                 <ShoppingCart className="mr-2 h-4 w-4" /> Add to cart
               </Button>
             )}
@@ -340,7 +418,11 @@ export default function ProductPage({ productId }: { productId: string }) {
             </>
           ) : (
             relatedProducts?.map((relatedProduct) => (
-              <ProductCard key={relatedProduct.id} {...relatedProduct} image={relatedProduct.images[0]} />
+              <ProductCard
+                key={relatedProduct.id}
+                {...relatedProduct}
+                image={relatedProduct.images[0]}
+              />
             ))
           )}
         </div>
