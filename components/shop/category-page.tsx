@@ -21,37 +21,34 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
+      
       const res = await fetch("/api/products");
       const data = await res.json();
       const products = data.products;
-
-      // Get unique categories
-      const filteredCategories = products?.map((product: Product) => product.category);
-      const uniqueCategories = Array.from(new Set(filteredCategories));
-
+  
       // Get category name from URL
       const categoryInUrlArr = url.split("/");
       const categoryInUrl = categoryInUrlArr[categoryInUrlArr.length - 1];
-
-      // Find category name from unique categories
-      const name = uniqueCategories.find((category) => _.kebabCase(category as string) === categoryInUrl);
-
-      // Filter products by category
-      const filteredProducts = products?.filter((product: Product) => product.category === name);
-
-      // Set products if there are any
-      filteredProducts && filteredProducts.length > 0 && setSortedProducts(filteredProducts);
-
-      console.log("filteredProducts", filteredProducts);
-      console.log("name", name);
-
-      name && setCategoryName(name as string);
+  
+      // Find matching category name
+      const filteredProducts = products
+        .filter((product: Product) => _.kebabCase(product.category) === categoryInUrl)
+        .sort((a:Product , b:Product ) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Sort latest first
+  
+      if (filteredProducts.length > 0) {
+        setSortedProducts(filteredProducts);
+        setCategoryName(filteredProducts[0].category); // Set category name dynamically
+      } else {
+        setCategoryName(""); // Default if no products found
+      }
+  
+      setLoading(false);
     };
-
-    // Fetch products from API and set them to state on component mount
+  
     fetchProducts();
-    setLoading(false);
   }, [url]);
+  
 
   return (
     <main className="flex-grow">

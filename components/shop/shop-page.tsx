@@ -29,20 +29,22 @@ export default function ShopPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      
       const res = await fetch("/api/products");
       const data = await res.json();
-  
-      // Sort products by `createdAt` in descending order (newest first)
-      const sorted = data.products.sort((a: Product, b: Product) => 
+    
+      // Sort products by `createdAt` in descending order (latest first)
+      const sorted = data.products.sort((a:Product, b: Product) => 
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
-  
+    
       setSortedProducts(sorted);
       setLoading(false);
     };
   
     fetchProducts();
   }, []);
+  
 
   return (
     <main className="flex-grow">
