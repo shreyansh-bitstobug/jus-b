@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import emailjs from "emailjs-com";
 import { useEffect, useState } from "react";
 import AddressSection from "../checkout/address-section";
 import { useToast } from "@/components/ui/use-toast";
@@ -139,28 +140,96 @@ export default function ProgressSection() {
 
   // ---- Handlers ----
   // Posting the order to the database
+  // const postOrder = async () => {
+  //   setIsLoading(true);
+
+  //   const message = `New order placed by ${user?.displayName}. Order ID: ${order?.id}.`;
+
+  //   await fetch("/api/whatsapp", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ message }),
+  //   });
+
+  //   console.log("Discount while posting the order", order?.fare.discount);
+
+  //   if (order?.fare.discount) {
+  //     console.log("Applying coupon", coupon, "Discount", order?.fare.discount);
+  //     await fetch("/api/coupons/apply", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ userId: user?.uid, orderId: order?.id, placedAt: order?.placedAt, code: coupon }),
+  //     });
+  //   }
+
+  //   const res = await fetch("/api/orders", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(order),
+  //   });
+  //   if (res.ok) {
+  //     clearCart();
+  //     toast({
+  //       title: "Order placed",
+  //       description: "Your order has been placed successfully.",
+  //       duration: 2000,
+  //     });
+  //   }
+  //   console.log(res.json());
+  //   return res.ok;
+  // };
+
+
+
   const postOrder = async () => {
     setIsLoading(true);
-
-    const message = `New order placed by ${user?.displayName}. Order ID: ${order?.id}.`;
-
-    await fetch("/api/whatsapp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
-    });
-
-    console.log("Discount while posting the order", order?.fare.discount);
-
+  
+    const message = `New order placed by ${user?.displayName || "Unknown"}. Order ID: ${order?.id}.`;
+  
+    // EmailJS parameters
+    const templateParams = {
+      to_name: "Store Owner",
+      from_name: user?.displayName || "Unknown User",
+      order_id: order?.id,
+      email: user?.email || "no-reply@example.com",
+      message,
+    };
+  
+    // Send email via EmailJS
+    emailjs
+      .send(
+        "service_fxpxz1a",    // 🔁 Replace with your EmailJS service ID
+        "template_idlup7r",   // 🔁 Replace with your EmailJS template ID
+        templateParams,
+        "alFOcRyeZvQ8QsC7d"     // 🔁 Replace with your EmailJS public key
+      )
+      .then(
+        (result) => {
+          console.log("Email sent successfully:", result.text);
+        },
+        (error) => {
+          console.error("Failed to send email:", error);
+        }
+      );
+  
+    // If there's a discount applied, update coupon usage
     if (order?.fare.discount) {
       console.log("Applying coupon", coupon, "Discount", order?.fare.discount);
       await fetch("/api/coupons/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid, orderId: order?.id, placedAt: order?.placedAt, code: coupon }),
+        body: JSON.stringify({
+          userId: user?.uid,
+          orderId: order?.id,
+          placedAt: order?.placedAt,
+          code: coupon,
+        }),
       });
     }
-
+  
+    // Post order to database
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: {
@@ -168,6 +237,7 @@ export default function ProgressSection() {
       },
       body: JSON.stringify(order),
     });
+  
     if (res.ok) {
       clearCart();
       toast({
@@ -176,9 +246,13 @@ export default function ProgressSection() {
         duration: 2000,
       });
     }
-    console.log(res.json());
+  
+    console.log(await res.json());
     return res.ok;
   };
+
+
+
 
   // Applying the coupon code to the order
   const applyCoupon = async () => {
