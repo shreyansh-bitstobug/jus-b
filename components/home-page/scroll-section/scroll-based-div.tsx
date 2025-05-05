@@ -6,7 +6,15 @@ import { syne } from "@/lib/direct-fonts";
 import _ from "lodash";
 import Link from "next/link";
 
-const Card = ({ src, categoryName, className }: { src: string; categoryName: string; className?: string }) => {
+const Card = ({
+  src,
+  categoryName,
+  className,
+}: {
+  src: string;
+  categoryName: string;
+  className?: string;
+}) => {
   return (
     <Link href={`/shop/${_.kebabCase(categoryName)}`}>
       <div
@@ -22,7 +30,14 @@ const Card = ({ src, categoryName, className }: { src: string; categoryName: str
           width={500}
           height={500}
         />
-        <h1 className={cn("text-2xl px-8 font-bold text-left pt-1", syne.className)}>{categoryName}</h1>
+        <h1
+          className={cn(
+            "text-2xl px-8 font-bold text-left pt-1",
+            syne.className
+          )}
+        >
+          {categoryName}
+        </h1>
       </div>
     </Link>
   );
@@ -56,8 +71,8 @@ const CardStack = () => {
         <div className="lg:hidden flex flex-col items-center gap-6">
           <div className="flex md:flex-row flex-col md:gap-0 gap-10">
             <Card
-              src="/assets/banner/winterwear.jpeg"
-              categoryName="Winter Wear"
+              src="https://firebasestorage.googleapis.com/v0/b/jus-b-ff33a.appspot.com/o/media%2FWhatsApp-Image-2024-06-03-at-9.27.25-PM.jpeg?alt=media&token=04142cb0-5aa2-422c-9368-d8ed816ba900"
+              categoryName="Holiday Season"
               className=" -rotate-12"
             />
             <Card
@@ -101,7 +116,10 @@ const CardStack = () => {
           </motion.div>
 
           {/* Second card (moves left and tilts left) */}
-          <motion.div ref={ref} className=" absolute top-1/4 right-1/2 translate-x-1/2 z-20">
+          <motion.div
+            ref={ref}
+            className=" absolute top-1/4 right-1/2 translate-x-1/2 z-20"
+          >
             <Card
               src="/assets/banner/winterwear.jpeg"
               categoryName="Winter Wear"
